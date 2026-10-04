@@ -1,0 +1,97 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../core/widgets/async_states.dart';
+import '../features/assistant/ask_screen.dart';
+import '../features/auth/data/auth_controller.dart';
+import '../features/auth/presentation/login_screen.dart';
+import '../features/auth/presentation/otp_screen.dart';
+import '../features/auth/presentation/profile_setup_screen.dart';
+import '../features/explore/explore_screen.dart';
+import '../features/home/home_screen.dart';
+import '../features/policy/presentation/add_policy_screen.dart';
+import '../features/policy/presentation/policy_detail_screen.dart';
+import '../features/policy/presentation/policy_form_screen.dart';
+import '../features/policy/presentation/processing_screen.dart';
+import '../features/portfolio/portfolio_screen.dart';
+import '../features/profile/profile_screen.dart';
+import '../features/shell/app_shell.dart';
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final refresh = ValueNotifier(0);
+  ref.listen(authControllerProvider, (_, _) => refresh.value++);
+  ref.onDispose(refresh.dispose);
+
+  return GoRouter(
+    initialLocation: '/',
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final auth = ref.read(authControllerProvider);
+      final loc = state.matchedLocation;
+      final onAuthPage = loc == '/login' || loc == '/otp';
+      return switch (auth.status) {
+        AuthStatus.unknown => loc == '/splash' ? null : '/splash',
+        AuthStatus.signedOut => onAuthPage ? null : '/login',
+        AuthStatus.signedIn when auth.needsProfile => loc == '/profile-setup' ? null : '/profile-setup',
+        AuthStatus.signedIn => (onAuthPage || loc == '/splash' || loc == '/profile-setup') ? '/' : null,
+      };
+    },
+    routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (_, _) => const Scaffold(body: LoadingView()),
+      ),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(
+        path: '/otp',
+        builder: (_, s) => OtpScreen(args: s.extra! as OtpArgs),
+      ),
+      GoRoute(path: '/profile-setup', builder: (_, _) => const ProfileSetupScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (_, _, shell) => AppShell(shell: shell),
+        branches: [
+          StatefulShellBranch(
+            routes: [GoRoute(path: '/', builder: (_, _) => const HomeScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: '/portfolio', builder: (_, _) => const PortfolioScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: '/explore', builder: (_, _) => const ExploreScreen())],
+          ),
+          StatefulShellBranch(
+            routes: [GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen())],
+          ),
+        ],
+      ),
+      GoRoute(path: '/add', builder: (_, _) => const AddPolicyScreen()),
+      GoRoute(
+        path: '/add/manual',
+        builder: (_, _) => const PolicyFormScreen(mode: PolicyFormMode.manual),
+      ),
+      GoRoute(
+        path: '/add/processing/:documentId',
+        builder: (_, s) => ProcessingScreen(documentId: s.pathParameters['documentId']!),
+      ),
+      GoRoute(
+        path: '/policy/:id',
+        builder: (_, s) => PolicyDetailScreen(policyId: s.pathParameters['id']!),
+        routes: [
+          GoRoute(
+            path: 'verify',
+            builder: (_, s) => PolicyFormScreen(mode: PolicyFormMode.verify, policyId: s.pathParameters['id']),
+          ),
+          GoRoute(
+            path: 'edit',
+            builder: (_, s) => PolicyFormScreen(mode: PolicyFormMode.edit, policyId: s.pathParameters['id']),
+          ),
+          GoRoute(
+            path: 'ask',
+            builder: (_, s) => AskScreen(policyId: s.pathParameters['id']!),
+          ),
+        ],
+      ),
+    ],
+  );
+});

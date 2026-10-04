@@ -1,0 +1,15 @@
+# Local development dependencies. Not for production.
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: insure
+      POSTGRES_PASSWORD: insure
+      POSTGRES_DB: insure
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+volumes:
+  pgdata:

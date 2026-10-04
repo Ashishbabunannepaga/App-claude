@@ -1,0 +1,181 @@
+import enum
+import uuid
+from datetime import date, datetime
+from decimal import Decimal
+
+from pgvector.sqlalchemy import Vector
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
+from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.core.config import get_settings
+from app.core.db import Base
+
+
+def _uuid_pk() -> Mapped[uuid.UUID]:
+    return mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+
+
+class TimestampMixin:
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class PolicyType(str, enum.Enum):
+    health = "health"
+    life = "life"
+    motor = "motor"
+    other = "other"
+
+
+class DocumentStatus(str, enum.Enum):
+    uploaded = "uploaded"
+    processing = "processing"
+    extracted = "extracted"
+    failed = "failed"
+
+
+class User(TimestampMixin, Base):
+    __tablename__ = "users"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    phone: Mapped[str | None] = mapped_column(String(20), unique=True)
+    email: Mapped[str | None] = mapped_column(String(320), unique=True)
+    full_name: Mapped[str | None] = mapped_column(String(120))
+    date_of_birth: Mapped[date | None] = mapped_column(Date)
+    city: Mapped[str | None] = mapped_column(String(80))
+    state: Mapped[str | None] = mapped_column(String(80))
+    consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    consent_version: Mapped[str | None] = mapped_column(String(20))
+    deletion_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class OtpChallenge(Base):
+    __tablename__ = "otp_challenges"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    identifier: Mapped[str] = mapped_column(String(320), index=True)
+    code_hash: Mapped[str] = mapped_column(String(64))
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class FamilyMember(TimestampMixin, Base):
+    __tablename__ = "family_members"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    relation: Mapped[str] = mapped_column(String(20))  # self, spouse, child, parent, other
+    full_name: Mapped[str] = mapped_column(String(120))
+    date_of_birth: Mapped[date | None] = mapped_column(Date)
+
+
+class Document(TimestampMixin, Base):
+    __tablename__ = "documents"
+    __table_args__ = (UniqueConstraint("user_id", "sha256", name="uq_documents_user_sha256"),)
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    storage_key: Mapped[str] = mapped_column(String(300))
+    original_filename: Mapped[str | None] = mapped_column(String(255))
+    content_type: Mapped[str] = mapped_column(String(50))
+    size_bytes: Mapped[int] = mapped_column(Integer)
+    sha256: Mapped[str] = mapped_column(String(64))
+    status: Mapped[DocumentStatus] = mapped_column(String(20), default=DocumentStatus.uploaded)
+    error_code: Mapped[str | None] = mapped_column(String(50))
+    page_count: Mapped[int | None] = mapped_column(Integer)
+    extraction_method: Mapped[str | None] = mapped_column(String(20))  # text | ocr
+    extracted_text: Mapped[str | None] = mapped_column(Text)
+
+    policy: Mapped["Policy | None"] = relationship(back_populates="document", uselist=False)
+
+
+class Policy(TimestampMixin, Base):
+    __tablename__ = "policies"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    document_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("documents.id", ondelete="SET NULL"), unique=True)
+    policy_type: Mapped[PolicyType] = mapped_column(String(20), default=PolicyType.other)
+    insurer: Mapped[str | None] = mapped_column(String(120))
+    plan_name: Mapped[str | None] = mapped_column(String(200))
+    policy_number: Mapped[str | None] = mapped_column(String(80))
+    start_date: Mapped[date | None] = mapped_column(Date)
+    end_date: Mapped[date | None] = mapped_column(Date, index=True)
+    premium: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    sum_insured: Mapped[Decimal | None] = mapped_column(Numeric(16, 2))
+    payment_frequency: Mapped[str | None] = mapped_column(String(20))
+    verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    source: Mapped[str] = mapped_column(String(20), default="upload")  # upload | manual
+    extraction_confidence: Mapped[float | None] = mapped_column(Float)
+    field_confidence: Mapped[dict] = mapped_column(JSONB, default=dict)
+    details: Mapped[dict] = mapped_column(JSONB, default=dict)
+    summary: Mapped[dict | None] = mapped_column(JSONB)
+
+    document: Mapped[Document | None] = relationship(back_populates="policy")
+
+
+class PolicyChunk(Base):
+    __tablename__ = "policy_chunks"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    policy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("policies.id", ondelete="CASCADE"), index=True)
+    chunk_index: Mapped[int] = mapped_column(Integer)
+    page: Mapped[int | None] = mapped_column(Integer)
+    section: Mapped[str | None] = mapped_column(String(200))
+    content: Mapped[str] = mapped_column(Text)
+    embedding: Mapped[list[float]] = mapped_column(Vector(get_settings().embedding_dim))
+
+
+class QaMessage(Base):
+    __tablename__ = "qa_messages"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    policy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("policies.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    question: Mapped[str] = mapped_column(Text)
+    answer: Mapped[str] = mapped_column(Text)
+    answerable: Mapped[bool] = mapped_column(Boolean)
+    confidence: Mapped[str] = mapped_column(String(10))
+    citations: Mapped[list] = mapped_column(JSONB, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), index=True)
+    action: Mapped[str] = mapped_column(String(50))
+    entity: Mapped[str | None] = mapped_column(String(50))
+    entity_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    meta: Mapped[dict] = mapped_column(JSONB, default=dict)
+    ip: Mapped[str | None] = mapped_column(String(45))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
