@@ -47,6 +47,7 @@ def to_out(policy: Policy) -> PolicyOut:
     data.update(status=policy_status(policy), days_to_expiry=days_to_expiry(policy))
     data["field_confidence"] = policy.field_confidence or {}
     data["details"] = policy.details or {}
+    data["members"] = sorted(policy.members, key=lambda m: m.full_name)
     return PolicyOut.model_validate(data)
 
 
@@ -61,6 +62,7 @@ def portfolio_summary(db: Session, user_id: uuid.UUID) -> PortfolioSummary:
     policies = db.scalars(select(Policy).where(Policy.user_id == user_id)).all()
     verified = [p for p in policies if p.verified]
     live = [p for p in verified if policy_status(p) in ("active", "expiring_soon", "unknown")]
+    due = [p for p in live if p.renewal_status == "pending"]
     by_type: dict[str, int] = {}
     for p in policies:
         by_type[p.policy_type] = by_type.get(p.policy_type, 0) + 1
@@ -73,7 +75,7 @@ def portfolio_summary(db: Session, user_id: uuid.UUID) -> PortfolioSummary:
                 end_date=p.end_date,
                 days_to_expiry=days_to_expiry(p),
             )
-            for p in live
+            for p in due
             if p.end_date and 0 <= days_to_expiry(p) <= RENEWAL_WINDOW_DAYS
         ),
         key=lambda r: r.days_to_expiry,
@@ -81,7 +83,7 @@ def portfolio_summary(db: Session, user_id: uuid.UUID) -> PortfolioSummary:
     return PortfolioSummary(
         total_policies=len(policies),
         active_policies=len(live),
-        expiring_soon=sum(1 for p in live if policy_status(p) == "expiring_soon"),
+        expiring_soon=sum(1 for p in due if policy_status(p) == "expiring_soon"),
         pending_verification=len(policies) - len(verified),
         total_annual_premium=sum((annual_premium(p) for p in live), Decimal(0)),
         health_cover=sum((p.sum_insured or 0 for p in live if p.policy_type == "health"), Decimal(0)),

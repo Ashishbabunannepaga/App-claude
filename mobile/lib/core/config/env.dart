@@ -1,7 +1,7 @@
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
 /// Build-time configuration via `--dart-define`. The app holds NO secrets:
-/// only the public API base URL and the environment name.
+/// only the public API base URL, environment name and public Firebase client identifiers.
 class Env {
   static const String name = String.fromEnvironment('ENV', defaultValue: 'development');
   static const String _apiBaseUrl = String.fromEnvironment('API_BASE_URL');
@@ -12,14 +12,22 @@ class Env {
   /// (Android emulator reaches the host via 10.0.2.2).
   static String get apiBaseUrl {
     if (_apiBaseUrl.isNotEmpty) return _apiBaseUrl;
-    return Platform.isAndroid ? 'http://10.0.2.2:8000/api/v1' : 'http://localhost:8000/api/v1';
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) return 'http://10.0.2.2:8000/api/v1';
+    return 'http://localhost:8000/api/v1';
   }
 
   /// Origin of the API, used to resolve relative URLs returned by the server.
   static Uri get apiOrigin {
     final uri = Uri.parse(apiBaseUrl);
-    return uri.replace(path: '', query: null);
+    return Uri(scheme: uri.scheme, host: uri.host, port: uri.port);
   }
+
+  // Firebase (push). Public client config, not secrets. Push is disabled when unset.
+  static const firebaseApiKey = String.fromEnvironment('FIREBASE_API_KEY');
+  static const firebaseProjectId = String.fromEnvironment('FIREBASE_PROJECT_ID');
+  static const firebaseSenderId = String.fromEnvironment('FIREBASE_SENDER_ID');
+  static const firebaseAndroidAppId = String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
+  static const firebaseIosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
 
   static const String privacyPolicyUrl = String.fromEnvironment(
     'PRIVACY_URL',
@@ -33,4 +41,8 @@ class Env {
     'SUPPORT_EMAIL',
     defaultValue: 'support@example.com',
   ); // TODO: real address
+  static const String grievanceOfficer = String.fromEnvironment(
+    'GRIEVANCE_OFFICER',
+    defaultValue: 'Grievance Officer, grievance@example.com',
+  ); // TODO
 }

@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 final _inr = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
-final _date = DateFormat('d MMM yyyy');
+final _date = DateFormat('d MMM yyyy', 'en_IN');
 
 String formatInr(num? value) => value == null ? '—' : _inr.format(value);
 

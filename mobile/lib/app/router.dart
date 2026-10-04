@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/widgets/async_states.dart';
+import '../features/account/presentation/family_screen.dart';
+import '../features/account/presentation/notifications_screen.dart';
+import '../features/account/presentation/settings_screens.dart';
 import '../features/assistant/ask_screen.dart';
 import '../features/auth/data/auth_controller.dart';
 import '../features/auth/presentation/login_screen.dart';
+import '../features/auth/presentation/onboarding_screen.dart';
 import '../features/auth/presentation/otp_screen.dart';
 import '../features/auth/presentation/profile_setup_screen.dart';
 import '../features/explore/explore_screen.dart';
@@ -13,6 +17,7 @@ import '../features/home/home_screen.dart';
 import '../features/policy/presentation/add_policy_screen.dart';
 import '../features/policy/presentation/policy_detail_screen.dart';
 import '../features/policy/presentation/policy_form_screen.dart';
+import '../features/policy/presentation/policy_health_screen.dart';
 import '../features/policy/presentation/processing_screen.dart';
 import '../features/portfolio/portfolio_screen.dart';
 import '../features/profile/profile_screen.dart';
@@ -21,6 +26,7 @@ import '../features/shell/app_shell.dart';
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
   ref.listen(authControllerProvider, (_, _) => refresh.value++);
+  ref.listen(onboardingDoneProvider, (_, _) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
@@ -29,10 +35,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
       final loc = state.matchedLocation;
-      final onAuthPage = loc == '/login' || loc == '/otp';
+      final onAuthPage = loc == '/login' || loc == '/otp' || loc == '/welcome';
+      final onboarded = ref.read(onboardingDoneProvider);
       return switch (auth.status) {
         AuthStatus.unknown => loc == '/splash' ? null : '/splash',
-        AuthStatus.signedOut => onAuthPage ? null : '/login',
+        AuthStatus.signedOut when !onboarded => loc == '/welcome' ? null : '/welcome',
+        AuthStatus.signedOut => (onAuthPage && loc != '/welcome') ? null : '/login',
         AuthStatus.signedIn when auth.needsProfile => loc == '/profile-setup' ? null : '/profile-setup',
         AuthStatus.signedIn => (onAuthPage || loc == '/splash' || loc == '/profile-setup') ? '/' : null,
       };
@@ -42,6 +50,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/splash',
         builder: (_, _) => const Scaffold(body: LoadingView()),
       ),
+      GoRoute(path: '/welcome', builder: (_, _) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(
         path: '/otp',
@@ -66,6 +75,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/add', builder: (_, _) => const AddPolicyScreen()),
+      GoRoute(path: '/family', builder: (_, _) => const FamilyScreen()),
+      GoRoute(path: '/notifications', builder: (_, _) => const NotificationsScreen()),
+      GoRoute(path: '/settings/notifications', builder: (_, _) => const NotificationSettingsScreen()),
+      GoRoute(path: '/settings/profile', builder: (_, _) => const EditProfileScreen()),
+      GoRoute(path: '/support', builder: (_, _) => const SupportScreen()),
+      GoRoute(path: '/privacy', builder: (_, _) => const PrivacyScreen()),
       GoRoute(
         path: '/add/manual',
         builder: (_, _) => const PolicyFormScreen(mode: PolicyFormMode.manual),
@@ -89,6 +104,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'ask',
             builder: (_, s) => AskScreen(policyId: s.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: 'health',
+            builder: (_, s) => PolicyHealthScreen(policyId: s.pathParameters['id']!),
           ),
         ],
       ),

@@ -15,6 +15,10 @@ class AIGateway:
     def __init__(self, provider: AIProvider):
         self.provider = provider
 
+    @property
+    def provider_name(self) -> str:
+        return self.provider.name
+
     def extract_policy(self, text: str) -> dict[str, Any]:
         prompt = prompts.EXTRACT_PROMPT.format(
             core_fields=", ".join(prompts.CORE_FIELDS),
@@ -63,6 +67,12 @@ def get_ai_gateway() -> AIGateway:
         if not s.openai_api_key:
             raise RuntimeError("OPENAI_API_KEY is required for the openai provider")
         provider = OpenAIProvider(s.openai_api_key, s.openai_model, s.ai_timeout_seconds)
+    elif s.ai_provider == "gemini":
+        from app.ai.providers.gemini import GeminiProvider
+
+        if not s.gemini_api_key:
+            raise RuntimeError("GEMINI_API_KEY is required for the gemini provider")
+        provider = GeminiProvider(s.gemini_api_key, s.gemini_model, s.ai_timeout_seconds)
     else:
         from app.ai.providers.mock import MockProvider
 

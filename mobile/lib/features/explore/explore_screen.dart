@@ -48,8 +48,8 @@ class ExploreScreen extends StatelessWidget {
             children: [
               _SoonTile(Icons.mail_outline_rounded, 'Gmail import'),
               _SoonTile(Icons.account_balance_wallet_outlined, 'DigiLocker'),
-              _SoonTile(Icons.health_and_safety_outlined, 'Policy health check'),
-              _SoonTile(Icons.family_restroom_rounded, 'Family coverage'),
+              _SoonTile(Icons.track_changes_rounded, 'Claim tracking'),
+              _SoonTile(Icons.spa_outlined, 'Wellness'),
             ],
           ),
         ],

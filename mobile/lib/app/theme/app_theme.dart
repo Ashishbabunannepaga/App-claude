@@ -11,7 +11,7 @@ class AppTheme {
       error: AppColors.error,
       surface: AppColors.surface,
     );
-    final base = ThemeData(useMaterial3: true, colorScheme: scheme);
+    final base = ThemeData(useMaterial3: true, colorScheme: scheme, fontFamily: 'Inter');
     final text = base.textTheme.apply(bodyColor: AppColors.textPrimary, displayColor: AppColors.textPrimary);
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.background,

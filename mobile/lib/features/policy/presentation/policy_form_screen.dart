@@ -7,6 +7,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/async_states.dart';
+import '../../account/data/account_repository.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
 
@@ -51,6 +52,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
   late final _number = TextEditingController(text: widget.policy?.policyNumber);
   late final _premium = TextEditingController(text: _amount(widget.policy?.premium));
   late final _cover = TextEditingController(text: _amount(widget.policy?.sumInsured));
+  late final Set<String> _members = {...?widget.policy?.members.map((m) => m.id)};
   bool _saving = false;
   String? _error;
 
@@ -100,6 +102,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
       'premium': text(_premium),
       'sum_insured': text(_cover),
       'payment_frequency': _frequency,
+      'member_ids': _members.toList(),
     };
   }
 
@@ -191,7 +194,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
               validator: (v) => (v ?? '').trim().isEmpty ? 'Insurer is required' : null,
             ),
             const SizedBox(height: AppSpacing.md),
-            TextFormField(controller: _plan, decoration: _decoration('Plan name', 'plan_name', true)),
+            TextFormField(controller: _plan, decoration: _decoration('Plan name', 'plan_name', _plan.text.isNotEmpty)),
             const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _number,
@@ -243,6 +246,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
               ].map((f) => DropdownMenuItem(value: f, child: Text(f == null ? 'Not sure' : humanise(f)))).toList(),
               onChanged: (v) => setState(() => _frequency = v),
             ),
+            if (_type != 'motor') _MembersPicker(selected: _members, onChanged: () => setState(() {})),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.md),
               Text(_error!, style: const TextStyle(color: AppColors.error)),
@@ -282,4 +286,47 @@ class _DateField extends StatelessWidget {
       child: Text(value == null ? 'Select' : formatDate(value)),
     ),
   );
+}
+
+class _MembersPicker extends ConsumerWidget {
+  const _MembersPicker({required this.selected, required this.onChanged});
+  final Set<String> selected;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final family = ref.watch(familyProvider).value ?? [];
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Who is covered?', style: TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: AppSpacing.sm),
+          if (family.isEmpty)
+            TextButton.icon(
+              onPressed: () => context.push('/family'),
+              icon: const Icon(Icons.person_add_alt_1_rounded),
+              label: const Text('Add family members'),
+            )
+          else
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final m in family)
+                  FilterChip(
+                    label: Text(m.fullName),
+                    selected: selected.contains(m.id),
+                    onSelected: (on) {
+                      on ? selected.add(m.id) : selected.remove(m.id);
+                      onChanged();
+                    },
+                  ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
 }

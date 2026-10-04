@@ -33,3 +33,33 @@ def delete_me(user: CurrentUser, request: Request, db: DB) -> dict:
     audit(db, "account_deletion_requested", user.id, ip=client_ip(request))
     db.commit()
     return {"status": "scheduled", "grace_period_days": 7}
+
+
+@router.get("/export")
+def export_my_data(user: CurrentUser, db: DB, request: Request) -> dict:
+    """DPDP right of access: everything we hold about the user, except document files
+    (downloadable individually via signed URLs)."""
+    from sqlalchemy import select
+
+    from app.models import FamilyMember, Notification, Policy, QaMessage
+    from app.services.policy_service import to_out
+
+    audit(db, "data_exported", user.id, ip=client_ip(request))
+    db.commit()
+    policies = db.scalars(select(Policy).where(Policy.user_id == user.id)).all()
+    return {
+        "profile": UserOut.model_validate(user).model_dump(mode="json"),
+        "family": [
+            {"relation": m.relation, "full_name": m.full_name, "date_of_birth": m.date_of_birth}
+            for m in db.scalars(select(FamilyMember).where(FamilyMember.user_id == user.id))
+        ],
+        "policies": [to_out(p).model_dump(mode="json") for p in policies],
+        "questions": [
+            {"policy_id": str(q.policy_id), "question": q.question, "answer": q.answer, "asked_at": q.created_at}
+            for q in db.scalars(select(QaMessage).where(QaMessage.user_id == user.id))
+        ],
+        "notifications": [
+            {"title": n.title, "body": n.body, "created_at": n.created_at}
+            for n in db.scalars(select(Notification).where(Notification.user_id == user.id))
+        ],
+    }

@@ -21,6 +21,8 @@ class Policy {
     this.paymentFrequency,
     this.extractionConfidence,
     this.daysToExpiry,
+    this.renewalStatus = 'pending',
+    this.members = const [],
   });
 
   final String id;
@@ -44,6 +46,10 @@ class Policy {
   final String status;
   final int? daysToExpiry;
 
+  /// pending | renewed | not_renewing
+  final String renewalStatus;
+  final List<FamilyMember> members;
+
   String get displayName => insurer ?? 'Untitled policy';
 
   factory Policy.fromJson(Map<String, dynamic> j) => Policy(
@@ -65,6 +71,99 @@ class Policy {
     details: Map<String, dynamic>.from(j['details'] as Map? ?? {}),
     status: j['status'] as String,
     daysToExpiry: j['days_to_expiry'] as int?,
+    renewalStatus: j['renewal_status'] as String? ?? 'pending',
+    members: (j['members'] as List? ?? []).map((m) => FamilyMember.fromJson(m as Map<String, dynamic>)).toList(),
+  );
+}
+
+class FamilyMember {
+  FamilyMember({required this.id, required this.relation, required this.fullName, this.dateOfBirth});
+  final String id;
+
+  /// self | spouse | child | parent | other
+  final String relation;
+  final String fullName;
+  final DateTime? dateOfBirth;
+
+  factory FamilyMember.fromJson(Map<String, dynamic> j) => FamilyMember(
+    id: j['id'] as String,
+    relation: j['relation'] as String,
+    fullName: j['full_name'] as String,
+    dateOfBirth: _date(j['date_of_birth']),
+  );
+}
+
+class AppNotification {
+  AppNotification({
+    required this.id,
+    required this.kind,
+    required this.title,
+    required this.body,
+    required this.createdAt,
+    this.deepLink,
+    this.readAt,
+  });
+  final String id;
+  final String kind;
+  final String title;
+  final String body;
+  final String? deepLink;
+  final DateTime createdAt;
+  final DateTime? readAt;
+
+  bool get isRead => readAt != null;
+
+  factory AppNotification.fromJson(Map<String, dynamic> j) => AppNotification(
+    id: j['id'] as String,
+    kind: j['kind'] as String,
+    title: j['title'] as String,
+    body: j['body'] as String,
+    deepLink: j['deep_link'] as String?,
+    createdAt: DateTime.parse(j['created_at'] as String).toLocal(),
+    readAt: j['read_at'] == null ? null : DateTime.parse(j['read_at'] as String),
+  );
+}
+
+class HealthFinding {
+  HealthFinding(this.key, this.label, this.grade, this.detail);
+  final String key;
+  final String label;
+  final String grade;
+  final String detail;
+
+  factory HealthFinding.fromJson(Map<String, dynamic> j) =>
+      HealthFinding(j['key'] as String, j['label'] as String, j['grade'] as String, j['detail'] as String);
+}
+
+class HealthCheck {
+  HealthCheck({
+    required this.available,
+    this.score,
+    required this.strong,
+    required this.attention,
+    required this.notCovered,
+    required this.notMentioned,
+    required this.disclaimer,
+  });
+  final bool available;
+  final int? score;
+  final List<HealthFinding> strong;
+  final List<HealthFinding> attention;
+  final List<HealthFinding> notCovered;
+  final List<String> notMentioned;
+  final String disclaimer;
+
+  static List<HealthFinding> _list(Object? v) =>
+      (v as List).map((f) => HealthFinding.fromJson(f as Map<String, dynamic>)).toList();
+
+  factory HealthCheck.fromJson(Map<String, dynamic> j) => HealthCheck(
+    available: j['available'] as bool,
+    score: j['score'] as int?,
+    strong: _list(j['strong']),
+    attention: _list(j['attention']),
+    notCovered: _list(j['not_covered']),
+    notMentioned: List<String>.from(j['not_mentioned'] as List),
+    disclaimer: j['disclaimer'] as String,
   );
 }
 
@@ -120,9 +219,11 @@ class Answer {
     required this.confidence,
     required this.citations,
     required this.disclaimer,
+    this.provider,
   });
 
   final String id;
+  final String? provider;
   final String question;
   final String answer;
   final bool answerable;
@@ -138,11 +239,19 @@ class Answer {
     confidence: j['confidence'] as String,
     citations: (j['citations'] as List).map((c) => Citation.fromJson(c as Map<String, dynamic>)).toList(),
     disclaimer: j['disclaimer'] as String,
+    provider: j['provider'] as String?,
   );
 }
 
 class PolicySummary {
-  PolicySummary({required this.headline, required this.keyPoints, required this.watchOuts, required this.disclaimer});
+  PolicySummary({
+    required this.headline,
+    required this.keyPoints,
+    required this.watchOuts,
+    required this.disclaimer,
+    this.provider,
+  });
+  final String? provider;
   final String headline;
   final List<String> keyPoints;
   final List<String> watchOuts;
@@ -153,6 +262,7 @@ class PolicySummary {
     keyPoints: List<String>.from(j['key_points'] as List),
     watchOuts: List<String>.from(j['watch_outs'] as List),
     disclaimer: j['disclaimer'] as String,
+    provider: j['provider'] as String?,
   );
 }
 

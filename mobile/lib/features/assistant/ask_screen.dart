@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/widgets/async_states.dart';
+import '../../core/widgets/demo_badge.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
 
@@ -37,6 +38,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
   final List<Answer> _session = [];
   String? _pending;
   String? _error;
+  bool _scrolledToHistory = false;
 
   @override
   void dispose() {
@@ -65,14 +67,12 @@ class _AskScreenState extends ConsumerState<AskScreen> {
     }
   }
 
-  void _scrollToEnd() => WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (_scroll.hasClients) {
-      _scroll.animateTo(
-        _scroll.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    }
+  void _scrollToEnd({bool animate = true}) => WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!_scroll.hasClients) return;
+    final end = _scroll.position.maxScrollExtent;
+    animate
+        ? _scroll.animateTo(end, duration: const Duration(milliseconds: 250), curve: Curves.easeOut)
+        : _scroll.jumpTo(end);
   });
 
   @override
@@ -98,6 +98,10 @@ class _AskScreenState extends ConsumerState<AskScreen> {
               onRetry: () => ref.invalidate(_historyProvider(widget.policyId)),
               data: (past) {
                 final all = [...past, ..._session];
+                if (!_scrolledToHistory && past.isNotEmpty) {
+                  _scrolledToHistory = true;
+                  _scrollToEnd(animate: false);
+                }
                 if (all.isEmpty && _pending == null) {
                   return _Suggestions(
                     questions: _suggestions[policy.value?.policyType ?? 'other'] ?? _suggestions['other']!,
@@ -225,6 +229,7 @@ class _AnswerBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          DemoAiBadge(provider: answer.provider),
           if (!answer.answerable)
             const Padding(
               padding: EdgeInsets.only(bottom: 6),

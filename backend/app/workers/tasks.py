@@ -1,5 +1,6 @@
 import uuid
 
+from celery.schedules import crontab
 from fastapi import BackgroundTasks
 
 from app.core.config import get_settings
@@ -34,7 +35,16 @@ def purge_deleted_accounts_task() -> int:
         return purge_deleted_accounts(db)
 
 
+@celery_app.task(name="renewal_reminders")
+def renewal_reminders_task() -> int:
+    from app.services.notification_service import renewal_reminders
+
+    with SessionLocal() as db:
+        return renewal_reminders(db)
+
+
 celery_app.conf.beat_schedule = {
     "purge-deleted-accounts": {"task": "purge_deleted_accounts", "schedule": 6 * 3600},
-    # TODO(Week 7): "renewal-reminders" daily at 09:00 IST.
+    # 09:00 IST daily (celery timezone is Asia/Kolkata) — avoids night-time pushes.
+    "renewal-reminders": {"task": "renewal_reminders", "schedule": crontab(hour=9, minute=0)},
 }

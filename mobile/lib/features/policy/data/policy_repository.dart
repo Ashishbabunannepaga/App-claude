@@ -89,6 +89,16 @@ class PolicyRepository {
     return res.data!.map((m) => Answer.fromJson(m as Map<String, dynamic>)).toList();
   });
 
+  Future<HealthCheck> health(String id) => _call(() async {
+    final res = await _dio.get<Map<String, dynamic>>('/policies/$id/health');
+    return HealthCheck.fromJson(res.data!);
+  });
+
+  Future<Policy> setRenewal(String id, String status) => _call(() async {
+    final res = await _dio.put<Map<String, dynamic>>('/policies/$id/renewal', data: {'renewal_status': status});
+    return Policy.fromJson(res.data!);
+  });
+
   Future<PortfolioSummary> portfolio() => _call(() async {
     final res = await _dio.get<Map<String, dynamic>>('/portfolio/summary');
     return PortfolioSummary.fromJson(res.data!);
@@ -109,6 +119,10 @@ final summaryProvider = FutureProvider.autoDispose.family<PolicySummary, String>
   (ref, id) => ref.watch(policyRepositoryProvider).summary(id),
 );
 
+final healthProvider = FutureProvider.autoDispose.family<HealthCheck, String>(
+  (ref, id) => ref.watch(policyRepositoryProvider).health(id),
+);
+
 /// Call after any change to policies so every list/summary refreshes.
 void invalidatePolicies(WidgetRef ref, [String? policyId]) {
   ref.invalidate(policiesProvider);
@@ -116,5 +130,6 @@ void invalidatePolicies(WidgetRef ref, [String? policyId]) {
   if (policyId != null) {
     ref.invalidate(policyProvider(policyId));
     ref.invalidate(summaryProvider(policyId));
+    ref.invalidate(healthProvider(policyId));
   }
 }

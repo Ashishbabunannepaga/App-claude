@@ -94,6 +94,7 @@ def ask(db: Session, policy: Policy, user_id: uuid.UUID, question: str) -> QaMes
         answerable, answer, confidence, cited = False, NOT_FOUND, "low", []
 
     message = QaMessage(
+        provider=get_ai_gateway().provider_name,
         policy_id=policy.id,
         user_id=user_id,
         question=question,

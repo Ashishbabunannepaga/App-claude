@@ -6,6 +6,7 @@ from decimal import Decimal
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     Boolean,
+    Column,
     Date,
     DateTime,
     Float,
@@ -13,6 +14,7 @@ from sqlalchemy import (
     Integer,
     Numeric,
     String,
+    Table,
     Text,
     UniqueConstraint,
     func,
@@ -62,6 +64,8 @@ class User(TimestampMixin, Base):
     consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     consent_version: Mapped[str | None] = mapped_column(String(20))
     deletion_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    notify_renewals: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    notify_processing: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
 
 
 class OtpChallenge(Base):
@@ -85,6 +89,14 @@ class RefreshToken(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+policy_members = Table(
+    "policy_members",
+    Base.metadata,
+    Column("policy_id", ForeignKey("policies.id", ondelete="CASCADE"), primary_key=True),
+    Column("member_id", ForeignKey("family_members.id", ondelete="CASCADE"), primary_key=True),
+)
 
 
 class FamilyMember(TimestampMixin, Base):
@@ -138,8 +150,10 @@ class Policy(TimestampMixin, Base):
     field_confidence: Mapped[dict] = mapped_column(JSONB, default=dict)
     details: Mapped[dict] = mapped_column(JSONB, default=dict)
     summary: Mapped[dict | None] = mapped_column(JSONB)
+    renewal_status: Mapped[str] = mapped_column(String(20), default="pending", server_default="pending")
 
     document: Mapped[Document | None] = relationship(back_populates="policy")
+    members: Mapped[list[FamilyMember]] = relationship(secondary=policy_members, lazy="selectin")
 
 
 class PolicyChunk(Base):
@@ -165,6 +179,7 @@ class QaMessage(Base):
     answerable: Mapped[bool] = mapped_column(Boolean)
     confidence: Mapped[str] = mapped_column(String(10))
     citations: Mapped[list] = mapped_column(JSONB, default=list)
+    provider: Mapped[str | None] = mapped_column(String(20))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -178,4 +193,42 @@ class AuditLog(Base):
     entity_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
     meta: Mapped[dict] = mapped_column(JSONB, default=dict)
     ip: Mapped[str | None] = mapped_column(String(45))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class DeviceToken(Base):
+    __tablename__ = "device_tokens"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    token: Mapped[str] = mapped_column(String(512), unique=True)
+    platform: Mapped[str] = mapped_column(String(10))  # android | ios
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Notification(Base):
+    __tablename__ = "notifications"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    policy_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("policies.id", ondelete="CASCADE"))
+    kind: Mapped[str] = mapped_column(String(30))  # renewal | processing_done | processing_failed
+    title: Mapped[str] = mapped_column(String(120))
+    body: Mapped[str] = mapped_column(String(300))
+    deep_link: Mapped[str | None] = mapped_column(String(200))
+    dedupe_key: Mapped[str] = mapped_column(String(120), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SupportRequest(Base):
+    __tablename__ = "support_requests"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True)
+    category: Mapped[str] = mapped_column(String(30))
+    message: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(20), default="open")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

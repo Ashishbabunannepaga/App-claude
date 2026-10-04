@@ -7,10 +7,11 @@ from sqlalchemy.orm import Session
 from app.ai.embeddings import get_embedder
 from app.ai.gateway import get_ai_gateway
 from app.ai.providers.base import AIProviderError
-from app.models import Document, DocumentStatus, Policy, PolicyChunk
+from app.models import Document, DocumentStatus, Policy, PolicyChunk, User
 from app.processing.chunking import chunk_pages
 from app.processing.extraction import validate_extraction
 from app.processing.text_extraction import ExtractionError, extract_text
+from app.services.notification_service import notify
 from app.storage import get_storage
 
 log = logging.getLogger(__name__)
@@ -64,6 +65,7 @@ def process_document(db: Session, document_id: uuid.UUID) -> None:
         )
         doc.status = DocumentStatus.extracted
         db.commit()
+        _notify(db, doc, ok=True, policy_id=policy.id)
     except ExtractionError as exc:
         db.rollback()
         _fail(db, document_id, exc.code)
@@ -82,3 +84,24 @@ def _fail(db: Session, document_id: uuid.UUID, code: str) -> None:
     if doc:
         doc.status, doc.error_code = DocumentStatus.failed, code
         db.commit()
+        _notify(db, doc, ok=False)
+
+
+def _notify(db: Session, doc: Document, ok: bool, policy_id: uuid.UUID | None = None) -> None:
+    user = db.get(User, doc.user_id)
+    if user is None or not user.notify_processing:
+        return
+    try:
+        notify(
+            db,
+            doc.user_id,
+            kind="processing_done" if ok else "processing_failed",
+            title="Your policy is ready to review" if ok else "We couldn't read your document",
+            body="Check the details we found and confirm them." if ok else "Open the app to retry or enter details.",
+            dedupe_key=f"processing:{doc.id}:{doc.updated_at.isoformat()}",
+            policy_id=policy_id,
+            deep_link=f"/policy/{policy_id}/verify" if ok else f"/add/processing/{doc.id}",
+        )
+    except Exception:
+        db.rollback()
+        log.exception("processing notification failed for document %s", doc.id)

@@ -6,7 +6,17 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
 
 class AppUser {
-  AppUser({required this.id, this.phone, this.email, this.fullName, this.dateOfBirth, this.city, this.state});
+  AppUser({
+    required this.id,
+    this.phone,
+    this.email,
+    this.fullName,
+    this.dateOfBirth,
+    this.city,
+    this.state,
+    this.notifyRenewals = true,
+    this.notifyProcessing = true,
+  });
 
   final String id;
   final String? phone;
@@ -15,6 +25,8 @@ class AppUser {
   final DateTime? dateOfBirth;
   final String? city;
   final String? state;
+  final bool notifyRenewals;
+  final bool notifyProcessing;
 
   factory AppUser.fromJson(Map<String, dynamic> j) => AppUser(
     id: j['id'] as String,

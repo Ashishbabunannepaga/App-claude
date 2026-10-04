@@ -3,36 +3,49 @@ from typing import Literal
 
 from fastapi import APIRouter, Query, Request
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.ai.gateway import get_ai_gateway
 from app.ai.providers.base import AIProviderError
 from app.api.deps import DB, CurrentUser, client_ip
 from app.core.errors import AppError
 from app.core.rate_limit import limiter
-from app.models import Policy, QaMessage
+from app.models import FamilyMember, Policy, QaMessage
 from app.schemas.policy import (
     AnswerOut,
     AskRequest,
+    HealthCheckOut,
     PolicyCreate,
     PolicyOut,
     PolicyUpdate,
     PortfolioSummary,
+    RenewalUpdate,
     SummaryOut,
 )
 from app.services import qa_service
 from app.services.audit import audit
+from app.services.health_check import health_check
 from app.services.policy_service import get_owned_policy, portfolio_summary, structured_view, to_out
 from app.storage import get_storage
 
 router = APIRouter(tags=["policies"])
 
 
-def _apply(policy: Policy, body: PolicyUpdate | PolicyCreate) -> None:
+def _apply(db: Session, policy: Policy, body: PolicyUpdate | PolicyCreate) -> None:
     changes = body.model_dump(exclude_unset=True)
     confidence = dict(policy.field_confidence or {})
     for field, value in changes.items():
         if field == "details":
             policy.details = {**(policy.details or {}), **(value or {})}
+            continue
+        if field == "member_ids":
+            ids = set(value or [])
+            members = db.scalars(
+                select(FamilyMember).where(FamilyMember.id.in_(ids), FamilyMember.user_id == policy.user_id)
+            ).all()
+            if len(members) != len(ids):
+                raise AppError("invalid_member", "Unknown family member", 422)
+            policy.members = list(members)
             continue
         setattr(policy, field, value)
         confidence[field] = 1.0  # user-provided or user-corrected
@@ -50,6 +63,7 @@ def _answer_out(m: QaMessage) -> AnswerOut:
         confidence=m.confidence,
         citations=m.citations,
         disclaimer=qa_service.DISCLAIMER,
+        provider=m.provider,
         created_at=m.created_at,
     )
 
@@ -66,8 +80,8 @@ def list_policies(
 
 @router.post("/policies", response_model=PolicyOut, status_code=201)
 def create_manual(body: PolicyCreate, user: CurrentUser, db: DB) -> PolicyOut:
-    policy = Policy(user_id=user.id, source="manual", verified=True, field_confidence={}, details={})
-    _apply(policy, body)
+    policy = Policy(user_id=user.id, source="manual", verified=True, field_confidence={}, details={}, members=[])
+    _apply(db, policy, body)
     db.add(policy)
     db.commit()
     return to_out(policy)
@@ -81,7 +95,7 @@ def get_policy(policy_id: uuid.UUID, user: CurrentUser, db: DB) -> PolicyOut:
 @router.patch("/policies/{policy_id}", response_model=PolicyOut)
 def update_policy(policy_id: uuid.UUID, body: PolicyUpdate, user: CurrentUser, db: DB) -> PolicyOut:
     policy = get_owned_policy(db, user.id, policy_id)
-    _apply(policy, body)
+    _apply(db, policy, body)
     policy.summary = None
     db.commit()
     return to_out(policy)
@@ -91,7 +105,7 @@ def update_policy(policy_id: uuid.UUID, body: PolicyUpdate, user: CurrentUser, d
 def confirm_policy(policy_id: uuid.UUID, body: PolicyUpdate, user: CurrentUser, db: DB) -> PolicyOut:
     """User reviewed (and optionally corrected) the extracted fields."""
     policy = get_owned_policy(db, user.id, policy_id)
-    _apply(policy, body)
+    _apply(db, policy, body)
     if not policy.insurer:
         raise AppError("insurer_required", "Please enter the insurer name", 422)
     policy.verified = True
@@ -121,12 +135,27 @@ def get_summary(policy_id: uuid.UUID, user: CurrentUser, db: DB) -> SummaryOut:
         except AIProviderError as exc:
             raise AppError("ai_unavailable", "Summary is unavailable right now. Please try again.", 503) from exc
         policy.summary = {
+            "provider": get_ai_gateway().provider_name,
             "headline": str(raw.get("headline") or ""),
             "key_points": [str(x) for x in raw.get("key_points") or []][:6],
             "watch_outs": [str(x) for x in raw.get("watch_outs") or []][:4],
         }
         db.commit()
     return SummaryOut(**policy.summary, disclaimer=qa_service.DISCLAIMER)
+
+
+@router.get("/policies/{policy_id}/health", response_model=HealthCheckOut)
+def get_health(policy_id: uuid.UUID, user: CurrentUser, db: DB) -> dict:
+    return health_check(get_owned_policy(db, user.id, policy_id))
+
+
+@router.put("/policies/{policy_id}/renewal", response_model=PolicyOut)
+def set_renewal(policy_id: uuid.UUID, body: RenewalUpdate, user: CurrentUser, db: DB) -> PolicyOut:
+    """Mark as renewed / not renewing (stops reminders), or back to pending."""
+    policy = get_owned_policy(db, user.id, policy_id)
+    policy.renewal_status = body.renewal_status
+    db.commit()
+    return to_out(policy)
 
 
 @router.post("/policies/{policy_id}/ask", response_model=AnswerOut)

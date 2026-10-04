@@ -42,7 +42,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | ✅ OTP request/verify, JWT + rotating refresh, logout, account deletion endpoint | Lead |
 | ✅ User, policy, document, chunk, Q&A models + migration | Lead |
 | ✅ Login/OTP/profile screens, secure token storage, auth guard, silent refresh | Mobile |
-| 🔲 Real SMS provider integration (behind `OtpSender`) | Lead |
+| ✅ Real SMS provider integration (behind `OtpSender`) | Lead |
 | 🔲 Consent screen copy from Legal | Mobile + Legal |
 | 🔲 Auth tests (rate limits, expiry, reuse detection) — extend | Intern |
 
@@ -54,7 +54,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 |-------|-------|
 | ✅ `POST /documents` with validation, sha256 dedupe, local + S3/R2 storage, signed URLs | Lead |
 | ✅ Add-policy source chooser, file picker, upload progress, processing status polling | Mobile |
-| 🔲 Camera capture (`image_picker`) for photos | Mobile |
+| ✅ Camera capture (`image_picker`) for photos | Mobile |
 | 🔲 Staging infrastructure (DB, bucket, Redis, worker) | Lead |
 | 🔲 Label first 30 documents (ground-truth fields) | Intern |
 
@@ -89,7 +89,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | ✅ Policy summary ("Understand my policy") | Lead |
 | 🔲 Hybrid retrieval (keyword + vector), prompt tuning, eval loop | Lead + Intern |
 | 🔲 Cost & latency budget per question (target < 6 s p90) | Lead |
-| 🔲 Policy detail screen with type-specific sections | Mobile |
+| ✅ Policy detail screen with type-specific sections | Mobile |
 
 **Acceptance:** groundedness ≥ 95% and "correct or correctly-refused" ≥ 85% on the golden set.
 
@@ -98,9 +98,9 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | Tasks | Owner |
 |-------|-------|
 | ✅ Portfolio summary API + home dashboard + portfolio screen | Lead + Mobile |
-| 🔲 Family members CRUD + link policy to insured members | Lead + Mobile |
-| 🔲 FCM/APNs setup, device token registration, processing-complete push | Mobile + Lead |
-| 🔲 Renewal reminder job (90/60/30/15/7/1 days, dedupe) | Lead |
+| ✅ Family members CRUD + link policy to insured members | Lead + Mobile |
+| ✅ FCM/APNs setup, device token registration, processing-complete push | Mobile + Lead |
+| ✅ Renewal reminder job (90/60/30/15/7/1 days, dedupe) | Lead |
 
 **Dependencies:** Apple account (APNs key). **Acceptance:** reminder received on both platforms on a test policy with a near expiry date; never duplicated.
 
@@ -108,11 +108,11 @@ Status legend: ✅ done in this repository · 🔲 to do.
 
 | Tasks | Owner |
 |-------|-------|
-| 🔲 Renewal card, "mark as renewed" → upload new policy | Mobile + Lead |
-| 🔲 Claim guidance content (health cashless/reimbursement, motor, life) + screens | Lead + Mobile |
-| 🔲 Rules-based Policy Health for health policies (P1) | Lead |
-| 🔲 Explore tab (guides, glossary, "coming soon" tiles) | Mobile |
-| 🔲 Profile: notifications, privacy, support, FAQ, delete account flow | Mobile |
+| ✅ Renewal card, "mark as renewed" → upload new policy | Mobile + Lead |
+| ✅ Claim guidance content (health cashless/reimbursement, motor, life) + screens | Lead + Mobile |
+| ✅ Rules-based Policy Health for health policies (P1) | Lead |
+| ✅ Explore tab (guides, glossary, "coming soon" tiles) | Mobile |
+| ✅ Profile: notifications, privacy, support, FAQ, delete account flow | Mobile |
 
 **Acceptance:** **feature freeze** at end of week.
 
@@ -120,7 +120,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 
 | Tasks | Owner |
 |-------|-------|
-| 🔲 Security review: authZ tests on every endpoint, rate limits in Redis, log scrubbing, pip-audit | Lead |
+| 🔲 Security review: authZ tests on every endpoint, ✅ Redis rate limits, log scrubbing, pip-audit | Lead |
 | 🔲 Crashlytics, Sentry, uptime alerts | Mobile + Lead |
 | 🔲 Device matrix testing (low-end Android, small iPhone, tablets off) | Intern + Mobile |
 | 🔲 Accessibility pass (contrast, text scaling, screen readers) | Mobile + Design |
@@ -132,7 +132,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | 🔲 Performance: cold start < 3 s, list rendering, API p95 < 500 ms (non-AI) | Mobile + Lead |
 | 🔲 Full AI regression run, fix top failure modes | Lead + Intern |
 | 🔲 Bug bash, UI polish | All |
-| 🔲 Admin panel (minimal, PII-masked) (P1) | Lead |
+| ✅ Admin panel (minimal, PII-masked) (P1) | Lead |
 
 **Acceptance:** zero P0/P1 bugs open.
 

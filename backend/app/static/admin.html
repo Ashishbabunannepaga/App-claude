@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>InsureIQ Admin</title>
+<style>
+  :root { --primary:#0B2A5B; --bg:#F5F7FB; --border:#E3E8F0; --muted:#5B6475; --warn:#E59E0B; --err:#D93B3B; }
+  body { font-family: system-ui, sans-serif; margin:0; background:var(--bg); color:#111827; }
+  header { background:var(--primary); color:#fff; padding:14px 24px; font-weight:700; }
+  main { padding:24px; max-width:1100px; margin:auto; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+  .card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; }
+  .card b { display:block; font-size:24px; margin-top:4px; }
+  .muted { color:var(--muted); font-size:13px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  th, td { text-align:left; padding:10px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:top; }
+  h2 { margin-top:32px; }
+  input, button { font:inherit; padding:8px 12px; border-radius:8px; border:1px solid var(--border); }
+  button { background:var(--primary); color:#fff; cursor:pointer; border:none; }
+  #err { color:var(--err); }
+</style>
+</head>
+<body>
+<header>InsureIQ · Operations</header>
+<main>
+  <div id="login" class="card">
+    <p>Enter the admin token. It is kept only in this browser tab.</p>
+    <input id="token" type="password" placeholder="Admin token" size="50"> <button onclick="save()">Open</button>
+    <p id="err"></p>
+  </div>
+  <div id="app" hidden>
+    <div class="grid" id="stats"></div>
+    <h2>Failed documents</h2><table id="failed"></table>
+    <h2>Open support requests</h2><table id="support"></table>
+  </div>
+</main>
+<script>
+const api = (p, opt = {}) => fetch('/api/v1/admin' + p, {...opt, headers: {'X-Admin-Token': sessionStorage.getItem('t'), 'Content-Type': 'application/json'}})
+  .then(r => { if (!r.ok) throw new Error(r.status === 403 ? 'Invalid token' : 'Request failed'); return r.json(); });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save() { sessionStorage.setItem('t', document.getElementById('token').value); load(); }
+async function load() {
+  try {
+    const s = await api('/stats');
+    const tiles = [['Users', s.users], ['Verified policies', s.policies_verified], ['Documents (7d)', s.documents_last_7_days],
+      ['Processing failure rate (7d)', (s.processing_failure_rate_7d * 100).toFixed(1) + '%'], ['Questions (7d)', s.questions_last_7_days],
+      ['Unanswerable rate (7d)', (s.unanswerable_rate_7d * 100).toFixed(1) + '%'], ['Renewal reminders (7d)', s.renewal_reminders_last_7_days],
+      ['Open support', s.open_support_requests], ['Pending deletion', s.users_pending_deletion]];
+    document.getElementById('stats').innerHTML = tiles.map(([k, v]) => `<div class="card"><span class="muted">${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+    const f = await api('/documents/failed');
+    document.getElementById('failed').innerHTML = '<tr><th>When</th><th>Error</th><th>Type</th><th>Size</th><th>Document</th></tr>' +
+      (f.map(d => `<tr><td>${esc(new Date(d.created_at).toLocaleString())}</td><td>${esc(d.error_code)}</td><td>${esc(d.content_type)}</td><td>${(d.size_bytes/1024).toFixed(0)} KB</td><td class="muted">${esc(d.id)}</td></tr>`).join('') || '<tr><td colspan=5 class="muted">None</td></tr>');
+    const r = await api('/support');
+    document.getElementById('support').innerHTML = '<tr><th>When</th><th>User</th><th>Category</th><th>Message</th><th></th></tr>' +
+      (r.map(x => `<tr><td>${esc(new Date(x.created_at).toLocaleString())}</td><td>${esc(x.user)}</td><td>${esc(x.category)}</td><td>${esc(x.message)}</td><td><button onclick="closeReq('${esc(x.id)}')">Close</button></td></tr>`).join('') || '<tr><td colspan=5 class="muted">None</td></tr>');
+    document.getElementById('login').hidden = true; document.getElementById('app').hidden = false;
+  } catch (e) { document.getElementById('err').textContent = e.message; }
+}
+async function closeReq(id) { await api('/support/' + id, {method: 'PATCH', body: JSON.stringify({status: 'closed'})}); load(); }
+if (sessionStorage.getItem('t')) load();
+</script>
+</body>
+</html>

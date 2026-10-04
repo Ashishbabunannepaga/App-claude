@@ -40,6 +40,7 @@ class PolicyFields(BaseModel):
     sum_insured: Decimal | None = Field(None, ge=0, max_digits=16, decimal_places=2)
     payment_frequency: FrequencyLit | None = None
     details: dict | None = None
+    member_ids: list[uuid.UUID] | None = Field(None, max_length=20)
 
     @model_validator(mode="after")
     def _dates(self) -> "PolicyFields":
@@ -55,6 +56,15 @@ class PolicyCreate(PolicyFields):
 
 class PolicyUpdate(PolicyFields):
     pass
+
+
+class MemberOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    relation: str
+    full_name: str
+    date_of_birth: date | None
 
 
 class PolicyOut(BaseModel):
@@ -78,6 +88,8 @@ class PolicyOut(BaseModel):
     details: dict
     status: Literal["active", "expiring_soon", "expired", "unknown"]
     days_to_expiry: int | None
+    renewal_status: Literal["pending", "renewed", "not_renewing"]
+    members: list[MemberOut]
     created_at: datetime
     updated_at: datetime
 
@@ -87,6 +99,7 @@ class SummaryOut(BaseModel):
     key_points: list[str]
     watch_outs: list[str]
     disclaimer: str
+    provider: str | None = None
 
 
 class AskRequest(BaseModel):
@@ -107,6 +120,7 @@ class AnswerOut(BaseModel):
     confidence: Literal["high", "medium", "low"]
     citations: list[Citation]
     disclaimer: str
+    provider: str | None = None
     created_at: datetime
 
 
@@ -128,3 +142,24 @@ class PortfolioSummary(BaseModel):
     life_cover: Decimal
     by_type: dict[str, int]
     upcoming_renewals: list[RenewalItem]
+
+
+class RenewalUpdate(BaseModel):
+    renewal_status: Literal["pending", "renewed", "not_renewing"]
+
+
+class HealthFinding(BaseModel):
+    key: str
+    label: str
+    grade: Literal["strong", "attention", "not_covered"]
+    detail: str
+
+
+class HealthCheckOut(BaseModel):
+    available: bool
+    score: int | None
+    strong: list[HealthFinding]
+    attention: list[HealthFinding]
+    not_covered: list[HealthFinding]
+    not_mentioned: list[str]
+    disclaimer: str

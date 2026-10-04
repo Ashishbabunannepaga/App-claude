@@ -13,27 +13,53 @@ V1 core loop: **Add policy → Read → Understand → Ask → Track → Renew**
 | 🐍 Backend (FastAPI + PostgreSQL/pgvector) | [`backend/`](backend) |
 | 📱 Mobile (Flutter, Android + iOS) | [`mobile/`](mobile) |
 
-## What works today (first vertical slice)
+## Screenshots
 
-```
-Login (phone OTP) → Profile → Add policy → Upload PDF/photo → Text extraction / OCR
-→ AI structured extraction + validation + confidence → User verifies/corrects
-→ Policy detail + AI summary → Ask AI (RAG, page citations, refuses when not in document)
-→ Portfolio dashboard + upcoming renewals
-```
+| | | | |
+|---|---|---|---|
+| ![Home](docs/screenshots/04-home.png) | ![Policy](docs/screenshots/07-policy-detail.png) | ![Ask AI](docs/screenshots/12-ask-ai.png) | ![Policy health](docs/screenshots/10-policy-health.png) |
+| ![Portfolio](docs/screenshots/06-portfolio.png) | ![Verify](docs/screenshots/19-verify-extracted.png) | ![Renewal](docs/screenshots/15-renewal.png) | ![Family](docs/screenshots/22-family.png) |
 
-Also: manual policy entry, retry/delete documents, signed document URLs, refresh-token rotation with reuse detection, account deletion (7-day grace + purge job), claim guidance content, audit log.
+All screens: [`docs/screenshots/`](docs/screenshots). They are captured from the Flutter web build at phone size against
+the real backend in demo mode (offline mock AI, labelled "Demo mode · offline AI" in the app). Regenerate with
+[`tools/demo/`](tools/demo/README.md).
 
-### Clearly marked MOCK / TODO
+## V1 feature status
 
-| Item | Status |
+| Area | Status |
 |------|--------|
-| `AI_PROVIDER=mock`, `EMBEDDING_PROVIDER=hashing` | **MOCK** — offline heuristics so the flow runs without API keys. Refused when `ENV=production`. Set `AI_PROVIDER=claude` (or `openai`) + key for real extraction/answers. |
-| OTP SMS | Console sender (**DEV ONLY**, prints OTP to the server log). MSG91/Twilio = TODO Week 2 (needs DLT template). |
-| Rate limiting | In-process; Redis-backed = TODO Week 9. |
-| Push notifications / renewal reminders | TODO Week 7 (UI says "coming soon"). |
-| Family members, app lock, notification settings, Gmail import, policy health | Shown as "Coming soon" — no fake flows. |
-| Privacy / terms / support URLs | Placeholders in `mobile/lib/core/config/env.dart` (`--dart-define` to override). |
+| Onboarding, phone OTP login, consent capture, profile | ✅ |
+| Sessions: short-lived JWT + rotating refresh tokens with reuse detection, logout | ✅ |
+| Add policy: PDF upload, photo upload, camera capture, manual entry | ✅ |
+| Processing: PDF text / OCR, classification, AI extraction, grounding validation, per-field confidence, retry | ✅ |
+| Verify & correct extracted details (low-confidence fields highlighted) | ✅ |
+| Portfolio + home dashboard (coverage totals, renewals, insights) | ✅ |
+| Policy detail, plain-language summary, document viewer (signed URLs) | ✅ |
+| Ask AI — RAG with page citations, refuses when not in the document | ✅ |
+| Policy health check — rules-based for health & motor | ✅ |
+| Renewal tracking, "renewed / not renewing", reminders at 90/60/30/15/7/1 days | ✅ |
+| Notifications: in-app inbox, push via FCM/APNs, preferences | ✅ (push needs your Firebase project) |
+| Family members and "who is covered" per policy | ✅ |
+| Claim guidance (health, motor, life) | ✅ static, reviewed content |
+| App lock (biometric / device PIN) | ✅ |
+| Help & FAQ, support requests, grievance officer | ✅ |
+| Privacy: data export, account deletion with 7-day purge | ✅ |
+| Admin operations dashboard (PII-masked) at `/admin` | ✅ (shared token; put behind SSO before scaling) |
+| AI providers: Claude, OpenAI, Gemini, offline mock | ✅ (real providers need API keys; untested here) |
+
+### Needs your accounts / keys before launch
+
+| Item | What to provide |
+|------|-----------------|
+| Real AI | `AI_PROVIDER=claude` + `ANTHROPIC_API_KEY` (or openai/gemini), `EMBEDDING_PROVIDER=openai` + `OPENAI_API_KEY` |
+| SMS OTP | MSG91 account + DLT-approved template: `OTP_SENDER=msg91`, `MSG91_AUTH_KEY`, `MSG91_TEMPLATE_ID` |
+| Push | Firebase project: backend `PUSH_SENDER=fcm`, `FCM_PROJECT_ID`, `FCM_SERVICE_ACCOUNT_JSON`; app `--dart-define=FIREBASE_*`; iOS: enable Push Notifications capability in Xcode + upload APNs key to Firebase |
+| Storage | S3 / R2 bucket: `STORAGE_BACKEND=s3`, `S3_BUCKET`, (`S3_ENDPOINT_URL` for R2) |
+| Legal URLs | `--dart-define=PRIVACY_URL / TERMS_URL / SUPPORT_EMAIL / GRIEVANCE_OFFICER` |
+| Store identity | Replace the codename, bundle ID `com.insureiq.insureiq`, app icon |
+
+The server refuses to start with `ENV=production` while any dev-only setting (mock AI, console OTP, local storage,
+log push, in-memory rate limits) is still active.
 
 ## Run locally
 
@@ -71,6 +97,8 @@ flutter run                                   # Android emulator → http://10.0
 flutter run --dart-define=API_BASE_URL=https://api.staging.example.com/api/v1 --dart-define=ENV=staging
 flutter analyze && flutter test
 ```
+
+`mobile/web/` exists only for browser previews and screenshots; the product targets Android and iOS.
 
 The app contains **no secrets** — only the public API URL.
 

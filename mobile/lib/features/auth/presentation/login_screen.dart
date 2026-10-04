@@ -56,7 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
             const SizedBox(height: AppSpacing.xl),
-            const Icon(Icons.shield_moon_rounded, size: 56, color: AppColors.primary),
+            const Icon(Icons.verified_user_rounded, size: 56, color: AppColors.primary),
             const SizedBox(height: AppSpacing.lg),
             Text('All your insurance.\nOne place. Clearly explained.', style: theme.textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),

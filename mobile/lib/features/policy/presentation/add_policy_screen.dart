@@ -1,7 +1,9 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
@@ -37,12 +39,22 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
       setState(() => _error = 'Please choose a PDF, JPG or PNG file.');
       return;
     }
+    await _upload(await file.readAsBytes(), file.name);
+  }
+
+  Future<void> _capture() async {
+    setState(() => _error = null);
+    final photo = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 85, maxWidth: 2400);
+    if (photo == null) return;
+    await _upload(await photo.readAsBytes(), photo.name);
+  }
+
+  Future<void> _upload(Uint8List bytes, String name) async {
     setState(() => _progress = 0);
     try {
-      final bytes = await file.readAsBytes();
       final doc = await ref
           .read(policyRepositoryProvider)
-          .upload(bytes, file.name, onProgress: (p) => mounted ? setState(() => _progress = p) : null);
+          .upload(bytes, name, onProgress: (p) => mounted ? setState(() => _progress = p) : null);
       if (!mounted) return;
       context.pushReplacement('/add/processing/${doc.id}');
     } on ApiException catch (e) {
@@ -78,13 +90,20 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
               subtitle: 'Recommended · Best accuracy',
               onTap: () => _pick(images: false),
             ),
+            if (!kIsWeb)
+              _SourceTile(
+                icon: Icons.photo_camera_rounded,
+                title: 'Take a photo',
+                subtitle: 'Place the policy on a flat, well-lit surface',
+                onTap: _capture,
+              ),
             _SourceTile(
               icon: Icons.photo_library_rounded,
               title: 'Upload a photo of the policy',
               subtitle: 'JPG or PNG',
               onTap: () => _pick(images: true),
             ),
-            // TODO(P1): in-app document scanner with edge detection and multi-page capture.
+            // TODO(P2): multi-page scanner with edge detection.
             _SourceTile(
               icon: Icons.edit_note_rounded,
               title: 'Enter details manually',

@@ -14,6 +14,8 @@ class UserOut(BaseModel):
     date_of_birth: date | None
     city: str | None
     state: str | None
+    notify_renewals: bool
+    notify_processing: bool
     created_at: datetime
     deletion_requested_at: datetime | None
 
@@ -23,3 +25,5 @@ class UserUpdate(BaseModel):
     date_of_birth: date | None = None
     city: str | None = Field(None, max_length=80)
     state: str | None = Field(None, max_length=80)
+    notify_renewals: bool | None = None
+    notify_processing: bool | None = None

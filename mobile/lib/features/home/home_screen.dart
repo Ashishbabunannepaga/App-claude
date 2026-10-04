@@ -6,6 +6,7 @@ import '../../app/theme/app_colors.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/async_states.dart';
 import '../../core/widgets/policy_card.dart';
+import '../account/data/account_repository.dart';
 import '../auth/data/auth_controller.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
@@ -29,9 +30,15 @@ class HomeScreen extends ConsumerWidget {
     final policies = ref.watch(policiesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('${_greeting()}${user?.firstName.isNotEmpty == true ? ', ${user!.firstName}' : ''}')),
+      appBar: AppBar(
+        title: Text('${_greeting()}${user?.firstName.isNotEmpty == true ? ', ${user!.firstName}' : ''}'),
+        actions: const [_Bell()],
+      ),
       body: RefreshIndicator(
-        onRefresh: () async => invalidatePolicies(ref),
+        onRefresh: () async {
+          invalidatePolicies(ref);
+          ref.invalidate(unreadCountProvider);
+        },
         child: AsyncValueView(
           value: summary,
           onRetry: () => invalidatePolicies(ref),
@@ -77,6 +84,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                     const SectionHeader('Quick actions'),
                     const _QuickActions(),
+                    _Insight(policies: policies.value ?? []),
                     SectionHeader(
                       'Your policies',
                       action: TextButton(onPressed: () => context.go('/portfolio'), child: const Text('See all')),
@@ -209,7 +217,65 @@ class _QuickActions extends ConsumerWidget {
         tile(Icons.add_rounded, 'Add policy', () => context.push('/add')),
         tile(Icons.auto_awesome_rounded, 'Ask AI', () => pickPolicyThen('/ask')),
         tile(Icons.support_agent_rounded, 'Claim help', () => context.go('/explore')),
-        tile(Icons.family_restroom_rounded, 'Family', () => context.go('/profile')),
+        tile(Icons.family_restroom_rounded, 'Family', () => context.push('/family')),
+      ],
+    );
+  }
+}
+
+class _Bell extends ConsumerWidget {
+  const _Bell();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(unreadCountProvider).value ?? 0;
+    return IconButton(
+      tooltip: 'Notifications',
+      onPressed: () async {
+        await context.push('/notifications');
+        ref.invalidate(unreadCountProvider);
+      },
+      icon: Badge(
+        isLabelVisible: count > 0,
+        label: Text('$count'),
+        child: const Icon(Icons.notifications_none_rounded),
+      ),
+    );
+  }
+}
+
+/// One plain-language insight from the rules-based health check of the first health policy.
+class _Insight extends ConsumerWidget {
+  const _Insight({required this.policies});
+  final List<Policy> policies;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final health = policies.where((p) => p.verified && p.policyType == 'health').firstOrNull;
+    if (health == null) return const SizedBox.shrink();
+    final check = ref.watch(healthProvider(health.id)).value;
+    final finding = check == null ? null : [...check.attention, ...check.notCovered].firstOrNull;
+    if (finding == null) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SectionHeader('Insurance insights'),
+        Card(
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(AppSpacing.md),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFFFFF4DE),
+              child: Icon(Icons.lightbulb_outline_rounded, color: AppColors.warning),
+            ),
+            title: Text(
+              '${finding.label} · ${health.displayName}',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Text(finding.detail),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push('/policy/${health.id}/health'),
+          ),
+        ),
       ],
     );
   }

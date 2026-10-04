@@ -6,11 +6,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/widgets/demo_badge.dart';
+import '../../auth/data/auth_controller.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../../core/widgets/policy_card.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
 import 'claim_guide.dart';
+import 'policy_health_screen.dart';
 
 class PolicyDetailScreen extends ConsumerWidget {
   const PolicyDetailScreen({super.key, required this.policyId});
@@ -47,6 +50,21 @@ class PolicyDetailScreen extends ConsumerWidget {
               ],
               const SizedBox(height: AppSpacing.md),
               _Actions(policy: p),
+              if (p.policyType == 'health' || p.policyType == 'motor') _HealthCard(policyId: p.id),
+              if (p.members.isNotEmpty) ...[
+                const SectionHeader('Who is covered'),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    for (final m in p.members)
+                      Chip(
+                        avatar: const Icon(Icons.person_rounded, size: 18),
+                        label: Text('${m.fullName} · ${humanise(m.relation)}'),
+                      ),
+                  ],
+                ),
+              ],
               const SectionHeader('Understand your policy'),
               _SummaryCard(policyId: p.id),
               const SectionHeader('Key details'),
@@ -154,33 +172,10 @@ class _Actions extends StatelessWidget {
   }
 
   void _showRenewal(BuildContext context, Policy p) {
-    final days = p.daysToExpiry;
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
-      builder: (_) => Padding(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Renewal', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              days == null
-                  ? 'Add the policy end date to track renewal.'
-                  : days < 0
-                  ? 'This policy expired on ${formatDate(p.endDate)}.'
-                  : 'Renews on ${formatDate(p.endDate)} — $days days left.',
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text('Last premium: ${formatInr(p.premium)}'),
-            const SizedBox(height: AppSpacing.md),
-            // TODO(Week 7): push reminders at 90/60/30/15/7 days; "Mark as renewed" flow.
-            const Text('Renewal reminders — coming soon.', style: TextStyle(color: AppColors.textSecondary)),
-          ],
-        ),
-      ),
+      builder: (_) => _RenewalSheet(policyId: p.id),
     );
   }
 
@@ -244,6 +239,7 @@ class _SummaryCard extends ConsumerWidget {
           data: (s) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              DemoAiBadge(provider: s.provider),
               Text(s.headline, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: AppSpacing.sm),
               for (final point in s.keyPoints) _Bullet(point, Icons.check_circle_rounded, AppColors.accent),
@@ -390,4 +386,125 @@ class _Menu extends ConsumerWidget {
       const PopupMenuItem(value: 'delete', child: Text('Delete policy')),
     ],
   );
+}
+
+class _HealthCard extends ConsumerWidget {
+  const _HealthCard({required this.policyId});
+  final String policyId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final health = ref.watch(healthProvider(policyId)).value;
+    if (health == null || !health.available) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Card(
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(AppSpacing.md),
+          leading: ScoreRing(score: health.score!, size: 52),
+          title: const Text('Policy health', style: TextStyle(fontWeight: FontWeight.w600)),
+          subtitle: Text(
+            health.attention.isEmpty && health.notCovered.isEmpty
+                ? 'No issues found in the details we read'
+                : '${health.attention.length + health.notCovered.length} things to know about',
+          ),
+          trailing: const Icon(Icons.chevron_right_rounded),
+          onTap: () => context.push('/policy/$policyId/health'),
+        ),
+      ),
+    );
+  }
+}
+
+class _RenewalSheet extends ConsumerWidget {
+  const _RenewalSheet({required this.policyId});
+  final String policyId;
+
+  Future<void> _set(BuildContext context, WidgetRef ref, String status) async {
+    try {
+      await ref.read(policyRepositoryProvider).setRenewal(policyId, status);
+      invalidatePolicies(ref, policyId);
+      if (!context.mounted) return;
+      Navigator.pop(context);
+      if (status == 'renewed') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Marked as renewed. Add your new policy document to keep things up to date.'),
+            action: SnackBarAction(label: 'Add', onPressed: () => context.push('/add')),
+          ),
+        );
+      }
+    } on ApiException catch (e) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = ref.watch(policyProvider(policyId)).value;
+    final remindersOn = ref.watch(authControllerProvider).user?.notifyRenewals ?? true;
+    if (p == null) return const SizedBox(height: 200, child: LoadingView());
+    final days = p.daysToExpiry;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('Renewal', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              days == null
+                  ? 'Add the policy end date to track renewal.'
+                  : days < 0
+                  ? 'This policy expired on ${formatDate(p.endDate)}.'
+                  : 'Renews on ${formatDate(p.endDate)} — $days days left.',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text('Last premium: ${formatInr(p.premium)}'),
+            const SizedBox(height: AppSpacing.md),
+            if (p.renewalStatus == 'pending')
+              Row(
+                children: [
+                  Icon(
+                    remindersOn ? Icons.notifications_active_rounded : Icons.notifications_off_outlined,
+                    size: 18,
+                    color: AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      remindersOn
+                          ? 'We\'ll remind you 90, 60, 30, 15, 7 and 1 day before expiry.'
+                          : 'Renewal reminders are turned off in settings.',
+                      style: const TextStyle(color: AppColors.textSecondary),
+                    ),
+                  ),
+                ],
+              )
+            else
+              Text(
+                p.renewalStatus == 'renewed' ? '✓ Marked as renewed' : 'Marked as not renewing',
+                style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.w600),
+              ),
+            const SizedBox(height: AppSpacing.lg),
+            if (p.renewalStatus == 'pending') ...[
+              FilledButton(
+                onPressed: () => _set(context, ref, 'renewed'),
+                child: const Text('I\'ve renewed this policy'),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              OutlinedButton(
+                onPressed: () => _set(context, ref, 'not_renewing'),
+                child: const Text('I\'m not renewing'),
+              ),
+            ] else
+              OutlinedButton(onPressed: () => _set(context, ref, 'pending'), child: const Text('Undo')),
+          ],
+        ),
+      ),
+    );
+  }
 }
