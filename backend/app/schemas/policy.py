@@ -230,6 +230,7 @@ class CompareRow(BaseModel):
     label: str
     values: list[str | int | float | None]
     best_index: int | None
+    grades: list[str | None]  # strong | attention | not_covered per policy (feature rows)
 
 
 class CompareOut(BaseModel):

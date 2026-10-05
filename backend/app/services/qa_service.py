@@ -100,10 +100,12 @@ def related_clauses(db: Session, policy_id: uuid.UUID, question: str, limit: int
         key=lambda x: x[:2],
         reverse=True,
     )
+    best = scored[0][0] if scored else 0
+    # Only the strongest matches: a clause sharing one generic word ("treatment") is noise.
     return [
         {"type": c.clause_type, "title": c.title, "text": c.text, "page": c.page}
         for score, _, c in scored[:limit]
-        if score > 0
+        if score > 0 and score == best
     ]
 
 

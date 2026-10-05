@@ -10,6 +10,8 @@ V1 core loop: **Add policy → Read → Understand → Ask → Track → Renew**
 |---|---|
 | 📐 Technical blueprint (Phase 1) | [`docs/01-technical-blueprint.md`](docs/01-technical-blueprint.md) |
 | 🗓️ 12-week roadmap (Phase 2) | [`docs/02-development-roadmap.md`](docs/02-development-roadmap.md) |
+| 🎓 **New here? Beginner's guide** (install, run on your phone, daily workflow) | [`docs/03-beginner-guide.md`](docs/03-beginner-guide.md) |
+| 🔭 Vision plan (5 phases → what is built / next / needs partners) | [`docs/04-vision-plan.md`](docs/04-vision-plan.md) |
 | 🐍 Backend (FastAPI + PostgreSQL/pgvector) | [`backend/`](backend) |
 | 📱 Mobile (Flutter, Android + iOS) | [`mobile/`](mobile) |
 
@@ -46,6 +48,15 @@ the real backend in demo mode (offline mock AI, labelled "Demo mode · offline A
 | Privacy: data export, account deletion with 7-day purge | ✅ |
 | Admin operations dashboard (PII-masked) at `/admin` | ✅ (shared token; put behind SSO before scaling) |
 | AI providers: Claude, OpenAI, Gemini, offline mock | ✅ (real providers need API keys; untested here) |
+| **Nominees** per policy (shares, minor + appointee) and a family "if something happens" guide | ✅ |
+| **Clause library** — policy wording split into benefits, exclusions, waiting periods, limits, conditions | ✅ rule-based, explainable |
+| Related clauses shown under every AI answer | ✅ |
+| **Insurance check-up** — product-neutral gap insights (missing cover, low family cover, nominees, renewals) | ✅ |
+| **Compare** your own policies side by side | ✅ |
+| AI answers & summaries in 9 Indian languages (Hindi tested) | ✅ app screens stay English for now |
+| Own-AI foundations: PaddleOCR, self-hosted bge-m3 embeddings, ML worker image (Python 3.10.11) | ✅ code + tests; models not downloaded here |
+| Exact version pins (`requirements.txt`, `requirements.lock`, `pubspec.lock`) | ✅ |
+| Installable test APK built by GitHub Actions | ✅ Actions → *Android APK* |
 
 ### Needs your accounts / keys before launch
 

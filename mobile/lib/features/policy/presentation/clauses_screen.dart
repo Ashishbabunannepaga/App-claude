@@ -149,8 +149,11 @@ class _ClauseCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            Text(clause.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-            const SizedBox(height: 2),
+            // Titles derived from the first words would just repeat the text; show only real labels.
+            if (!clause.title.endsWith('…') && clause.title != clause.text) ...[
+              Text(clause.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+            ],
             Text(clause.text, style: const TextStyle(height: 1.35)),
           ],
         ),

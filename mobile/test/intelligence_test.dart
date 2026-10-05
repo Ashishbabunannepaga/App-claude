@@ -48,8 +48,9 @@ class FakeRepo extends PolicyRepository {
       {
         'section': 'Features',
         'label': 'Co-payment',
-        'values': ['✓ No co-payment.', '⚠ You pay 20% of every claim yourself.'],
+        'values': ['No co-payment.', 'You pay 20% of every claim yourself.'],
         'best_index': null,
+        'grades': ['strong', 'attention'],
       },
     ],
     'disclaimer': 'Compares only what we read.',
@@ -130,7 +131,9 @@ void main() {
     expect(find.text('Star Health'), findsOneWidget);
     expect(find.text('₹10,00,000'), findsOneWidget);
     expect(find.byIcon(Icons.star_rounded), findsOneWidget);
-    expect(find.text('⚠ You pay 20% of every claim yourself.'), findsOneWidget);
+    expect(find.text('You pay 20% of every claim yourself.'), findsOneWidget);
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
   });
 
   testWidgets('insight tile shows title, detail and action', (tester) async {

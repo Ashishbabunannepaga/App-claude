@@ -30,7 +30,9 @@ def compare_policies(policies: list[Policy]) -> dict:
 
     rows: list[dict] = []
 
-    def add(label: str, values: list, best: str | None = None, section: str = "Overview") -> None:
+    def add(
+        label: str, values: list, best: str | None = None, section: str = "Overview", grades: list | None = None
+    ) -> None:
         shown = [v if v not in (None, "") else None for v in values]
         best_index = None
         if (
@@ -42,29 +44,35 @@ def compare_policies(policies: list[Policy]) -> dict:
             pick = max(candidates) if best == "max" else min(candidates)
             if [v for v, _ in candidates].count(pick[0]) == 1 and len(candidates) > 1:
                 best_index = pick[1]
-        rows.append({"section": section, "label": label, "values": shown, "best_index": best_index})
+        rows.append(
+            {
+                "section": section,
+                "label": label,
+                "values": shown,
+                "best_index": best_index,
+                "grades": grades or [None] * len(values),
+            }
+        )
 
     cover_label = {"motor": "IDV", "life": "Sum assured"}.get(ptype, "Sum insured")
     add("Plan", [p.plan_name for p in policies])
     add(cover_label, [float(p.sum_insured) if p.sum_insured else None for p in policies], "max")
     add("Annual premium", [float(annual_premium(p)) or None for p in policies], "min")
-    add("Valid till", [p.end_date.isoformat() if p.end_date else None for p in policies])
+    add("Valid till", [f"{p.end_date.day} {p.end_date:%b %Y}" if p.end_date else None for p in policies])
     add("Covered members", [", ".join(m.full_name for m in p.members) or None for p in policies])
 
     if ptype in ("health", "motor"):
         checks = [health_check(p) for p in policies]
         add("Policy health score", [c["score"] for c in checks], "max", "Policy health")
-        grades = {}
+        features: dict[str, tuple[list, list]] = {}
         for i, c in enumerate(checks):
             for grade in ("strong", "attention", "not_covered"):
                 for f in (f for f in c[grade] if f["key"] != "sum_insured"):  # already in the overview
-                    grades.setdefault(f["label"], [None] * len(policies))[i] = {
-                        "strong": "✓ " + f["detail"],
-                        "attention": "⚠ " + f["detail"],
-                        "not_covered": "✕ Not covered",
-                    }[grade]
-        for label, values in grades.items():
-            add(label, values, section="Features")
+                    values, grades = features.setdefault(f["label"], ([None] * len(policies), [None] * len(policies)))
+                    values[i] = "Not covered" if grade == "not_covered" else f["detail"]
+                    grades[i] = grade
+        for label, (values, grades) in features.items():
+            add(label, values, section="Features", grades=grades)
     else:
         for key in DETAIL_FIELDS[ptype]:
             values = [(p.details or {}).get(key) for p in policies]

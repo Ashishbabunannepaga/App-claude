@@ -168,27 +168,7 @@ class _Row extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          v ?? '—',
-                          style: TextStyle(
-                            fontWeight: row.bestIndex == i ? FontWeight.w700 : FontWeight.w400,
-                            color: v == null
-                                ? AppColors.textSecondary
-                                : v.startsWith('✕')
-                                ? AppColors.error
-                                : v.startsWith('⚠')
-                                ? const Color(0xFFB45309)
-                                : null,
-                          ),
-                        ),
-                      ),
-                      if (row.bestIndex == i) const Icon(Icons.star_rounded, size: 16, color: AppColors.accent),
-                    ],
-                  ),
+                  child: _Cell(value: v, best: row.bestIndex == i, grade: i < row.grades.length ? row.grades[i] : null),
                 ),
               ),
           ],
@@ -196,4 +176,42 @@ class _Row extends StatelessWidget {
       ],
     ),
   );
+}
+
+class _Cell extends StatelessWidget {
+  const _Cell({required this.value, required this.best, this.grade});
+  final String? value;
+  final bool best;
+  final String? grade;
+
+  @override
+  Widget build(BuildContext context) {
+    final (IconData? icon, Color? color) = switch (grade) {
+      'strong' => (Icons.check_circle_rounded, AppColors.accent),
+      'attention' => (Icons.warning_amber_rounded, AppColors.warning),
+      'not_covered' => (Icons.cancel_rounded, AppColors.error),
+      _ => best ? (Icons.star_rounded, AppColors.accent) : (null, null),
+    };
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (icon != null) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Icon(icon, size: 16, color: color),
+          ),
+          const SizedBox(width: 4),
+        ],
+        Expanded(
+          child: Text(
+            value ?? '—',
+            style: TextStyle(
+              fontWeight: best ? FontWeight.w700 : FontWeight.w400,
+              color: value == null ? AppColors.textSecondary : (grade == 'not_covered' ? AppColors.error : null),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

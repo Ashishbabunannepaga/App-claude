@@ -441,17 +441,21 @@ class Insights {
 }
 
 class CompareRow {
-  CompareRow(this.section, this.label, this.values, this.bestIndex);
+  CompareRow(this.section, this.label, this.values, this.bestIndex, [this.grades = const []]);
   final String section;
   final String label;
   final List<String?> values;
   final int? bestIndex;
+
+  /// strong | attention | not_covered per policy, for feature rows.
+  final List<String?> grades;
 
   factory CompareRow.fromJson(Map<String, dynamic> j) => CompareRow(
     j['section'] as String,
     j['label'] as String,
     (j['values'] as List).map((v) => v?.toString()).toList(),
     j['best_index'] as int?,
+    (j['grades'] as List? ?? const []).map((g) => g as String?).toList(),
   );
 }
 

@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
+const indicFontFallback = [
+  'NotoSansDevanagari',
+  'NotoSansTamil',
+  'NotoSansTelugu',
+  'NotoSansKannada',
+  'NotoSansBengali',
+  'NotoSansGujarati',
+  'NotoSansMalayalam',
+];
+
 class AppTheme {
   static ThemeData light() {
     final scheme = ColorScheme.fromSeed(
@@ -11,7 +21,13 @@ class AppTheme {
       error: AppColors.error,
       surface: AppColors.surface,
     );
-    final base = ThemeData(useMaterial3: true, colorScheme: scheme, fontFamily: 'Inter');
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      fontFamily: 'Inter',
+      // Indian scripts for AI answers in Hindi/Marathi/Tamil/Telugu/Kannada/Bengali/Gujarati/Malayalam.
+      fontFamilyFallback: indicFontFallback,
+    );
     final text = base.textTheme.apply(bodyColor: AppColors.textPrimary, displayColor: AppColors.textPrimary);
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.background,

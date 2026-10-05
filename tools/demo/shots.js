@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const OUT = process.argv[2];
 const ids = Object.fromEntries(fs.readFileSync(process.argv[3], 'utf8').trim().split('\n')
-  .map(l => l.split(' ')).filter(p => p.length === 2 && /^(health|motor|life|parents)$/.test(p[0])));
+  .map(l => l.split(' ')).filter(p => p.length === 2 && /^(health|motor|life|parents|employer)$/.test(p[0])));
 const BASE = 'http://localhost:8080/';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -61,6 +61,14 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await go('/privacy'); await shot('26-privacy');
   await go('/settings/notifications'); await shot('27-notification-settings');
   await go(`/policy/${ids.life}`); await shot('28-life-detail');
+  await go(`/policy/${ids.life}/nominees`); await shot('30-nominees');
+  await wheel(1500); await shot('31-nominees-family-guide');
+  await go(`/policy/${ids.health}/clauses`); await shot('32-clauses');
+  await go('/insights'); await shot('33-insights');
+  await go('/compare'); await shot('34-compare-select');
+  await go(`/compare/view?ids=${ids.health},${ids.employer}`); await shot('35-compare');
+  await wheel(1500); await shot('36-compare-features');
+  await go('/profile'); await tap('AI answer language', { wait: 2000 }); await shot('37-answer-language');
 
   const admin = await browser.newPage({ viewport: { width: 1280, height: 860 }, deviceScaleFactor: 2 });
   await admin.goto('http://localhost:8000/admin');

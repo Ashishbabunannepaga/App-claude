@@ -149,11 +149,22 @@ def test_compare_own_policies(client, login):
     rows = {row["label"]: row for row in r.json()["rows"]}
     assert rows["Sum insured"]["values"] == ["₹10,00,000", "₹5,00,000"] and rows["Sum insured"]["best_index"] == 0
     assert rows["Annual premium"]["best_index"] == 0
-    assert rows["Room rent"]["values"][1].startswith("✓")
-    assert rows["Co-payment"]["values"][1].startswith("⚠")
+    assert rows["Room rent"]["grades"][1] == "strong"
+    assert rows["Co-payment"]["grades"][1] == "attention" and "20%" in rows["Co-payment"]["values"][1]
+    assert rows["Valid till"]["values"][1].count(" ") == 2  # "4 Apr 2027"
 
     motor = _manual(client, auth, policy_type="motor", insurer="Acko")
     assert client.get(f"/api/v1/policies/compare?ids={a['id']}&ids={motor['id']}", headers=auth).status_code == 422
     assert client.get(f"/api/v1/policies/compare?ids={a['id']}", headers=auth).status_code == 422
     other = login("9123456780")["headers"]
     assert client.get(f"/api/v1/policies/compare?ids={a['id']}&ids={b['id']}", headers=other).status_code == 404
+
+
+def test_related_clauses_are_only_the_strongest_matches(client, auth):
+    policy = _upload_confirm(client, auth)
+    a = client.post(
+        f"/api/v1/policies/{policy['id']}/ask",
+        json={"question": "Is cosmetic surgery treatment covered?"},
+        headers=auth,
+    ).json()
+    assert a["related_clauses"] and all("Cosmetic" in c["text"] for c in a["related_clauses"])
