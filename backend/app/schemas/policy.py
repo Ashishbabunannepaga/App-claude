@@ -67,6 +67,29 @@ class MemberOut(BaseModel):
     date_of_birth: date | None
 
 
+class NomineeOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    family_member_id: uuid.UUID | None
+    full_name: str
+    relation: str
+    share_percent: int
+    date_of_birth: date | None
+    phone: str | None
+    appointee_name: str | None
+
+
+class NomineeIn(BaseModel):
+    family_member_id: uuid.UUID | None = None
+    full_name: str = Field(min_length=1, max_length=120)
+    relation: Literal["spouse", "child", "parent", "sibling", "other"]
+    share_percent: int = Field(ge=1, le=100)
+    date_of_birth: date | None = None
+    phone: str | None = Field(None, max_length=20)
+    appointee_name: str | None = Field(None, max_length=120)
+
+
 class PolicyOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -90,6 +113,7 @@ class PolicyOut(BaseModel):
     days_to_expiry: int | None
     renewal_status: Literal["pending", "renewed", "not_renewing"]
     members: list[MemberOut]
+    nominees: list[NomineeOut]
     created_at: datetime
     updated_at: datetime
 
@@ -112,6 +136,13 @@ class Citation(BaseModel):
     excerpt: str
 
 
+class RelatedClause(BaseModel):
+    type: str
+    title: str
+    text: str
+    page: int | None
+
+
 class AnswerOut(BaseModel):
     id: uuid.UUID
     question: str
@@ -121,6 +152,7 @@ class AnswerOut(BaseModel):
     citations: list[Citation]
     disclaimer: str
     provider: str | None = None
+    related_clauses: list[RelatedClause] = []
     created_at: datetime
 
 
@@ -162,4 +194,46 @@ class HealthCheckOut(BaseModel):
     attention: list[HealthFinding]
     not_covered: list[HealthFinding]
     not_mentioned: list[str]
+    disclaimer: str
+
+
+class ClauseOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    clause_type: str
+    tags: list[str]
+    title: str
+    text: str
+    page: int | None
+    section: str | None
+
+
+class InsightOut(BaseModel):
+    id: str
+    severity: Literal["high", "medium", "info"]
+    category: str
+    title: str
+    detail: str
+    action_label: str | None
+    action_link: str | None
+    policy_id: str | None
+
+
+class InsightsOut(BaseModel):
+    insights: list[InsightOut]
+    disclaimer: str
+
+
+class CompareRow(BaseModel):
+    section: str
+    label: str
+    values: list[str | int | float | None]
+    best_index: int | None
+
+
+class CompareOut(BaseModel):
+    policy_type: str
+    policies: list[dict]
+    rows: list[CompareRow]
     disclaimer: str

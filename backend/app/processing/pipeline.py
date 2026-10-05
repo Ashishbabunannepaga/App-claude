@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 from app.ai.embeddings import get_embedder
 from app.ai.gateway import get_ai_gateway
 from app.ai.providers.base import AIProviderError
-from app.models import Document, DocumentStatus, Policy, PolicyChunk, User
+from app.models import Document, DocumentStatus, Policy, PolicyChunk, PolicyClause, User
 from app.processing.chunking import chunk_pages
+from app.processing.clauses import extract_clauses
 from app.processing.extraction import validate_extraction
 from app.processing.text_extraction import ExtractionError, extract_text
 from app.services.notification_service import notify
@@ -62,6 +63,20 @@ def process_document(db: Session, document_id: uuid.UUID) -> None:
                 embedding=v,
             )
             for c, v in zip(chunks, vectors, strict=True)
+        )
+        db.execute(delete(PolicyClause).where(PolicyClause.policy_id == policy.id))
+        db.add_all(
+            PolicyClause(
+                policy_id=policy.id,
+                clause_type=c.clause_type,
+                tags=c.tags,
+                title=c.title[:200],
+                text=c.text,
+                page=c.page,
+                section=(c.section or "")[:200] or None,
+                order=c.order,
+            )
+            for c in extract_clauses(extracted.pages)
         )
         doc.status = DocumentStatus.extracted
         db.commit()

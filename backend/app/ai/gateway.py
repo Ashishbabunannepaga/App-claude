@@ -29,25 +29,31 @@ class AIGateway:
             "extract", prompts.EXTRACT_SYSTEM, prompt, context={"text": text}, max_tokens=3000
         )
 
-    def summarise(self, structured: dict[str, Any], excerpts: str) -> dict[str, Any]:
+    def summarise(self, structured: dict[str, Any], excerpts: str, language: str = "en") -> dict[str, Any]:
         prompt = prompts.SUMMARY_PROMPT.format(
             policy_type=structured.get("policy_type", "insurance"),
             structured=json.dumps(structured, default=str, indent=1),
             excerpts=excerpts,
         )
+        system = prompts.SUMMARY_SYSTEM + prompts.language_instruction(language)
         return self.provider.complete_json(
-            "summary", prompts.SUMMARY_SYSTEM, prompt, context={"structured": structured}, max_tokens=1200
+            "summary", system, prompt, context={"structured": structured, "language": language}, max_tokens=1500
         )
 
     def answer_question(
-        self, question: str, structured: dict[str, Any], chunks: list[tuple[str, str]]
+        self, question: str, structured: dict[str, Any], chunks: list[tuple[str, str]], language: str = "en"
     ) -> dict[str, Any]:
         excerpts = "\n\n".join(f"[{cid}] {text}" for cid, text in chunks) or "(none)"
         prompt = prompts.QA_PROMPT.format(
             structured=json.dumps(structured, default=str, indent=1), excerpts=excerpts, question=question
         )
+        system = prompts.QA_SYSTEM + prompts.language_instruction(language)
         return self.provider.complete_json(
-            "qa", prompts.QA_SYSTEM, prompt, context={"question": question, "chunks": chunks}, max_tokens=800
+            "qa",
+            system,
+            prompt,
+            context={"question": question, "chunks": chunks, "language": language},
+            max_tokens=1000,
         )
 
 

@@ -1,8 +1,8 @@
 """Versioned prompts. Bump the version when changing a prompt so evaluations stay comparable."""
 
 EXTRACT_VERSION = "extract-v1"
-SUMMARY_VERSION = "summary-v1"
-QA_VERSION = "qa-v1"
+SUMMARY_VERSION = "summary-v2"
+QA_VERSION = "qa-v2"
 
 CORE_FIELDS = [
     "insurer",
@@ -145,3 +145,27 @@ QUESTION: {question}
 
 Return JSON:
 {{"answerable": true|false, "answer": "<answer>", "citations": ["C1", ...], "confidence": "high|medium|low"}}"""
+
+
+LANGUAGES = {
+    "en": "English",
+    "hi": "Hindi",
+    "mr": "Marathi",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "kn": "Kannada",
+    "bn": "Bengali",
+    "gu": "Gujarati",
+    "ml": "Malayalam",
+}
+
+
+def language_instruction(language: str) -> str:
+    if language == "en":
+        return ""
+    name = LANGUAGES.get(language, "English")
+    return (
+        f"\nWrite every text value in {name}, in simple everyday words. Keep insurer names, plan names, "
+        "numbers, amounts and dates exactly as written. The user may also ask in "
+        f"{name}; understand it, but search the English document as usual."
+    )

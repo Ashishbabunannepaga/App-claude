@@ -1,5 +1,6 @@
 import io
 from dataclasses import dataclass
+from functools import lru_cache
 
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
@@ -29,14 +30,47 @@ class ExtractedText:
 
 
 def _ocr_image(image) -> str:
-    if get_settings().ocr_provider == "none":
+    provider = get_settings().ocr_provider
+    if provider == "none":
         raise ExtractionError("ocr_unavailable")
+    if provider == "paddle":
+        return _paddle_ocr(image)
     import pytesseract
 
     try:
-        return pytesseract.image_to_string(image, lang="eng")
+        langs = get_settings().ocr_languages
+        available = set(pytesseract.get_languages(config=""))
+        langs = "+".join(lang for lang in langs.split("+") if lang in available) or "eng"
+        return pytesseract.image_to_string(image, lang=langs)
     except pytesseract.TesseractNotFoundError as exc:
         raise ExtractionError("ocr_unavailable") from exc
+
+
+@lru_cache
+def _paddle_engine():
+    try:
+        from paddleocr import PaddleOCR  # installed only in the ML worker image (requirements-ml.txt)
+    except ImportError as exc:
+        raise ExtractionError("ocr_unavailable") from exc
+    return PaddleOCR(use_angle_cls=True, lang=get_settings().ocr_paddle_lang, show_log=False)
+
+
+def _paddle_ocr(image) -> str:
+    """PaddleOCR: better than Tesseract on phone photos, skew and stamps. Lines are re-ordered
+    top-to-bottom, left-to-right so clause and field extraction see natural reading order."""
+    import numpy as np
+
+    result = _paddle_engine().ocr(np.array(image.convert("RGB")), cls=True) or []
+    lines = [
+        (box[0][1], box[0][0], text) for page in result for box, (text, confidence) in (page or []) if confidence >= 0.5
+    ]
+    rows: list[list[tuple[float, float, str]]] = []
+    for y, x, text in sorted(lines):
+        if rows and abs(rows[-1][0][0] - y) < 12:  # same visual line
+            rows[-1].append((y, x, text))
+        else:
+            rows.append([(y, x, text)])
+    return "\n".join(" ".join(t for _, _, t in sorted(row, key=lambda r: r[1])) for row in rows)
 
 
 def _ocr_pdf(data: bytes) -> list[str]:

@@ -16,6 +16,8 @@ def get_me(user: CurrentUser) -> UserOut:
 
 @router.patch("", response_model=UserOut)
 def update_me(body: UserUpdate, user: CurrentUser, db: DB) -> UserOut:
+    if body.preferred_language is None and "preferred_language" in body.model_fields_set:
+        body.preferred_language = "en"
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(user, field, value)
     db.commit()

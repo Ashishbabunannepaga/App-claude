@@ -23,6 +23,7 @@ class Policy {
     this.daysToExpiry,
     this.renewalStatus = 'pending',
     this.members = const [],
+    this.nominees = const [],
   });
 
   final String id;
@@ -49,6 +50,7 @@ class Policy {
   /// pending | renewed | not_renewing
   final String renewalStatus;
   final List<FamilyMember> members;
+  final List<Nominee> nominees;
 
   String get displayName => insurer ?? 'Untitled policy';
 
@@ -73,6 +75,7 @@ class Policy {
     daysToExpiry: j['days_to_expiry'] as int?,
     renewalStatus: j['renewal_status'] as String? ?? 'pending',
     members: (j['members'] as List? ?? []).map((m) => FamilyMember.fromJson(m as Map<String, dynamic>)).toList(),
+    nominees: (j['nominees'] as List? ?? []).map((m) => Nominee.fromJson(m as Map<String, dynamic>)).toList(),
   );
 }
 
@@ -220,10 +223,12 @@ class Answer {
     required this.citations,
     required this.disclaimer,
     this.provider,
+    this.relatedClauses = const [],
   });
 
   final String id;
   final String? provider;
+  final List<Clause> relatedClauses;
   final String question;
   final String answer;
   final bool answerable;
@@ -240,6 +245,9 @@ class Answer {
     citations: (j['citations'] as List).map((c) => Citation.fromJson(c as Map<String, dynamic>)).toList(),
     disclaimer: j['disclaimer'] as String,
     provider: j['provider'] as String?,
+    relatedClauses: (j['related_clauses'] as List? ?? [])
+        .map((c) => Clause.fromJson(c as Map<String, dynamic>))
+        .toList(),
   );
 }
 
@@ -324,5 +332,140 @@ class PortfolioSummary {
     upcomingRenewals: (j['upcoming_renewals'] as List)
         .map((r) => RenewalItem.fromJson(r as Map<String, dynamic>))
         .toList(),
+  );
+}
+
+class Nominee {
+  Nominee({
+    required this.id,
+    required this.fullName,
+    required this.relation,
+    required this.sharePercent,
+    this.familyMemberId,
+    this.dateOfBirth,
+    this.phone,
+    this.appointeeName,
+  });
+  final String id;
+  final String? familyMemberId;
+  final String fullName;
+  final String relation;
+  final int sharePercent;
+  final DateTime? dateOfBirth;
+  final String? phone;
+  final String? appointeeName;
+
+  bool get isMinor {
+    final dob = dateOfBirth;
+    if (dob == null) return false;
+    final now = DateTime.now();
+    final age =
+        now.year - dob.year - ((now.month < dob.month || (now.month == dob.month && now.day < dob.day)) ? 1 : 0);
+    return age < 18;
+  }
+
+  factory Nominee.fromJson(Map<String, dynamic> j) => Nominee(
+    id: j['id'] as String,
+    familyMemberId: j['family_member_id'] as String?,
+    fullName: j['full_name'] as String,
+    relation: j['relation'] as String,
+    sharePercent: j['share_percent'] as int,
+    dateOfBirth: _date(j['date_of_birth']),
+    phone: j['phone'] as String?,
+    appointeeName: j['appointee_name'] as String?,
+  );
+}
+
+/// A typed, citable clause from the policy wording (also used for "related clauses" under answers).
+class Clause {
+  Clause({required this.type, required this.title, required this.text, this.page, this.section, this.tags = const []});
+
+  /// benefit | exclusion | waiting_period | limit | condition | definition
+  final String type;
+  final List<String> tags;
+  final String title;
+  final String text;
+  final int? page;
+  final String? section;
+
+  factory Clause.fromJson(Map<String, dynamic> j) => Clause(
+    type: (j['clause_type'] ?? j['type']) as String,
+    tags: List<String>.from(j['tags'] as List? ?? const []),
+    title: j['title'] as String,
+    text: j['text'] as String,
+    page: j['page'] as int?,
+    section: j['section'] as String?,
+  );
+}
+
+class Insight {
+  Insight({
+    required this.id,
+    required this.severity,
+    required this.category,
+    required this.title,
+    required this.detail,
+    this.actionLabel,
+    this.actionLink,
+  });
+  final String id;
+
+  /// high | medium | info
+  final String severity;
+  final String category;
+  final String title;
+  final String detail;
+  final String? actionLabel;
+  final String? actionLink;
+
+  factory Insight.fromJson(Map<String, dynamic> j) => Insight(
+    id: j['id'] as String,
+    severity: j['severity'] as String,
+    category: j['category'] as String,
+    title: j['title'] as String,
+    detail: j['detail'] as String,
+    actionLabel: j['action_label'] as String?,
+    actionLink: j['action_link'] as String?,
+  );
+}
+
+class Insights {
+  Insights(this.items, this.disclaimer);
+  final List<Insight> items;
+  final String disclaimer;
+
+  factory Insights.fromJson(Map<String, dynamic> j) => Insights(
+    (j['insights'] as List).map((i) => Insight.fromJson(i as Map<String, dynamic>)).toList(),
+    j['disclaimer'] as String,
+  );
+}
+
+class CompareRow {
+  CompareRow(this.section, this.label, this.values, this.bestIndex);
+  final String section;
+  final String label;
+  final List<String?> values;
+  final int? bestIndex;
+
+  factory CompareRow.fromJson(Map<String, dynamic> j) => CompareRow(
+    j['section'] as String,
+    j['label'] as String,
+    (j['values'] as List).map((v) => v?.toString()).toList(),
+    j['best_index'] as int?,
+  );
+}
+
+class Comparison {
+  Comparison({required this.policyType, required this.policyNames, required this.rows, required this.disclaimer});
+  final String policyType;
+  final List<String> policyNames;
+  final List<CompareRow> rows;
+  final String disclaimer;
+
+  factory Comparison.fromJson(Map<String, dynamic> j) => Comparison(
+    policyType: j['policy_type'] as String,
+    policyNames: (j['policies'] as List).map((p) => ((p as Map)['insurer'] ?? 'Policy') as String).toList(),
+    rows: (j['rows'] as List).map((r) => CompareRow.fromJson(r as Map<String, dynamic>)).toList(),
+    disclaimer: j['disclaimer'] as String,
   );
 }

@@ -62,6 +62,31 @@ class HashingEmbedder(EmbeddingProvider):
         return [v / norm for v in vec]
 
 
+class LocalEmbedder(EmbeddingProvider):
+    """Self-hosted sentence-transformers model (default BAAI/bge-m3, 1024-d, multilingual).
+
+    Runs in the ML worker image (requirements-ml.txt). Vectors are L2-normalised and zero-padded to
+    the database column size, which leaves cosine similarity unchanged. After switching provider,
+    run `python -m app.scripts.reembed` so all stored chunks use the same model.
+    """
+
+    def __init__(self, model_name: str, dim: int):
+        from sentence_transformers import SentenceTransformer
+
+        self.model = SentenceTransformer(model_name)
+        self.dim = dim
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        vectors = self.model.encode(texts, normalize_embeddings=True, batch_size=16).tolist()
+        return [pad(v, self.dim) for v in vectors]
+
+
+def pad(vector: list[float], dim: int) -> list[float]:
+    if len(vector) > dim:
+        raise ValueError(f"embedding has {len(vector)} dimensions; the database column holds {dim}")
+    return vector + [0.0] * (dim - len(vector))
+
+
 @lru_cache
 def get_embedder() -> EmbeddingProvider:
     s = get_settings()
@@ -69,4 +94,6 @@ def get_embedder() -> EmbeddingProvider:
         if not s.openai_api_key:
             raise RuntimeError("OPENAI_API_KEY is required for openai embeddings")
         return OpenAIEmbedder(s.openai_api_key, s.openai_embedding_model, s.embedding_dim, s.ai_timeout_seconds)
+    if s.embedding_provider == "local":
+        return LocalEmbedder(s.local_embedding_model, s.embedding_dim)
     return HashingEmbedder(s.embedding_dim)

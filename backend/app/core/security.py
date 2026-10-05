@@ -2,7 +2,7 @@ import hashlib
 import hmac
 import secrets
 import uuid
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import jwt
 
@@ -13,7 +13,7 @@ ALGORITHM = "HS256"
 
 
 def now_utc() -> datetime:
-    return datetime.now(UTC)
+    return datetime.now(timezone.utc)
 
 
 def hash_otp(identifier: str, code: str) -> str:

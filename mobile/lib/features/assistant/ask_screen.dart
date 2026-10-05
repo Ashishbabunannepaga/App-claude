@@ -7,6 +7,7 @@ import '../../core/widgets/async_states.dart';
 import '../../core/widgets/demo_badge.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
+import '../policy/presentation/clauses_screen.dart';
 
 const _suggestions = {
   'health': [
@@ -245,6 +246,35 @@ class _AnswerBubble extends StatelessWidget {
               ),
             ),
           Text(answer.answer),
+          if (answer.relatedClauses.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            for (final c in answer.relatedClauses)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: AppSpacing.xs),
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        ClauseTypeBadge(c.type),
+                        const SizedBox(width: AppSpacing.sm),
+                        if (c.page != null)
+                          Text('Page ${c.page}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(c.text, style: const TextStyle(fontSize: 13)),
+                  ],
+                ),
+              ),
+          ],
           if (answer.citations.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             for (final c in answer.citations)

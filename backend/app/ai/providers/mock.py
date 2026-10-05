@@ -11,6 +11,8 @@ from typing import Any
 from app.ai.prompts import DETAIL_FIELDS
 from app.ai.providers.base import AIProvider
 from app.processing import heuristics as h
+from app.processing.glossary import english_terms
+from app.processing.text_utils import sentences as _sentences
 
 _STOP = {
     "is",
@@ -82,23 +84,6 @@ DETAIL_KEYWORDS: dict[str, list[str]] = {
 }
 
 
-_SPLIT = re.compile(r"(?<=[.!?])(?<!Rs\.)(?<!No\.)\s+(?=[A-Z(])")
-
-
-def _sentences(text: str) -> list[str]:
-    """Rebuild sentences from PDF lines: a line continues the previous one when that line has no
-    closing punctuation and this one starts in lower case; headings stay on their own."""
-    paragraphs: list[str] = []
-    for line in (ln.strip() for ln in text.splitlines()):
-        if not line or line.startswith("[Page"):
-            continue
-        if paragraphs and not paragraphs[-1].endswith((".", ":", "!", "?")) and line[0].islower():
-            paragraphs[-1] += " " + line
-        else:
-            paragraphs.append(line)
-    return [s.strip() for p in paragraphs for s in _SPLIT.split(p) if s.strip()]
-
-
 def _lakh(amount: float) -> str:
     if amount >= 1e7:
         return f"₹{amount / 1e7:g} crore"
@@ -158,13 +143,20 @@ class MockProvider(AIProvider):
         cover = p.get("sum_insured")
         headline = f"A {kind} policy from {p.get('insurer') or 'your insurer'}"
         headline += f" with {_lakh(float(cover))} cover." if cover else "."
+        if ctx.get("language") == "hi":
+            kind_hi = {"health": "स्वास्थ्य", "life": "जीवन", "motor": "मोटर"}.get(p.get("policy_type"), "")
+            headline = f"{p.get('insurer') or 'आपकी'} की {kind_hi} बीमा पॉलिसी"
+            amount = _lakh(float(cover)).replace("lakh", "लाख").replace("crore", "करोड़") if cover else ""
+            headline += f", {amount} कवर के साथ।" if cover else "।"
         details = [str(v) for k, v in p.items() if k in DETAIL_KEYWORDS and k not in ("tpa", "exclusions") and v]
         key_points = [v for v in details if not _WATCH.search(v)][:6]
         watch_outs = [v for v in details if _WATCH.search(v)][:4]
         return {"headline": headline, "key_points": key_points, "watch_outs": watch_outs}
 
     def _qa(self, ctx: dict[str, Any]) -> dict[str, Any]:
-        terms = {t for t in re.findall(r"[a-z]+", ctx["question"].lower()) if t not in _STOP and len(t) > 2}
+        hindi = ctx.get("language") == "hi"
+        question = f"{ctx['question']} {english_terms(ctx['question'])}"
+        terms = {t for t in re.findall(r"[a-z]+", question.lower()) if t not in _STOP and len(t) > 2}
         best_id, best_score, best_text = None, 0, ""
         for chunk_id, labelled in ctx["chunks"]:
             text = re.sub(r"^\(page[^)]*\)\s*", "", labelled)
@@ -174,7 +166,9 @@ class MockProvider(AIProvider):
         if not best_id:
             return {
                 "answerable": False,
-                "answer": "I couldn't find this in your policy document.",
+                "answer": "यह जानकारी आपके पॉलिसी दस्तावेज़ में नहीं मिली।"
+                if hindi
+                else "I couldn't find this in your policy document.",
                 "citations": [],
                 "confidence": "low",
             }
@@ -185,7 +179,7 @@ class MockProvider(AIProvider):
         quote = sentences[idx] if sentences else best_text[:300]
         return {
             "answerable": True,
-            "answer": f"Your policy document says: “{quote}”",
+            "answer": f"आपके पॉलिसी दस्तावेज़ में लिखा है: “{quote}”" if hindi else f"Your policy document says: “{quote}”",
             "citations": [best_id],
             "confidence": "medium",
         }

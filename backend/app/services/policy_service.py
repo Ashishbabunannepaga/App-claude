@@ -48,6 +48,7 @@ def to_out(policy: Policy) -> PolicyOut:
     data["field_confidence"] = policy.field_confidence or {}
     data["details"] = policy.details or {}
     data["members"] = sorted(policy.members, key=lambda m: m.full_name)
+    data["nominees"] = list(policy.nominees)
     return PolicyOut.model_validate(data)
 
 

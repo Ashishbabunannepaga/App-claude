@@ -16,6 +16,7 @@ class AppUser {
     this.state,
     this.notifyRenewals = true,
     this.notifyProcessing = true,
+    this.preferredLanguage = 'en',
   });
 
   final String id;
@@ -28,6 +29,9 @@ class AppUser {
   final bool notifyRenewals;
   final bool notifyProcessing;
 
+  /// Language for AI summaries and answers (en, hi, mr, ta, te, kn, bn, gu, ml).
+  final String preferredLanguage;
+
   factory AppUser.fromJson(Map<String, dynamic> j) => AppUser(
     id: j['id'] as String,
     phone: j['phone'] as String?,
@@ -36,6 +40,9 @@ class AppUser {
     dateOfBirth: j['date_of_birth'] == null ? null : DateTime.parse(j['date_of_birth'] as String),
     city: j['city'] as String?,
     state: j['state'] as String?,
+    notifyRenewals: j['notify_renewals'] as bool? ?? true,
+    notifyProcessing: j['notify_processing'] as bool? ?? true,
+    preferredLanguage: j['preferred_language'] as String? ?? 'en',
   );
 
   String get firstName => (fullName ?? '').split(' ').first;

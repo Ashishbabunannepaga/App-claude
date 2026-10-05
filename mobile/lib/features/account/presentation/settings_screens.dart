@@ -11,6 +11,7 @@ import '../../../core/security/app_lock.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/policy_card.dart';
 import '../../auth/data/auth_controller.dart';
+import '../../policy/data/policy_repository.dart';
 import '../data/account_repository.dart';
 
 void _snack(BuildContext context, String text) =>
@@ -393,6 +394,68 @@ class AppLockTile extends ConsumerWidget {
       onChanged: (v) async {
         final ok = await ref.read(appLockProvider.notifier).setEnabled(v);
         if (!ok && context.mounted) _snack(context, 'Set up a screen lock on your phone first.');
+      },
+    );
+  }
+}
+
+const answerLanguages = {
+  'en': 'English',
+  'hi': 'हिन्दी (Hindi)',
+  'mr': 'मराठी (Marathi)',
+  'ta': 'தமிழ் (Tamil)',
+  'te': 'తెలుగు (Telugu)',
+  'kn': 'ಕನ್ನಡ (Kannada)',
+  'bn': 'বাংলা (Bengali)',
+  'gu': 'ગુજરાતી (Gujarati)',
+  'ml': 'മലയാളം (Malayalam)',
+};
+
+/// Language for AI summaries and answers. The app's own screens stay in English for now.
+class LanguageTile extends ConsumerWidget {
+  const LanguageTile({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final current = ref.watch(authControllerProvider).user?.preferredLanguage ?? 'en';
+    return ListTile(
+      leading: const Icon(Icons.translate_rounded, color: AppColors.textSecondary),
+      title: const Text('AI answer language'),
+      subtitle: Text(answerLanguages[current] ?? 'English'),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () async {
+        final picked = await showModalBottomSheet<String>(
+          context: context,
+          showDragHandle: true,
+          builder: (c) => SafeArea(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+                  child: Text(
+                    'Summaries and answers about your policies will be written in this language. '
+                    'You can ask questions in it too.',
+                    style: TextStyle(color: AppColors.textSecondary),
+                  ),
+                ),
+                for (final e in answerLanguages.entries)
+                  ListTile(
+                    title: Text(e.value),
+                    trailing: e.key == current ? const Icon(Icons.check_rounded, color: AppColors.accent) : null,
+                    onTap: () => Navigator.pop(c, e.key),
+                  ),
+              ],
+            ),
+          ),
+        );
+        if (picked == null || picked == current) return;
+        try {
+          await ref.read(authControllerProvider.notifier).updateProfile({'preferred_language': picked});
+          ref.invalidate(summaryProvider);
+        } on ApiException catch (e) {
+          if (context.mounted) _snack(context, e.message);
+        }
       },
     );
   }

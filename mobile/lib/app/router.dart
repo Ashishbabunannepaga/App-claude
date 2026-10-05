@@ -14,6 +14,10 @@ import '../features/auth/presentation/otp_screen.dart';
 import '../features/auth/presentation/profile_setup_screen.dart';
 import '../features/explore/explore_screen.dart';
 import '../features/home/home_screen.dart';
+import '../features/insights/insights_screen.dart';
+import '../features/policy/presentation/clauses_screen.dart';
+import '../features/policy/presentation/nominees_screen.dart';
+import '../features/portfolio/compare_screen.dart';
 import '../features/policy/presentation/add_policy_screen.dart';
 import '../features/policy/presentation/policy_detail_screen.dart';
 import '../features/policy/presentation/policy_form_screen.dart';
@@ -76,6 +80,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/add', builder: (_, _) => const AddPolicyScreen()),
       GoRoute(path: '/family', builder: (_, _) => const FamilyScreen()),
+      GoRoute(path: '/insights', builder: (_, _) => const InsightsScreen()),
+      GoRoute(path: '/compare', builder: (_, _) => const CompareSelectScreen()),
+      GoRoute(
+        path: '/compare/view',
+        builder: (_, s) => CompareScreen(ids: s.uri.queryParameters['ids'] ?? ''),
+      ),
       GoRoute(path: '/notifications', builder: (_, _) => const NotificationsScreen()),
       GoRoute(path: '/settings/notifications', builder: (_, _) => const NotificationSettingsScreen()),
       GoRoute(path: '/settings/profile', builder: (_, _) => const EditProfileScreen()),
@@ -108,6 +118,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'health',
             builder: (_, s) => PolicyHealthScreen(policyId: s.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: 'nominees',
+            builder: (_, s) => NomineesScreen(policyId: s.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: 'clauses',
+            builder: (_, s) => ClausesScreen(policyId: s.pathParameters['id']!),
           ),
         ],
       ),

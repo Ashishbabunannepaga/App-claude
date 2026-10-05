@@ -66,6 +66,7 @@ class User(TimestampMixin, Base):
     deletion_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     notify_renewals: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
     notify_processing: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    preferred_language: Mapped[str] = mapped_column(String(5), default="en", server_default="en")
 
 
 class OtpChallenge(Base):
@@ -154,6 +155,9 @@ class Policy(TimestampMixin, Base):
 
     document: Mapped[Document | None] = relationship(back_populates="policy")
     members: Mapped[list[FamilyMember]] = relationship(secondary=policy_members, lazy="selectin")
+    nominees: Mapped[list["Nominee"]] = relationship(
+        lazy="selectin", cascade="all, delete-orphan", order_by="Nominee.created_at"
+    )
 
 
 class PolicyChunk(Base):
@@ -180,6 +184,7 @@ class QaMessage(Base):
     confidence: Mapped[str] = mapped_column(String(10))
     citations: Mapped[list] = mapped_column(JSONB, default=list)
     provider: Mapped[str | None] = mapped_column(String(20))
+    related_clauses: Mapped[list] = mapped_column(JSONB, default=list, server_default="[]")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
@@ -232,3 +237,31 @@ class SupportRequest(Base):
     message: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(20), default="open")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class Nominee(TimestampMixin, Base):
+    __tablename__ = "nominees"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    policy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("policies.id", ondelete="CASCADE"), index=True)
+    family_member_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("family_members.id", ondelete="SET NULL"))
+    full_name: Mapped[str] = mapped_column(String(120))
+    relation: Mapped[str] = mapped_column(String(20))
+    share_percent: Mapped[int] = mapped_column(Integer)
+    date_of_birth: Mapped[date | None] = mapped_column(Date)
+    phone: Mapped[str | None] = mapped_column(String(20))
+    appointee_name: Mapped[str | None] = mapped_column(String(120))  # required when the nominee is a minor
+
+
+class PolicyClause(Base):
+    __tablename__ = "policy_clauses"
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    policy_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("policies.id", ondelete="CASCADE"), index=True)
+    clause_type: Mapped[str] = mapped_column(String(20), index=True)
+    tags: Mapped[list] = mapped_column(JSONB, default=list)
+    title: Mapped[str] = mapped_column(String(200))
+    text: Mapped[str] = mapped_column(Text)
+    page: Mapped[int | None] = mapped_column(Integer)
+    section: Mapped[str | None] = mapped_column(String(200))
+    order: Mapped[int] = mapped_column(Integer)

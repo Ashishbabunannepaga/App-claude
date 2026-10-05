@@ -1,7 +1,10 @@
 import uuid
 from datetime import date, datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+Language = Literal["en", "hi", "mr", "ta", "te", "kn", "bn", "gu", "ml"]
 
 
 class UserOut(BaseModel):
@@ -16,6 +19,7 @@ class UserOut(BaseModel):
     state: str | None
     notify_renewals: bool
     notify_processing: bool
+    preferred_language: str
     created_at: datetime
     deletion_requested_at: datetime | None
 
@@ -27,3 +31,4 @@ class UserUpdate(BaseModel):
     state: str | None = Field(None, max_length=80)
     notify_renewals: bool | None = None
     notify_processing: bool | None = None
+    preferred_language: Language | None = None

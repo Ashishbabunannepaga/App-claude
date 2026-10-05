@@ -22,7 +22,16 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   Widget build(BuildContext context) {
     final policies = ref.watch(policiesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('My insurance')),
+      appBar: AppBar(
+        title: const Text('My insurance'),
+        actions: [
+          TextButton.icon(
+            onPressed: () => context.push('/compare'),
+            icon: const Icon(Icons.compare_arrows_rounded),
+            label: const Text('Compare'),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/add'),
         icon: const Icon(Icons.add_rounded),

@@ -1,3 +1,4 @@
+import re
 import uuid
 from typing import Literal
 
@@ -29,6 +30,7 @@ from app.services.policy_service import get_owned_policy, portfolio_summary, str
 from app.storage import get_storage
 
 router = APIRouter(tags=["policies"])
+_DEVANAGARI = re.compile("[\u0900-\u097f]")
 
 
 def _apply(db: Session, policy: Policy, body: PolicyUpdate | PolicyCreate) -> None:
@@ -62,8 +64,9 @@ def _answer_out(m: QaMessage) -> AnswerOut:
         answerable=m.answerable,
         confidence=m.confidence,
         citations=m.citations,
-        disclaimer=qa_service.DISCLAIMER,
+        disclaimer=qa_service.disclaimer("hi" if _DEVANAGARI.search(m.answer) else "en"),
         provider=m.provider,
+        related_clauses=m.related_clauses or [],
         created_at=m.created_at,
     )
 
@@ -127,21 +130,29 @@ def delete_policy(policy_id: uuid.UUID, user: CurrentUser, db: DB, request: Requ
 
 @router.get("/policies/{policy_id}/summary", response_model=SummaryOut)
 def get_summary(policy_id: uuid.UUID, user: CurrentUser, db: DB) -> SummaryOut:
+    """Generated once per language and cached on the policy (invalidated when details change)."""
     policy = get_owned_policy(db, user.id, policy_id)
-    if policy.summary is None:
+    language = user.preferred_language or "en"
+    cache = dict(policy.summary or {})
+    if "headline" in cache:  # summaries cached before per-language support
+        cache = {"en": cache}
+    if language not in cache:
         limiter.hit(f"summary:{user.id}", limit=30, window_seconds=3600)
         try:
-            raw = get_ai_gateway().summarise(structured_view(policy), qa_service.summary_excerpts(db, policy.id))
+            raw = get_ai_gateway().summarise(
+                structured_view(policy), qa_service.summary_excerpts(db, policy.id), language
+            )
         except AIProviderError as exc:
             raise AppError("ai_unavailable", "Summary is unavailable right now. Please try again.", 503) from exc
-        policy.summary = {
+        cache[language] = {
             "provider": get_ai_gateway().provider_name,
             "headline": str(raw.get("headline") or ""),
             "key_points": [str(x) for x in raw.get("key_points") or []][:6],
             "watch_outs": [str(x) for x in raw.get("watch_outs") or []][:4],
         }
+        policy.summary = cache
         db.commit()
-    return SummaryOut(**policy.summary, disclaimer=qa_service.DISCLAIMER)
+    return SummaryOut(**cache[language], disclaimer=qa_service.disclaimer(language))
 
 
 @router.get("/policies/{policy_id}/health", response_model=HealthCheckOut)
@@ -162,7 +173,7 @@ def set_renewal(policy_id: uuid.UUID, body: RenewalUpdate, user: CurrentUser, db
 def ask(policy_id: uuid.UUID, body: AskRequest, user: CurrentUser, db: DB) -> AnswerOut:
     policy = get_owned_policy(db, user.id, policy_id)
     limiter.hit(f"ask:{user.id}", limit=60, window_seconds=3600)
-    return _answer_out(qa_service.ask(db, policy, user.id, body.question.strip()))
+    return _answer_out(qa_service.ask(db, policy, user.id, body.question.strip(), user.preferred_language or "en"))
 
 
 @router.get("/policies/{policy_id}/messages", response_model=list[AnswerOut])

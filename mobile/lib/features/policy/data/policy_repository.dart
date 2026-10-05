@@ -99,6 +99,40 @@ class PolicyRepository {
     return Policy.fromJson(res.data!);
   });
 
+  Future<List<Nominee>> nominees(String policyId) => _call(() async {
+    final res = await _dio.get<List<dynamic>>('/policies/$policyId/nominees');
+    return res.data!.map((n) => Nominee.fromJson(n as Map<String, dynamic>)).toList();
+  });
+
+  Future<Nominee> saveNominee(String policyId, Map<String, dynamic> fields, {String? id}) => _call(() async {
+    final res = id == null
+        ? await _dio.post<Map<String, dynamic>>('/policies/$policyId/nominees', data: fields)
+        : await _dio.put<Map<String, dynamic>>('/policies/$policyId/nominees/$id', data: fields);
+    return Nominee.fromJson(res.data!);
+  });
+
+  Future<void> deleteNominee(String policyId, String id) =>
+      _call(() => _dio.delete<void>('/policies/$policyId/nominees/$id'));
+
+  Future<List<Clause>> clauses(String policyId) => _call(() async {
+    final res = await _dio.get<List<dynamic>>('/policies/$policyId/clauses');
+    return res.data!.map((c) => Clause.fromJson(c as Map<String, dynamic>)).toList();
+  });
+
+  Future<Insights> insights() => _call(() async {
+    final res = await _dio.get<Map<String, dynamic>>('/portfolio/insights');
+    return Insights.fromJson(res.data!);
+  });
+
+  Future<Comparison> compare(List<String> ids) => _call(() async {
+    final res = await _dio.get<Map<String, dynamic>>(
+      '/policies/compare',
+      queryParameters: {'ids': ids},
+      options: Options(listFormat: ListFormat.multi),
+    );
+    return Comparison.fromJson(res.data!);
+  });
+
   Future<PortfolioSummary> portfolio() => _call(() async {
     final res = await _dio.get<Map<String, dynamic>>('/portfolio/summary');
     return PortfolioSummary.fromJson(res.data!);
@@ -123,10 +157,17 @@ final healthProvider = FutureProvider.autoDispose.family<HealthCheck, String>(
   (ref, id) => ref.watch(policyRepositoryProvider).health(id),
 );
 
+final clausesProvider = FutureProvider.autoDispose.family<List<Clause>, String>(
+  (ref, id) => ref.watch(policyRepositoryProvider).clauses(id),
+);
+
+final insightsProvider = FutureProvider<Insights>((ref) => ref.watch(policyRepositoryProvider).insights());
+
 /// Call after any change to policies so every list/summary refreshes.
 void invalidatePolicies(WidgetRef ref, [String? policyId]) {
   ref.invalidate(policiesProvider);
   ref.invalidate(portfolioProvider);
+  ref.invalidate(insightsProvider);
   if (policyId != null) {
     ref.invalidate(policyProvider(policyId));
     ref.invalidate(summaryProvider(policyId));

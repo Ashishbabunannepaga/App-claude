@@ -51,6 +51,37 @@ class PolicyDetailScreen extends ConsumerWidget {
               const SizedBox(height: AppSpacing.md),
               _Actions(policy: p),
               if (p.policyType == 'health' || p.policyType == 'motor') _HealthCard(policyId: p.id),
+              const SizedBox(height: AppSpacing.md),
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.groups_rounded, color: AppColors.secondary),
+                      title: const Text('Nominees', style: TextStyle(fontWeight: FontWeight.w600)),
+                      subtitle: Text(
+                        p.nominees.isEmpty
+                            ? (p.policyType == 'life' ? 'No nominee recorded — add one' : 'Not recorded')
+                            : p.nominees.map((n) => '${n.fullName} ${n.sharePercent}%').join(', '),
+                        style: TextStyle(
+                          color: p.nominees.isEmpty && p.policyType == 'life' ? AppColors.warning : null,
+                        ),
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => context.push('/policy/${p.id}/nominees'),
+                    ),
+                    if (p.documentId != null) ...[
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.article_outlined, color: AppColors.secondary),
+                        title: const Text('Policy clauses', style: TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: const Text('Benefits, exclusions, waiting periods and limits — word for word'),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: () => context.push('/policy/${p.id}/clauses'),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
               if (p.members.isNotEmpty) ...[
                 const SectionHeader('Who is covered'),
                 Wrap(
