@@ -116,3 +116,9 @@ flutter:
         - asset: assets/fonts/NotoSansMalayalam-Regular.ttf
         - asset: assets/fonts/NotoSansMalayalam-Bold.ttf
           weight: 700
+
+# path_provider_android 2.3.x pulls in package:jni, which compiles C code with the NDK + CMake on every
+# developer machine and fails on fresh Windows setups. 2.2.23 has the same API without native code.
+# Remove this override once jni builds reliably (re-check when upgrading Flutter).
+dependency_overrides:
+  path_provider_android: 2.2.23
