@@ -30,7 +30,7 @@ class Task:
 
 
 TASKS = [
-    Task("profile", "Complete your profile", 20, "/profile"),
+    Task("profile", "Complete your profile", 20, "/settings/profile"),
     Task("policy_added", "Add a policy (each, up to 10)", 50, "/add", repeatable=True),
     Task("family_member", "Add a family member", 20, "/family"),
     Task("nominee", "Add a nominee to a policy", 20, "/portfolio"),

@@ -102,3 +102,48 @@ def test_expert_review_support_category(client, auth):
         "/api/v1/support", json={"category": "expert_review", "message": "Please review my health cover"}, headers=auth
     )
     assert r.status_code == 201
+
+
+def test_short_values_from_real_wording():
+    """Regression: strings from the demo PDFs once rendered as 'Up to Rs', '60 years' and '…sum insured per'."""
+    from types import SimpleNamespace
+
+    from app.services.coverage_report import build_report
+
+    policy = SimpleNamespace(
+        policy_type="health",
+        sum_insured=None,
+        nominees=[],
+        plan_name=None,
+        insurer=None,
+        details={
+            "co_payment": "Co-payment: No co-payment applies for insured persons below 60 years.",
+            "room_rent_limit": "Room Rent: Single private AC room is covered up to 1% of the sum insured per day.",
+            "maternity": "Maternity Benefit: Maternity expenses are covered up to Rs. 50,000 per delivery after a "
+            "waiting period of 24 months from the first policy inception.",
+            "ambulance": "Ambulance charges are covered up to Rs. 2,000 per hospitalisation.",
+            "restoration": "Restoration: 100% restoration of the sum insured once per policy year.",
+        },
+    )
+    rows = _rows(build_report(policy))
+    assert rows["co_payment"]["value"] == "No co-payment"
+    assert rows["room_rent_limit"]["value"] == "1% of the sum insured per day"
+    assert rows["maternity"]["value"] == "Up to ₹50,000"
+    assert rows["ambulance"]["value"] == "Up to ₹2,000"
+    assert rows["restoration"]["value"] == "100% restoration"
+
+
+def test_idv_from_wording():
+    from types import SimpleNamespace
+
+    from app.services.coverage_report import build_report
+
+    motor = SimpleNamespace(
+        policy_type="motor",
+        sum_insured=None,
+        nominees=[],
+        plan_name=None,
+        insurer=None,
+        details={"idv": "Insured Declared Value (IDV): Rs. 9,40,000"},
+    )
+    assert _rows(build_report(motor))["idv"]["value"] == "₹9.4 lakh"

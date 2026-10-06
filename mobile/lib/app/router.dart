@@ -12,6 +12,7 @@ import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/onboarding_screen.dart';
 import '../features/auth/presentation/otp_screen.dart';
 import '../features/auth/presentation/profile_setup_screen.dart';
+import '../features/coverage/coverage_report_screen.dart';
 import '../features/explore/explore_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/insights/insights_screen.dart';
@@ -25,6 +26,7 @@ import '../features/policy/presentation/policy_health_screen.dart';
 import '../features/policy/presentation/processing_screen.dart';
 import '../features/portfolio/portfolio_screen.dart';
 import '../features/profile/profile_screen.dart';
+import '../features/rewards/rewards_screen.dart';
 import '../features/shell/app_shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -79,6 +81,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       GoRoute(path: '/add', builder: (_, _) => const AddPolicyScreen()),
+      GoRoute(
+        path: '/report/sample',
+        builder: (_, s) => CoverageReportScreen(initialType: s.uri.queryParameters['type'] ?? 'health'),
+      ),
+      GoRoute(path: '/rewards', builder: (_, _) => const RewardsScreen()),
       GoRoute(path: '/family', builder: (_, _) => const FamilyScreen()),
       GoRoute(path: '/insights', builder: (_, _) => const InsightsScreen()),
       GoRoute(path: '/compare', builder: (_, _) => const CompareSelectScreen()),
@@ -113,11 +120,16 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: 'ask',
-            builder: (_, s) => AskScreen(policyId: s.pathParameters['id']!),
+            builder: (_, s) =>
+                AskScreen(policyId: s.pathParameters['id']!, initialQuestion: s.uri.queryParameters['q']),
           ),
           GoRoute(
             path: 'health',
             builder: (_, s) => PolicyHealthScreen(policyId: s.pathParameters['id']!),
+          ),
+          GoRoute(
+            path: 'report',
+            builder: (_, s) => CoverageReportScreen(policyId: s.pathParameters['id']),
           ),
           GoRoute(
             path: 'nominees',

@@ -431,25 +431,45 @@ def _clip(v: str, limit: int = 24) -> str:
     return cut + "…"
 
 
-def _short(value: str, status: Status) -> str:
-    """A short right-hand value for a row: 'Up to ₹50,000', '24 months', '1% of sum insured per day'…"""
+def _normalise(value: str) -> str:
     v = re.sub(r"\s+", " ", value).strip().rstrip(".")
+    v = re.sub(r"^[A-Z][A-Za-z /&()'-]{2,40}:\s+", "", v)  # "Maternity Benefit: …" → "…"
+    v = re.sub(r"(?:\brs\.?|\binr)\s*(?=\d)", "₹", v, flags=re.I)
+    return v
+
+
+_SHORT_PATTERNS = [
+    r"up ?to ₹\s?[\d,]+(?:\s*(?:lakh|crore))?",
+    r"\d+(\.\d+)?\s*% of (the )?[a-z ]{2,30}",
+    r"up ?to \d+(\.\d+)?\s*%",
+    r"up ?to [^,.;]{1,24}",
+    r"\d+\s*(days|months|years)",
+    r"\d+(\.\d+)?\s*% [a-z]+",
+    r"\d+(\.\d+)?\s*%",
+]
+
+
+def _short(value: str, status: Status, graded_text: str | None = None) -> str:
+    """A short right-hand value for a row: 'Up to ₹50,000', '24 months', '1% of sum insured per day'…
+
+    [graded_text] is the rule's own verdict (e.g. 'No co-payment.'), preferred when the wording is long and the
+    verdict is short, so a conditional sentence never surfaces a misleading fragment like '60 years'.
+    """
+    v = _normalise(value)
     if len(v) <= 26:
         return v
     if status == "info":
         return _clip(v)
-    patterns = [
-        r"\d+(\.\d+)?\s*% of [a-z ]{2,24}",
-        r"up ?to [^,.;]{1,24}",
-        r"\d+\s*(days|months|years)",
-        r"\d+(\.\d+)?\s*%",
-    ]
-    for p in patterns:
+    if graded_text and status == "good":
+        verdict = graded_text.rstrip(".")
+        if len(verdict) <= 26:
+            return verdict
+    for p in _SHORT_PATTERNS:
         m = re.search(p, v, re.I)
         if m:
-            s = _clip(m.group(0).strip(), 28).rstrip("…").strip()
+            s = re.sub(r"\s+(per|of|the|a|for|and)$", "", _clip(m.group(0).strip(), 32).rstrip("…").strip())
             return s[0].upper() + s[1:]
-    m = _MONEY.search(v)
+    m = _MONEY.search(value)
     if m:
         return f"₹{m.group(1)}"
     return {"good": "Covered", "limited": "Covered with limits", "missing": "Not covered"}.get(status, _clip(v))
@@ -477,10 +497,11 @@ def _special_value(policy: Any, key: str) -> tuple[str | None, str | None]:
         if policy.sum_insured:
             return _inr(policy.sum_insured), _text(d["sum_assured"]) if d.get("sum_assured") else None
     if key == "idv" and (d.get("idv") or policy.sum_insured):
-        raw = d.get("idv")
-        if raw and _MONEY.search(str(raw)) is None and re.fullmatch(r"[0-9,]+", str(raw).strip()):
-            return _inr(Decimal(str(raw).replace(",", ""))), None
-        return (_text(raw) if raw else _inr(policy.sum_insured)), None
+        raw = str(d.get("idv") or "")
+        m = _MONEY.search(raw) or re.fullmatch(r"\s*([0-9][0-9,]*)\s*", raw)
+        if m:
+            return _inr(Decimal(m.group(1).replace(",", ""))), raw if _MONEY.search(raw) else None
+        return (_short(raw, "info") if raw else _inr(policy.sum_insured)), raw or None
     if key == "nominee":
         nominees = list(getattr(policy, "nominees", None) or [])
         if nominees:
@@ -535,15 +556,15 @@ def _row(policy: Any, item: ItemDef, clauses: Sequence[Any]) -> Row:
 
     text = _text(raw)
     if item.kind == "graded" and item.grade is not None:
-        grade, explanation = item.grade(text)
+        grade, verdict = item.grade(text)
         status = {"strong": "good", "attention": "limited", "not_covered": "missing"}[grade]
         return Row(
             item.key,
             item.label,
             status,
-            _short(text, status),
+            _short(text, status, verdict),
             item.why,
-            f"{explanation} {text}".strip(),
+            text,  # shown quoted as the policy's own words, so only the extracted text
             page,
             "document",
         )

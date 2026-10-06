@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/brand.dart';
 import '../../../core/config/env.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/auth_controller.dart';
@@ -56,7 +57,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
             const SizedBox(height: AppSpacing.xl),
-            const Icon(Icons.verified_user_rounded, size: 56, color: AppColors.primary),
+            const Align(alignment: Alignment.centerLeft, child: BrandLogo(height: 40)),
             const SizedBox(height: AppSpacing.lg),
             Text('All your insurance.\nOne place. Clearly explained.', style: theme.textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),

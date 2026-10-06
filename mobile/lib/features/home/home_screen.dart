@@ -3,23 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../core/brand.dart';
+import '../../core/push/push_prompt.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/async_states.dart';
 import '../../core/widgets/policy_card.dart';
 import '../account/data/account_repository.dart';
+import '../coverage/coverage_data.dart';
+import '../coverage/coverage_widgets.dart';
+import 'home_hero.dart';
 import '../insights/insights_screen.dart';
 import '../auth/data/auth_controller.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
-
-String _greeting() {
-  final h = DateTime.now().hour;
-  return h < 12
-      ? 'Good morning'
-      : h < 17
-      ? 'Good afternoon'
-      : 'Good evening';
-}
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -32,78 +28,143 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${_greeting()}${user?.firstName.isNotEmpty == true ? ', ${user!.firstName}' : ''}'),
-        actions: const [_Bell()],
+        leadingWidth: 96,
+        leading: const Padding(
+          padding: EdgeInsets.only(left: AppSpacing.md),
+          child: Center(child: _Coins()),
+        ),
+        title: const BrandLogo(height: 26),
+        centerTitle: true,
+        actions: [
+          const _Bell(),
+          Padding(
+            padding: const EdgeInsets.only(right: AppSpacing.md),
+            child: _Avatar(name: user?.firstName ?? ''),
+          ),
+        ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          invalidatePolicies(ref);
-          ref.invalidate(unreadCountProvider);
-        },
-        child: AsyncValueView(
-          value: summary,
-          onRetry: () => invalidatePolicies(ref),
-          data: (s) => s.totalPolicies == 0
-              ? ListView(
-                  children: [
-                    const SizedBox(height: 80),
-                    EmptyView(
-                      icon: Icons.add_moderator_rounded,
-                      title: 'Add your first policy',
-                      message:
-                          'Upload a health, life or motor policy. We\'ll read it and explain it in plain language.',
-                      action: FilledButton.icon(
-                        onPressed: () => context.push('/add'),
-                        icon: const Icon(Icons.upload_file_rounded),
-                        label: const Text('Add policy'),
+      body: PushPrompt(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            invalidatePolicies(ref);
+            ref.invalidate(unreadCountProvider);
+            ref.invalidate(rewardsProvider);
+          },
+          child: AsyncValueView(
+            value: summary,
+            onRetry: () => invalidatePolicies(ref),
+            data: (s) => ListView(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              children: [
+                HomeHero(name: user?.firstName ?? '', hasPolicies: s.totalPolicies > 0),
+                if (s.totalPolicies > 0) ...[const SizedBox(height: AppSpacing.md), _CoverageCard(summary: s)],
+                if (s.pendingVerification > 0) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  Card(
+                    color: const Color(0xFFFFF7E6),
+                    child: ListTile(
+                      leading: const Icon(Icons.fact_check_rounded, color: AppColors.warning),
+                      title: Text(
+                        '${s.pendingVerification} '
+                        '${s.pendingVerification == 1 ? 'policy needs' : 'policies need'} your review',
                       ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () => context.go('/portfolio'),
                     ),
-                  ],
-                )
-              : ListView(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  children: [
-                    _CoverageCard(summary: s),
-                    if (s.pendingVerification > 0) ...[
-                      const SizedBox(height: AppSpacing.md),
-                      Card(
-                        color: const Color(0xFFFFF7E6),
-                        child: ListTile(
-                          leading: const Icon(Icons.fact_check_rounded, color: AppColors.warning),
-                          title: Text(
-                            '${s.pendingVerification} '
-                            '${s.pendingVerification == 1 ? 'policy needs' : 'policies need'} your review',
-                          ),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () => context.go('/portfolio'),
+                  ),
+                ],
+                if (s.upcomingRenewals.isNotEmpty) ...[
+                  const SectionHeader('Upcoming renewal'),
+                  _RenewalCard(item: s.upcomingRenewals.first),
+                ],
+                const SectionHeader('Quick actions'),
+                const _QuickActions(),
+                const _TopInsights(),
+                if (s.totalPolicies > 0) ...[
+                  SectionHeader(
+                    'Your policies',
+                    action: TextButton(onPressed: () => context.go('/portfolio'), child: const Text('See all')),
+                  ),
+                  ...?policies.value
+                      ?.take(3)
+                      .map(
+                        (p) => Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                          child: PolicyCard(policy: p, onTap: () => context.push('/policy/${p.id}')),
                         ),
                       ),
-                    ],
-                    if (s.upcomingRenewals.isNotEmpty) ...[
-                      const SectionHeader('Upcoming renewal'),
-                      _RenewalCard(item: s.upcomingRenewals.first),
-                    ],
-                    const SectionHeader('Quick actions'),
-                    const _QuickActions(),
-                    const _TopInsights(),
-                    SectionHeader(
-                      'Your policies',
-                      action: TextButton(onPressed: () => context.go('/portfolio'), child: const Text('See all')),
-                    ),
-                    ...?policies.value
-                        ?.take(3)
-                        .map(
-                          (p) => Padding(
-                            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                            child: PolicyCard(policy: p, onTap: () => context.push('/policy/${p.id}')),
-                          ),
-                        ),
-                  ],
-                ),
+                ],
+                const SizedBox(height: AppSpacing.md),
+                const ExpertReviewCard(),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
+}
+
+class _Coins extends ConsumerWidget {
+  const _Coins();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final balance = ref.watch(rewardsProvider).value?.balance;
+    return Semantics(
+      button: true,
+      label: 'Coins: ${balance ?? 0}. Open rewards',
+      excludeSemantics: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () async {
+          await context.push('/rewards');
+          ref.invalidate(rewardsProvider);
+        },
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(10, 4, 4, 4),
+          decoration: BoxDecoration(color: const Color(0xFFFFF4D6), borderRadius: BorderRadius.circular(20)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${balance ?? 0}',
+                style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF7A4E00)),
+              ),
+              const SizedBox(width: 4),
+              const CoinIcon(size: 22),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.name});
+  final String name;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: 'Profile',
+    excludeSemantics: true,
+    child: InkWell(
+      customBorder: const CircleBorder(),
+      onTap: () => context.go('/profile'),
+      child: CircleAvatar(
+        radius: 17,
+        backgroundColor: AppColors.primary,
+        child: name.isEmpty
+            ? const Icon(Icons.person_rounded, color: Colors.white, size: 20)
+            : Text(
+                name[0].toUpperCase(),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              ),
+      ),
+    ),
+  );
 }
 
 class _CoverageCard extends StatelessWidget {

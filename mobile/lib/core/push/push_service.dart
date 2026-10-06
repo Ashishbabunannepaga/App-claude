@@ -42,12 +42,23 @@ class PushService {
     }
   }
 
-  /// Ask permission, register this device with the backend and route notification taps.
-  static Future<void> registerForUser(AccountRepository repo, GoRouter router) async {
+  /// True while the user hasn't been asked for notification permission yet (so the app can explain why first).
+  static Future<bool> needsPermission() async {
+    if (!_initialised) return false;
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+    return settings.authorizationStatus == AuthorizationStatus.notDetermined;
+  }
+
+  /// Register this device with the backend and route notification taps. Asks the OS for permission only when
+  /// [ask] is true (after the in-app explanation); otherwise registers only if permission was already given.
+  static Future<void> registerForUser(AccountRepository repo, GoRouter router, {bool ask = false}) async {
     if (!_initialised) return;
     final messaging = FirebaseMessaging.instance;
-    final settings = await messaging.requestPermission();
-    if (settings.authorizationStatus == AuthorizationStatus.denied) return;
+    final settings = ask ? await messaging.requestPermission() : await messaging.getNotificationSettings();
+    if (settings.authorizationStatus != AuthorizationStatus.authorized &&
+        settings.authorizationStatus != AuthorizationStatus.provisional) {
+      return;
+    }
     final platform = defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
 
     Future<void> register(String? token) async {

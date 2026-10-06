@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/brand.dart';
 import '../core/push/push_service.dart';
 import '../core/security/app_lock.dart';
 import '../features/account/data/account_repository.dart';
@@ -20,7 +21,7 @@ class InsureApp extends ConsumerWidget {
       }
     });
     return MaterialApp.router(
-      title: 'InsureIQ',
+      title: Brand.name,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       routerConfig: router,

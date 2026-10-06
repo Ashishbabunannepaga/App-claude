@@ -5,6 +5,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../brand.dart';
 
 /// Initialised in main() so preferences are available synchronously.
 final sharedPrefsProvider = Provider<SharedPreferences>((ref) => throw UnimplementedError());
@@ -50,7 +51,7 @@ class AppLockController extends Notifier<AppLockState> {
   }
 
   Future<void> unlock() async {
-    if (await _authenticate('Unlock InsureIQ')) state = AppLockState(enabled: state.enabled, locked: false);
+    if (await _authenticate('Unlock ${Brand.name}')) state = AppLockState(enabled: state.enabled, locked: false);
   }
 
   void onLifecycle(AppLifecycleState s) {
@@ -117,7 +118,7 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
                     const Icon(Icons.lock_rounded, color: Colors.white, size: 56),
                     const SizedBox(height: AppSpacing.md),
                     const Text(
-                      'InsureIQ is locked',
+                      '${Brand.name} is locked',
                       style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: AppSpacing.lg),

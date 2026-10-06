@@ -69,6 +69,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await go(`/compare/view?ids=${ids.health},${ids.employer}`); await shot('35-compare');
   await wheel(1500); await shot('36-compare-features');
   await go('/profile'); await tap('AI answer language', { wait: 2000 }); await shot('37-answer-language');
+  await go(`/policy/${ids.health}/report`); await shot('51-coverage-report-own');
+  await wheel(900); await shot('52-coverage-report-own-more');
+  await wheel(1600); await shot('53-coverage-report-own-exclusions');
+  await go(`/policy/${ids.motor}/report`); await shot('54-coverage-report-motor');
+  await go('/rewards'); await shot('55-rewards-after-policies');
 
   const admin = await browser.newPage({ viewport: { width: 1280, height: 860 }, deviceScaleFactor: 2 });
   await admin.goto('http://localhost:8000/admin');

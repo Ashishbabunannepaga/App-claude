@@ -14,6 +14,9 @@ String formatInrCompact(num? value) {
   return formatInr(value);
 }
 
+/// 125000 → "1,25,000" (Indian digit grouping).
+String formatIndianNumber(num value) => NumberFormat.decimalPattern('en_IN').format(value);
+
 String formatDate(DateTime? d) => d == null ? '—' : _date.format(d);
 
 String policyTypeLabel(String type) => switch (type) {

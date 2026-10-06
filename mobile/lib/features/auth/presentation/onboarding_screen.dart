@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/brand.dart';
 import '../../../core/security/app_lock.dart';
 
 final onboardingDoneProvider = NotifierProvider<OnboardingController, bool>(OnboardingController.new);
@@ -60,11 +61,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => ref.read(onboardingDoneProvider.notifier).complete(),
-                child: const Text('Skip'),
+            Padding(
+              padding: const EdgeInsets.only(left: AppSpacing.lg),
+              child: Row(
+                children: [
+                  const BrandLogo(height: 28),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () => ref.read(onboardingDoneProvider.notifier).complete(),
+                    child: const Text('Skip'),
+                  ),
+                ],
               ),
             ),
             Expanded(

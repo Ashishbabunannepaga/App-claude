@@ -13,6 +13,13 @@ class AppColors {
   static const textSecondary = Color(0xFF5B6475);
   static const border = Color(0xFFE3E8F0);
 
+  // Status colours above are for icons. Text in a status colour uses these darker versions (WCAG AA on white;
+  // checked with replica/design/tokens.json).
+  static const successText = Color(0xFF0F7A4E);
+  static const warningText = Color(0xFF8A5300);
+  static const errorText = Color(0xFFB42318);
+  static const unknownText = Color(0xFF6B7280);
+
   static const health = Color(0xFF16A36A);
   static const life = Color(0xFF7C4DFF);
   static const motor = Color(0xFF2F6FED);

@@ -26,15 +26,18 @@ final _historyProvider = FutureProvider.autoDispose.family<List<Answer>, String>
 );
 
 class AskScreen extends ConsumerStatefulWidget {
-  const AskScreen({super.key, required this.policyId});
+  const AskScreen({super.key, required this.policyId, this.initialQuestion});
   final String policyId;
+
+  /// Pre-filled (not sent) question, e.g. from "Ask about this" on the coverage report.
+  final String? initialQuestion;
 
   @override
   ConsumerState<AskScreen> createState() => _AskScreenState();
 }
 
 class _AskScreenState extends ConsumerState<AskScreen> {
-  final _input = TextEditingController();
+  late final _input = TextEditingController(text: widget.initialQuestion);
   final _scroll = ScrollController();
   final List<Answer> _session = [];
   String? _pending;

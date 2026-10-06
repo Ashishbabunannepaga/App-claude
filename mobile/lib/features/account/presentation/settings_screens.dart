@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/brand.dart';
 import '../../../core/config/env.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/security/app_lock.dart';
@@ -183,7 +184,7 @@ const _faqs = [
   ),
   (
     'Do you sell insurance?',
-    'No. InsureIQ helps you organise and understand the policies you already have. We do not sell or recommend '
+    'No. ${Brand.name} helps you organise and understand the policies you already have. We do not sell or recommend '
         'insurance products.',
   ),
   (
@@ -290,7 +291,7 @@ class PrivacyScreen extends ConsumerWidget {
             XFile.fromData(Uint8List.fromList(json.codeUnits), mimeType: 'application/json', name: 'my-data.json'),
           ],
           fileNameOverrides: const ['insureiq-my-data.json'],
-          subject: 'My InsureIQ data',
+          subject: 'My ${Brand.name} data',
         ),
       );
     } on ApiException catch (e) {

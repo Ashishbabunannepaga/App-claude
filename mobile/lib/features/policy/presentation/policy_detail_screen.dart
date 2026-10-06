@@ -50,6 +50,19 @@ class PolicyDetailScreen extends ConsumerWidget {
               ],
               const SizedBox(height: AppSpacing.md),
               _Actions(policy: p),
+              if (p.policyType != 'other') ...[
+                const SizedBox(height: AppSpacing.md),
+                Card(
+                  color: const Color(0xFFEFF3FA),
+                  child: ListTile(
+                    leading: const Icon(Icons.fact_check_rounded, color: AppColors.secondary),
+                    title: const Text('Coverage report', style: TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: const Text('What is covered, what has limits and what is not — item by item'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/policy/${p.id}/report'),
+                  ),
+                ),
+              ],
               if (p.policyType == 'health' || p.policyType == 'motor') _HealthCard(policyId: p.id),
               const SizedBox(height: AppSpacing.md),
               Card(

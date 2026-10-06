@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../core/brand.dart';
 import '../../core/config/env.dart';
 import '../../core/widgets/policy_card.dart';
 import '../account/presentation/settings_screens.dart';
@@ -76,7 +77,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           const Center(
-            child: Text('InsureIQ · v0.2.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            child: Text('${Brand.name} · v0.3.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
         ],
       ),

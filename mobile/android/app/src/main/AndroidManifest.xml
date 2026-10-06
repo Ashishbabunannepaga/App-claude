@@ -5,7 +5,7 @@
 
     <!-- allowBackup=false: tokens and policy data must not leave the device via cloud backup. -->
     <application
-        android:label="InsureIQ"
+        android:label="CapitUp"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:name="${applicationName}"
