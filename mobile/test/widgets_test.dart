@@ -27,7 +27,7 @@ void main() {
     await tester.pumpWidget(_wrap(PolicyCard(policy: _policy())));
     expect(find.text('Acko'), findsOneWidget);
     expect(find.text('Motor · ₹4.5 L cover'), findsOneWidget);
-    expect(find.text('Expires in 12 days'), findsOneWidget);
+    expect(find.text('Ends in 12 days'), findsOneWidget);
   });
 
   testWidgets('unverified policy asks for review', (tester) async {

@@ -115,11 +115,12 @@ void main() {
   });
 
   testWidgets('home hero greets by name and offers add + sample report', (tester) async {
-    await tester.pumpWidget(_app(const Scaffold(body: HomeHero(name: 'Asha', hasPolicies: false))));
+    await tester.pumpWidget(_app(const Scaffold(body: HomeHero(hasPolicies: false))));
     await tester.pump();
-    expect(find.text('Hi Asha, will your policy cover'), findsOneWidget);
+    expect(find.text('Will your policy cover'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 400));
     expect(find.text(heroScenarios.first), findsOneWidget);
     expect(find.text('+50'), findsOneWidget);
-    expect(find.text('SEE A SAMPLE REPORT'), findsOneWidget);
+    expect(find.text('See a sample report'), findsOneWidget);
   });
 }

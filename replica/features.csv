@@ -6,7 +6,6 @@ Scenario question cards carousel,report,should,yes,yes,each card answered from t
 Section tabs that jump to a section,report,should,yes,yes,
 Rating badge per section,report,should,yes,yes,strong / fair / weak
 Sticky add-policy bar on the sample report,report,should,yes,yes,
-Add-ons accordion,report,could,yes,partial,add-ons are a normal section for motor; no accordion
 Home hero with rotating scenario and add-policy CTA,home,must,yes,yes,
 Coins balance chip on home,rewards,should,yes,yes,
 Coin reward shown on Add policy,rewards,should,yes,yes,+50
@@ -20,3 +19,16 @@ Demo report ticker strip,home,could,yes,yes,static when reduced motion is on
 Row detail with why it matters and the policy's own words,report,should,no,yes,our addition: page reference and Ask AI about this row
 Not found in your document instead of a guess,report,must,no,yes,our addition: never marks unknown items as not covered
 Coverage report for the user's own uploaded policy,report,must,yes,yes,rule-based from extracted fields and clauses
+Skeleton loaders,experience,must,no,no,v2 G2
+Illustrated hero and service grid on Home,experience,must,yes,no,v2 G3
+Illustrated animated welcome pages,experience,must,no,no,v2 G4
+"Emergency card (policy numbers, 112, 108)",feature,must,yes,no,v2 G5; original has an emergency button
+Logo auto-trim so it is readable,experience,must,no,no,v2 G1
+Floating bottom nav with centre Add,experience,should,no,no,v2 G6
+Ask bar on Home,experience,should,no,no,v2 G7
+Tinted policy cards with validity ring,experience,should,no,no,v2 G8
+Pressable feedback and haptics,experience,should,no,no,v2 G9
+Illustrated empty states,experience,should,no,no,v2 G10
+Collapsible add-ons section,report,could,yes,no,v2 G11
+Auto-advancing scenario carousel,report,could,yes,no,v2 G12
+Animated coin-earned toast,rewards,could,no,no,v2 G13

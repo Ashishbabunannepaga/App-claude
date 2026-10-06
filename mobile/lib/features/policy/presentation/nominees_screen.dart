@@ -129,7 +129,7 @@ class NomineesScreen extends ConsumerWidget {
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                       leading: CircleAvatar(
-                        backgroundColor: const Color(0xFFE3ECFF),
+                        backgroundColor: AppColors.surfaceTint,
                         child: Text(
                           '${n.sharePercent}%',
                           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.secondary),

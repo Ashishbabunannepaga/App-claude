@@ -6,9 +6,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../../core/network/api_exception.dart';
+import '../../core/ui/art.dart';
+import '../../core/ui/pressable.dart';
+import '../../core/utils/formatters.dart';
+import '../../core/widgets/policy_card.dart';
 import '../account/data/account_repository.dart';
 import '../coverage/coverage_widgets.dart';
-import '../../core/widgets/policy_card.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
 
@@ -21,10 +24,51 @@ const heroScenarios = [
   'your family\'s future?',
 ];
 
+/// Picks one of the user's policies (skipping the sheet when there is only one) and returns its id.
+/// [types] limits the choice, e.g. {'life'} for nominees.
+Future<String?> pickPolicy(
+  BuildContext context,
+  WidgetRef ref, {
+  Set<String>? types,
+  String title = 'Which policy?',
+}) async {
+  final all = (ref.read(policiesProvider).value ?? const <Policy>[])
+      .where((p) => p.verified && p.policyType != 'other' && (types == null || types.contains(p.policyType)))
+      .toList();
+  if (all.isEmpty) return null;
+  if (all.length == 1) return all.first.id;
+  return showModalBottomSheet<String>(
+    context: context,
+    showDragHandle: true,
+    builder: (_) => SafeArea(
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+          ),
+          for (final p in all)
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: AppColors.tintForPolicyType(p.policyType),
+                child: Icon(policyIcon(p.policyType), color: AppColors.forPolicyType(p.policyType)),
+              ),
+              title: Text(p.displayName),
+              subtitle: Text(p.planName ?? policyTypeLabel(p.policyType)),
+              onTap: () => Navigator.pop(context, p.id),
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// The dark hero panel at the top of Home: rotating question, illustration and the main action.
 class HomeHero extends ConsumerStatefulWidget {
-  const HomeHero({super.key, required this.name, required this.hasPolicies});
-  final String name;
+  const HomeHero({super.key, required this.hasPolicies, this.summary});
   final bool hasPolicies;
+  final PortfolioSummary? summary;
 
   @override
   ConsumerState<HomeHero> createState() => _HomeHeroState();
@@ -38,8 +82,8 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _timer?.cancel();
-    if (!MediaQuery.of(context).disableAnimations) {
-      _timer = Timer.periodic(const Duration(milliseconds: 2600), (_) {
+    if (!(MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
+      _timer = Timer.periodic(const Duration(milliseconds: 2800), (_) {
         if (mounted) setState(() => _i = (_i + 1) % heroScenarios.length);
       });
     }
@@ -51,131 +95,108 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
     super.dispose();
   }
 
-  Future<void> _openOwnReport() async {
-    final policies = (ref.read(policiesProvider).value ?? const <Policy>[])
-        .where((p) => p.verified && p.policyType != 'other')
-        .toList();
-    if (policies.length == 1) {
-      context.push('/policy/${policies.first.id}/report');
-      return;
-    }
-    if (policies.isEmpty) {
-      context.go('/portfolio');
-      return;
-    }
-    final id = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
-      builder: (_) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
-              child: Text('Which policy?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-            ),
-            for (final p in policies)
-              ListTile(
-                leading: Icon(policyIcon(p.policyType), color: AppColors.forPolicyType(p.policyType)),
-                title: Text(p.displayName),
-                subtitle: Text(p.planName ?? p.policyType),
-                onTap: () => Navigator.pop(context, p.id),
-              ),
-          ],
-        ),
-      ),
-    );
-    if (id != null && mounted) context.push('/policy/$id/report');
+  Future<void> _openReport() async {
+    final id = await pickPolicy(context, ref);
+    if (!mounted) return;
+    id == null ? context.go('/portfolio') : context.push('/policy/$id/report');
   }
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.name.isEmpty ? 'there' : widget.name;
+    final s = widget.summary;
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFE6EEFF), Color(0xFFF7F9FD)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+          colors: [AppColors.ink, Color(0xFF0E4F52)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        boxShadow: AppShadows.lift,
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
+      child: Stack(
         children: [
+          Positioned(right: -30, top: -26, child: SceneArt(Scene.shield, size: 190)),
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.md),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Hi $name, will your policy cover',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, height: 1.2),
+                SizedBox(
+                  width: 190,
+                  child: Text(
+                    'Will your policy cover',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      height: 1.15,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 350),
                   transitionBuilder: (child, a) => FadeTransition(
                     opacity: a,
                     child: SlideTransition(
-                      position: Tween(begin: const Offset(0, 0.3), end: Offset.zero).animate(a),
+                      position: Tween(begin: const Offset(0, 0.4), end: Offset.zero).animate(a),
                       child: child,
                     ),
                   ),
                   child: Container(
                     key: ValueKey(_i),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                    decoration: BoxDecoration(color: const Color(0xFFBDF0D3), borderRadius: BorderRadius.circular(6)),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
                     child: Text(
                       heroScenarios[_i],
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF0B5A36)),
+                      style: const TextStyle(color: AppColors.ink, fontSize: 20, fontWeight: FontWeight.w800),
                     ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                if (widget.hasPolicies) ...[
+                if (widget.hasPolicies && s != null) ...[
+                  Row(
+                    children: [
+                      _Stat('Health', formatInrCompact(s.healthCover)),
+                      _Stat('Life', formatInrCompact(s.lifeCover)),
+                      _Stat('Per year', formatInrCompact(s.totalAnnualPremium)),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
                   FilledButton.icon(
-                    onPressed: _openOwnReport,
+                    style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.ink),
+                    onPressed: _openReport,
                     icon: const Icon(Icons.fact_check_rounded),
                     label: const Text('See your coverage report'),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextButton.icon(
-                    onPressed: () => context.push('/add'),
-                    icon: const Icon(Icons.add_rounded),
-                    label: const Text('Add another policy'),
-                  ),
                 ] else ...[
                   FilledButton(
-                    style: FilledButton.styleFrom(backgroundColor: AppColors.secondary),
+                    style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.ink),
                     onPressed: () => context.push('/add'),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Add policy'),
+                        Flexible(child: Text('Add a policy', overflow: TextOverflow.ellipsis)),
                         SizedBox(width: AppSpacing.sm),
-                        CoinChip('+50', dark: true),
+                        CoinChip('+50'),
                       ],
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      backgroundColor: AppColors.textPrimary,
                       foregroundColor: Colors.white,
-                      side: BorderSide.none,
+                      side: const BorderSide(color: Color(0x66FFFFFF), width: 1.5),
                     ),
                     onPressed: () => context.push('/report/sample'),
-                    child: const Text('SEE A SAMPLE REPORT', style: TextStyle(letterSpacing: 0.8)),
+                    child: const Text('See a sample report'),
                   ),
                 ],
               ],
             ),
-          ),
-          InkWell(
-            onTap: () => context.push('/report/sample'),
-            child: const _Ticker(text: 'SAMPLE REPORT  •  WHAT YOUR POLICY REALLY COVERS  •  '),
           ),
         ],
       ),
@@ -183,61 +204,114 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
   }
 }
 
-/// A slow, endless ticker strip. Static when the system asks for reduced motion.
-class _Ticker extends StatefulWidget {
-  const _Ticker({required this.text});
-  final String text;
+class _Stat extends StatelessWidget {
+  const _Stat(this.label, this.value);
+  final String label;
+  final String value;
 
   @override
-  State<_Ticker> createState() => _TickerState();
+  Widget build(BuildContext context) => Expanded(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+        ),
+        Text(label, style: const TextStyle(color: Color(0xCCFFFFFF), fontSize: 12)),
+      ],
+    ),
+  );
 }
 
-class _TickerState extends State<_Ticker> with SingleTickerProviderStateMixin {
-  late final _controller = AnimationController(vsync: this, duration: const Duration(seconds: 14));
+/// "Ask about your cover" bar. Opens the assistant for one of the user's policies.
+class AskBar extends ConsumerWidget {
+  const AskBar({super.key});
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    MediaQuery.of(context).disableAnimations ? _controller.stop() : _controller.repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const style = TextStyle(color: AppColors.errorText, fontWeight: FontWeight.w800, letterSpacing: 3, fontSize: 13);
-    final painter = TextPainter(
-      text: TextSpan(text: widget.text, style: style),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    final w = painter.width;
-    return Semantics(
-      button: true,
-      label: 'See a sample report',
-      excludeSemantics: true,
-      child: Container(
-        height: 36,
-        color: const Color(0xFFFFEFEF),
-        child: ClipRect(
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (_, _) => OverflowBox(
-              maxWidth: double.infinity,
-              alignment: Alignment.centerLeft,
-              child: Transform.translate(
-                offset: Offset(-w * _controller.value, 0),
-                child: Row(children: [for (var i = 0; i < 4; i++) Text(widget.text, style: style)]),
-              ),
+  Widget build(BuildContext context, WidgetRef ref) => Pressable(
+    semanticLabel: 'Ask about your cover',
+    onTap: () async {
+      final id = await pickPolicy(context, ref, title: 'Ask about which policy?');
+      if (!context.mounted) return;
+      if (id == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Add a policy first, then you can ask questions about it.')));
+        return;
+      }
+      context.push('/policy/$id/ask');
+    },
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppSpacing.radius),
+        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
+          SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              'Ask about your cover: "Is my room rent capped?"',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: AppColors.textSecondary),
             ),
           ),
-        ),
+          Icon(Icons.mic_none_rounded, color: AppColors.textSecondary),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+/// One illustrated tile in the services grid.
+class ServiceTile extends StatelessWidget {
+  const ServiceTile({super.key, required this.icon, required this.label, required this.color, required this.onTap});
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Pressable(
+    onTap: onTap,
+    semanticLabel: label,
+    child: Column(
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(22)),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                right: 6,
+                top: 6,
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(color: color.withValues(alpha: 0.2), shape: BoxShape.circle),
+                ),
+              ),
+              Icon(icon, color: color, size: 30),
+            ],
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, height: 1.15),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Request a call with an insurance expert. Goes to the support queue (category expert_review).
@@ -290,46 +364,37 @@ class ExpertReviewCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Card(
-    color: const Color(0xFFF1F0FF),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(AppSpacing.radius),
-      onTap: () => _request(context, ref),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 26,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.support_agent_rounded, color: AppColors.life, size: 28),
+  Widget build(BuildContext context, WidgetRef ref) => Pressable(
+    onTap: () => _request(context, ref),
+    child: Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDEAFB),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 28,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.support_agent_rounded, color: AppColors.life, size: 30),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Talk to an expert', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                SizedBox(height: 2),
+                Text(
+                  'A 30-minute walk through your cover and what to do next. No selling.',
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('30-minute policy review', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-                  const SizedBox(height: 2),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(color: AppColors.accent, borderRadius: BorderRadius.circular(6)),
-                    child: const Text(
-                      'ONE-ON-ONE',
-                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                  const Text(
-                    'Talk to an expert about your cover and clear next steps. No selling.',
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-            const Icon(Icons.chevron_right_rounded),
-          ],
-        ),
+          ),
+          const Icon(Icons.arrow_forward_rounded),
+        ],
       ),
     ),
   );

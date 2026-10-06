@@ -1,0 +1,5 @@
+{
+  "avoid": ["CoverSure", "Cover Sure", "Coversure"],
+  "domains": ["coversure.in", "coversure.com", "coversure.app"],
+  "colors": []
+}

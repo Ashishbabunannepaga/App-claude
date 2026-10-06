@@ -207,7 +207,7 @@ class _ScenarioCarouselState extends State<_ScenarioCarousel> {
   Widget build(BuildContext context) {
     final n = widget.scenarios.length;
     return Container(
-      color: const Color(0xFFEFF3FA),
+      color: AppColors.surfaceTint,
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Column(
         children: [

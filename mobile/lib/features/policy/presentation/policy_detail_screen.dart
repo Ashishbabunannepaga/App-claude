@@ -39,7 +39,7 @@ class PolicyDetailScreen extends ConsumerWidget {
               if (!p.verified) ...[
                 const SizedBox(height: AppSpacing.md),
                 Card(
-                  color: const Color(0xFFFFF7E6),
+                  color: AppColors.warningTint,
                   child: ListTile(
                     leading: const Icon(Icons.fact_check_rounded, color: AppColors.warning),
                     title: const Text('Please review the extracted details'),
@@ -53,7 +53,7 @@ class PolicyDetailScreen extends ConsumerWidget {
               if (p.policyType != 'other') ...[
                 const SizedBox(height: AppSpacing.md),
                 Card(
-                  color: const Color(0xFFEFF3FA),
+                  color: AppColors.surfaceTint,
                   child: ListTile(
                     leading: const Icon(Icons.fact_check_rounded, color: AppColors.secondary),
                     title: const Text('Coverage report', style: TextStyle(fontWeight: FontWeight.w600)),

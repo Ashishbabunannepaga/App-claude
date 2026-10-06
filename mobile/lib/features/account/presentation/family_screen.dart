@@ -76,7 +76,7 @@ class _MemberCard extends StatelessWidget {
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         leading: CircleAvatar(
-          backgroundColor: const Color(0xFFE3ECFF),
+          backgroundColor: AppColors.surfaceTint,
           child: Icon(relationIcon(member.relation), color: AppColors.secondary),
         ),
         title: Text(member.fullName, style: const TextStyle(fontWeight: FontWeight.w600)),
