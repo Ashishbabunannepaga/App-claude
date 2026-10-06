@@ -123,14 +123,14 @@ class _ValidityRing extends StatelessWidget {
     return Semantics(
       label: d > 0 ? '$d days left' : 'Expired',
       child: SizedBox(
-        width: 52,
-        height: 52,
+        width: 60,
+        height: 60,
         child: Stack(
           alignment: Alignment.center,
           children: [
             CircularProgressIndicator(
               value: fraction,
-              strokeWidth: 5,
+              strokeWidth: 4.5,
               strokeCap: StrokeCap.round,
               backgroundColor: AppColors.border,
               color: color,
@@ -143,11 +143,12 @@ class _ValidityRing extends StatelessWidget {
                     d > 99 ? '99+' : '$d',
                     style: TextStyle(
                       fontSize: 13,
+                      height: 1.05,
                       fontWeight: FontWeight.w800,
                       color: urgent ? AppColors.warningText : AppColors.textPrimary,
                     ),
                   ),
-                  const Text('days', style: TextStyle(fontSize: 8, color: AppColors.textSecondary)),
+                  const Text('days', style: TextStyle(fontSize: 9, height: 1.1, color: AppColors.textSecondary)),
                 ],
               ),
             ),

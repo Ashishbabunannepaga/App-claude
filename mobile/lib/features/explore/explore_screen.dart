@@ -12,7 +12,7 @@ class ExploreScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Explore')),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 128),
         children: [
           const SectionHeader('Claim guides'),
           for (final entry in claimGuides.entries)

@@ -41,7 +41,8 @@ class _PressableState extends State<Pressable> {
           scale: _down && !reduce ? widget.scale : 1,
           duration: const Duration(milliseconds: 110),
           curve: Curves.easeOut,
-          child: widget.child,
+          // With an explicit label, hide the visual text from the tree so it is not read twice.
+          child: widget.semanticLabel == null ? widget.child : ExcludeSemantics(child: widget.child),
         ),
       ),
     );

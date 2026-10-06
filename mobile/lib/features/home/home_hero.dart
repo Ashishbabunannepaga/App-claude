@@ -117,7 +117,7 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
       ),
       child: Stack(
         children: [
-          Positioned(right: -30, top: -26, child: SceneArt(Scene.shield, size: 190)),
+          Positioned(right: -22, top: -18, child: SceneArt(Scene.shield, size: 180, backdrop: false)),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
@@ -255,7 +255,7 @@ class AskBar extends ConsumerWidget {
           SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Ask about your cover: "Is my room rent capped?"',
+              'Ask anything about your cover',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: AppColors.textSecondary),

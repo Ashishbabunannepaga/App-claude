@@ -151,6 +151,13 @@ If a check fails, read the **first** error message; it usually names the file an
   (`recon.md`, `features.csv`, `parity.md`, `fixes.md`, `design/tokens.json`). They copy *what an app does*, never
   its logo, text or artwork.
 
+### Design system (v2)
+
+Colours, radii and shadows live in `mobile/lib/app/theme/app_colors.dart` (mirrors `replica/design/tokens.json`).
+Reusable pieces: `core/ui/pressable.dart` (touch feedback), `core/ui/skeleton.dart` (loading shimmer),
+`core/ui/art.dart` (illustrations drawn in code), `core/brand.dart` (logo, auto-trimmed).
+Change a colour once in `app_colors.dart` and the whole app follows.
+
 ## 9. Glossary
 
 | Word | Meaning |

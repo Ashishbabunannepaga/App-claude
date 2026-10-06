@@ -9,10 +9,13 @@ import '../../app/theme/app_colors.dart';
 enum Scene { organise, ask, remind, family, empty, shield }
 
 class SceneArt extends StatefulWidget {
-  const SceneArt(this.scene, {super.key, this.size = 220, this.animate = true});
+  const SceneArt(this.scene, {super.key, this.size = 220, this.animate = true, this.backdrop = true});
   final Scene scene;
   final double size;
   final bool animate;
+
+  /// The soft disc behind the scene. Turn off on dark panels.
+  final bool backdrop;
 
   @override
   State<SceneArt> createState() => _SceneArtState();
@@ -41,16 +44,17 @@ class _SceneArtState extends State<SceneArt> with SingleTickerProviderStateMixin
       height: widget.size,
       child: AnimatedBuilder(
         animation: _c,
-        builder: (_, _) => CustomPaint(painter: _ScenePainter(widget.scene, _c.value)),
+        builder: (_, _) => CustomPaint(painter: _ScenePainter(widget.scene, _c.value, widget.backdrop)),
       ),
     ),
   );
 }
 
 class _ScenePainter extends CustomPainter {
-  _ScenePainter(this.scene, this.t);
+  _ScenePainter(this.scene, this.t, this.backdrop);
   final Scene scene;
   final double t;
+  final bool backdrop;
 
   // Soft vertical bob for element [i].
   double _bob(int i, double amp) => math.sin((t + i * 0.23) * 2 * math.pi) * amp;
@@ -60,7 +64,7 @@ class _ScenePainter extends CustomPainter {
     final s = size.width;
     canvas.save();
     canvas.scale(s / 220);
-    _backdrop(canvas);
+    if (backdrop) _backdrop(canvas);
     switch (scene) {
       case Scene.organise:
         _organise(canvas);
@@ -175,7 +179,7 @@ class _ScenePainter extends CustomPainter {
   }
 
   void _backdrop(Canvas c) {
-    c.drawCircle(const Offset(110, 112), 92, _p(AppColors.surfaceTint));
+    c.drawCircle(const Offset(110, 112), 92, _p(const Color(0x99FFFFFF)));
     c.drawCircle(const Offset(36, 52), 14, _p(AppColors.goldTint));
     c.drawCircle(const Offset(188, 178), 10, _p(AppColors.surfaceTint));
     _sparkle(c, Offset(186, 46 + _bob(1, 2)), 9, AppColors.gold);
@@ -326,5 +330,5 @@ class _ScenePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_ScenePainter old) => old.t != t || old.scene != scene;
+  bool shouldRepaint(_ScenePainter old) => old.t != t || old.scene != scene || old.backdrop != backdrop;
 }

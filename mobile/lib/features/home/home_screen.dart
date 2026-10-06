@@ -107,12 +107,29 @@ class _Header extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final balance = ref.watch(rewardsProvider).value?.balance;
     final count = ref.watch(unreadCountProvider).value ?? 0;
+    ref.listen(rewardsProvider, (prev, next) {
+      final before = prev?.value?.balance, after = next.value?.balance;
+      if (before != null && after != null && after > before) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.ink,
+            content: Row(
+              children: [
+                const CoinIcon(size: 26),
+                const SizedBox(width: 10),
+                Text('+${after - before} coins earned', style: const TextStyle(fontWeight: FontWeight.w800)),
+              ],
+            ),
+          ),
+        );
+      }
+    });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const BrandLogo(height: 40),
+            const BrandLogo(height: 38),
             const Spacer(),
             Pressable(
               semanticLabel: 'Coins: ${balance ?? 0}. Open rewards',
