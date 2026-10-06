@@ -102,7 +102,7 @@ the change appears on the phone in about a second without losing your place.
 ### Without installing anything: download the APK from GitHub
 GitHub → repository → **Actions** → *Android APK* → **Run workflow** → enter your backend URL → wait ~10 min →
 open the run → download **insureiq-apk** → copy the `.apk` to an Android phone → open it
-(allow "install unknown apps"). This needs a backend reachable from the internet (see §9).
+(allow "install unknown apps"). This needs a backend reachable from the internet (see §10).
 
 ### iPhone
 Requires a Mac with Xcode: `cd mobile && open ios/Runner.xcworkspace`, choose your Apple ID under
@@ -140,7 +140,18 @@ git push                                  # 6. share it — GitHub Actions re-ru
 
 If a check fails, read the **first** error message; it usually names the file and line.
 
-## 8. Glossary
+## 8. Branding and the replica skills
+
+- **Logo:** save the CapitUp logo as `mobile/assets/brand/logo.png` (transparent PNG, ~600 px wide), then run the
+  app again (a full restart, `R`, because assets aren't hot-reloaded). Without it the app shows a text wordmark.
+- **App name** lives in `mobile/lib/core/brand.dart`, `android/app/src/main/AndroidManifest.xml` (`android:label`)
+  and `ios/Runner/Info.plist` (`CFBundleDisplayName`).
+- **Replica skills** (clean-room app cloning) are installed in `.claude/skills/replica-*`. Open Claude Code in this
+  repository and type `/replica-recon`, `/replica-diff`, … The results of the first run are in `replica/`
+  (`recon.md`, `features.csv`, `parity.md`, `fixes.md`, `design/tokens.json`). They copy *what an app does*, never
+  its logo, text or artwork.
+
+## 9. Glossary
 
 | Word | Meaning |
 |---|---|
@@ -158,7 +169,7 @@ If a check fails, read the **first** error message; it usually names the file an
 | **CI** | Continuous integration: GitHub automatically runs all tests on every push. |
 | **Hot reload** | Instantly applying code changes to the running app. |
 
-## 9. Going live (summary)
+## 10. Going live (summary)
 
 1. Host the backend (e.g. AWS Mumbai region or Render/Railway for the beta) with a real database and storage bucket.
 2. Set the production settings listed in the README (*Needs your accounts / keys before launch*). The server refuses
@@ -166,7 +177,7 @@ If a check fails, read the **first** error message; it usually names the file an
 3. Build the store versions: `flutter build appbundle` (Android) and archive in Xcode (iOS).
 4. Fill in the store listings, privacy forms and screenshots (`tools/demo/` can regenerate screenshots).
 
-## 10. Working with Claude effectively
+## 11. Working with Claude effectively
 
 - Ask for **one feature or fix at a time**, and say who it's for and what "done" looks like.
 - When something breaks, paste the **exact error text** or a screenshot, plus what you did just before.

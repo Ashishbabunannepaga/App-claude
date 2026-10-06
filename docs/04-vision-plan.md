@@ -31,6 +31,8 @@ Legend: ✅ built · 🟡 partly built · 🔜 next (code only) · 🤝 needs pa
 | Capability | Status | Notes |
 |---|---|---|
 | Coverage-gap insights | ✅ | Product-neutral; never names or ranks products |
+| Coverage report (item-by-item checklist with page refs) | ✅ | Sample report for new users; feature map in `replica/` |
+| Rewards (coins) | 🟡 | Ledger + earning built; redemption perks need partners 🤝 |
 | Renewal tracking & reminders | ✅ | Prediction of lapse risk needs usage data 🤝 |
 | Nominee management & family support | ✅ | Nominee records, minor/appointee, "if something happens" guide; secure nominee access 🔜 |
 | Comparison of the user's own policies | ✅ | |

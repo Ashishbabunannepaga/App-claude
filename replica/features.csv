@@ -1,0 +1,22 @@
+feature,area,priority,original,clone,notes
+Coverage report with sections and covered / not covered rows,report,must,yes,yes,health life motor from the user's own document
+Sample (demo) report before adding a policy,report,must,yes,yes,fictional sample data per type
+Health / Life / Motor switch on the sample report,report,must,yes,yes,
+Scenario question cards carousel,report,should,yes,yes,each card answered from the report rows and jumps to the row
+Section tabs that jump to a section,report,should,yes,yes,
+Rating badge per section,report,should,yes,yes,strong / fair / weak
+Sticky add-policy bar on the sample report,report,should,yes,yes,
+Add-ons accordion,report,could,yes,partial,add-ons are a normal section for motor; no accordion
+Home hero with rotating scenario and add-policy CTA,home,must,yes,yes,
+Coins balance chip on home,rewards,should,yes,yes,
+Coin reward shown on Add policy,rewards,should,yes,yes,+50
+Coins wallet with earn / use toggle,rewards,should,yes,yes,
+Redeem coins for wellness plan or gift cards,rewards,could,yes,skip,needs partner deals; perks shown as coming soon
+Coin to rupee value,rewards,could,yes,skip,coins have no cash value (Insurance Act s.41 inducement risk)
+Notification soft-ask before OS prompt,engagement,should,yes,yes,only when push is configured
+Request an expert policy review,services,should,yes,yes,support category expert_review
+Buy insurance tab,commerce,could,yes,skip,needs an IRDAI licence or licensed partner
+Demo report ticker strip,home,could,yes,yes,static when reduced motion is on
+Row detail with why it matters and the policy's own words,report,should,no,yes,our addition: page reference and Ask AI about this row
+Not found in your document instead of a guess,report,must,no,yes,our addition: never marks unknown items as not covered
+Coverage report for the user's own uploaded policy,report,must,yes,yes,rule-based from extracted fields and clauses

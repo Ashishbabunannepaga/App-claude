@@ -1,6 +1,7 @@
-# InsureIQ — AI-powered personal insurance intelligence
+# CapitUp — AI-powered personal insurance intelligence
 
-> Working codename. Replace the name, bundle IDs (`com.insureiq.insureiq`) and branding before store submission.
+> Brand: CapitUp (`mobile/lib/core/brand.dart`). Drop the logo into `mobile/assets/brand/logo.png`; until then the app
+> draws a text wordmark. The bundle ID is still `com.insureiq.insureiq` (change it before the first store upload).
 
 A cross-platform (Android + iOS) app that lets people keep all their insurance policies in one place, understand what they are covered for, ask questions answered **from their own policy document**, and never miss a renewal.
 
@@ -21,6 +22,7 @@ V1 core loop: **Add policy → Read → Understand → Ask → Track → Renew**
 |---|---|---|---|
 | ![Home](docs/screenshots/04-home.png) | ![Policy](docs/screenshots/07-policy-detail.png) | ![Ask AI](docs/screenshots/12-ask-ai.png) | ![Policy health](docs/screenshots/10-policy-health.png) |
 | ![Portfolio](docs/screenshots/06-portfolio.png) | ![Verify](docs/screenshots/19-verify-extracted.png) | ![Renewal](docs/screenshots/15-renewal.png) | ![Family](docs/screenshots/22-family.png) |
+| ![New user home](docs/screenshots/39-home-new-user.png) | ![Sample report](docs/screenshots/41-sample-report-health.png) | ![Coverage report](docs/screenshots/52-coverage-report-own-more.png) | ![Rewards](docs/screenshots/49-rewards-earn.png) |
 
 All screens: [`docs/screenshots/`](docs/screenshots). They are captured from the Flutter web build at phone size against
 the real backend in demo mode (offline mock AI, labelled "Demo mode · offline AI" in the app). Regenerate with
@@ -57,6 +59,10 @@ the real backend in demo mode (offline mock AI, labelled "Demo mode · offline A
 | Own-AI foundations: PaddleOCR, self-hosted bge-m3 embeddings, ML worker image (Python 3.10.11) | ✅ code + tests; models not downloaded here |
 | Exact version pins (`requirements.txt`, `requirements.lock`, `pubspec.lock`) | ✅ |
 | Installable test APK built by GitHub Actions | ✅ Actions → *Android APK* |
+| **Coverage report** — essentials / important / extras checklist per health, life & motor policy, with page refs; "not found" instead of guesses | ✅ rule-based |
+| **Sample report** for new users (health, life, motor) + everyday-question cards | ✅ |
+| **Coins rewards** for organising (profile, policies, family, nominees, first question); no cash value | ✅ perks "coming soon" |
+| Notification soft-ask before the OS prompt; expert policy-review request | ✅ |
 
 ### Needs your accounts / keys before launch
 
