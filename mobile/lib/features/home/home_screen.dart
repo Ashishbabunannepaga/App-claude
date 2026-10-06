@@ -29,11 +29,12 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 96,
+        toolbarHeight: 64,
         leading: const Padding(
           padding: EdgeInsets.only(left: AppSpacing.md),
           child: Center(child: _Coins()),
         ),
-        title: const BrandLogo(height: 26),
+        title: const BrandLogo(height: 34),
         centerTitle: true,
         actions: [
           const _Bell(),
