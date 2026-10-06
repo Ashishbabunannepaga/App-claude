@@ -65,7 +65,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               padding: const EdgeInsets.only(left: AppSpacing.lg),
               child: Row(
                 children: [
-                  const BrandLogo(height: 44),
+                  const BrandLogo(height: 72),
                   const Spacer(),
                   TextButton(
                     onPressed: () => ref.read(onboardingDoneProvider.notifier).complete(),
