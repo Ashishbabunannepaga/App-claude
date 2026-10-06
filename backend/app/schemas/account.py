@@ -38,5 +38,5 @@ class NotificationOut(BaseModel):
 
 
 class SupportIn(BaseModel):
-    category: Literal["question", "problem", "feedback", "privacy", "grievance"]
+    category: Literal["question", "problem", "feedback", "privacy", "grievance", "expert_review"]
     message: str = Field(min_length=5, max_length=4000)

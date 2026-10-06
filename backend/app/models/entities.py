@@ -265,3 +265,17 @@ class PolicyClause(Base):
     page: Mapped[int | None] = mapped_column(Integer)
     section: Mapped[str | None] = mapped_column(String(200))
     order: Mapped[int] = mapped_column(Integer)
+
+
+class RewardEvent(Base):
+    """Coin ledger. One row per earned reward; (user, kind, ref) is unique so rewards are never doubled."""
+
+    __tablename__ = "reward_events"
+    __table_args__ = (UniqueConstraint("user_id", "kind", "ref", name="uq_reward_event"),)
+
+    id: Mapped[uuid.UUID] = _uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(30))
+    ref: Mapped[str] = mapped_column(String(64), default="")
+    coins: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

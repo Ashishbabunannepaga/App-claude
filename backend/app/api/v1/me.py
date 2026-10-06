@@ -43,7 +43,7 @@ def export_my_data(user: CurrentUser, db: DB, request: Request) -> dict:
     (downloadable individually via signed URLs)."""
     from sqlalchemy import select
 
-    from app.models import FamilyMember, Notification, Policy, QaMessage
+    from app.models import FamilyMember, Notification, Policy, QaMessage, RewardEvent
     from app.services.policy_service import to_out
 
     audit(db, "data_exported", user.id, ip=client_ip(request))
@@ -63,5 +63,9 @@ def export_my_data(user: CurrentUser, db: DB, request: Request) -> dict:
         "notifications": [
             {"title": n.title, "body": n.body, "created_at": n.created_at}
             for n in db.scalars(select(Notification).where(Notification.user_id == user.id))
+        ],
+        "rewards": [
+            {"kind": r.kind, "coins": r.coins, "created_at": r.created_at}
+            for r in db.scalars(select(RewardEvent).where(RewardEvent.user_id == user.id))
         ],
     }
