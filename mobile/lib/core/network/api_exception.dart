@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+
+import '../config/env.dart';
 
 /// A user-presentable error. `code` mirrors the backend's stable error codes.
 class ApiException implements Exception {
@@ -23,10 +26,15 @@ class ApiException implements Exception {
     return switch (e.type) {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
-      DioExceptionType.receiveTimeout => ApiException('timeout', 'The connection timed out. Please try again.'),
+      DioExceptionType.receiveTimeout => ApiException(
+        'timeout',
+        'The connection timed out. Please try again.${kDebugMode ? '\nTrying: ${Env.apiBaseUrl}' : ''}',
+      ),
       DioExceptionType.connectionError => ApiException(
         'offline',
-        'Can\'t reach the server. Check your internet connection.',
+        // Debug builds also show the address being tried, which makes "wrong server address" obvious.
+        'Can\'t reach the server. Check your internet connection.'
+            '${kDebugMode ? '\nTrying: ${Env.apiBaseUrl}' : ''}',
       ),
       _ => ApiException('error', 'Something went wrong. Please try again.', statusCode: e.response?.statusCode),
     };
