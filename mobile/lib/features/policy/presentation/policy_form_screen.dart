@@ -164,7 +164,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
           children: [
             if (widget.mode == PolicyFormMode.verify)
               Card(
-                color: const Color(0xFFFFF7E6),
+                color: AppColors.warningTint,
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: Text(

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../network/api_exception.dart';
+import '../ui/art.dart';
+import '../ui/skeleton.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key, this.message});
@@ -62,11 +64,7 @@ class EmptyView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            radius: 36,
-            backgroundColor: const Color(0xFFE3ECFF),
-            child: Icon(icon, size: 36, color: AppColors.secondary),
-          ),
+          const SceneArt(Scene.empty, size: 180),
           const SizedBox(height: AppSpacing.md),
           Text(title, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center),
           const SizedBox(height: AppSpacing.sm),
@@ -92,7 +90,7 @@ class AsyncValueView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => value.when(
     data: data,
-    loading: () => const LoadingView(),
+    loading: () => const PageSkeleton(),
     error: (e, _) => ErrorView(error: e, onRetry: onRetry),
   );
 }

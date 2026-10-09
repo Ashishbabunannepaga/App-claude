@@ -45,7 +45,7 @@ Legend: ✅ built · 🟡 partly built · 🔜 next (code only) · 🤝 needs pa
 |---|---|---|
 | Hospitals (network lookup, cashless) | 🤝 | Insurer/TPA network data or partnership APIs |
 | Garages (cashless motor repair) | 🤝 | Insurer network data / partnerships |
-| Emergency workflows | 🔜 | One-tap emergency card: policy numbers, helplines, nearest steps — no partner needed |
+| Emergency workflows | 🟡 | Emergency card built (112 / 108, policy numbers to copy). Nearest-hospital lookup needs partner data 🤝 |
 | Document verification (DigiLocker) | 🤝 | DigiLocker partner onboarding |
 | Claim pipelines with insurers | 🤝 | Insurer APIs / Bima Sugam when available |
 

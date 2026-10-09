@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 final _inr = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 final _date = DateFormat('d MMM yyyy', 'en_IN');
+final _short = DateFormat('d MMM', 'en_IN');
 
 String formatInr(num? value) => value == null ? '—' : _inr.format(value);
 
@@ -16,6 +17,9 @@ String formatInrCompact(num? value) {
 
 /// 125000 → "1,25,000" (Indian digit grouping).
 String formatIndianNumber(num value) => NumberFormat.decimalPattern('en_IN').format(value);
+
+/// "22 Oct"
+String formatShortDate(DateTime? d) => d == null ? '—' : _short.format(d);
 
 String formatDate(DateTime? d) => d == null ? '—' : _date.format(d);
 

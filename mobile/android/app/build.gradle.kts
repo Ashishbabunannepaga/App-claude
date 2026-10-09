@@ -30,6 +30,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Lets the v1 (CoverSure-style) demo and this v2 demo be installed on the same phone at once.
+            applicationIdSuffix = ".v2"
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.

@@ -27,7 +27,7 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 128),
         children: [
           Card(
             child: ListTile(
@@ -77,7 +77,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           const Center(
-            child: Text('${Brand.name} · v0.3.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            child: Text('${Brand.name} · v0.4.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
         ],
       ),

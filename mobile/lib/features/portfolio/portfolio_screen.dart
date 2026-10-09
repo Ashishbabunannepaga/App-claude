@@ -32,27 +32,27 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/add'),
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Add policy'),
-      ),
       body: AsyncValueView(
         value: policies,
         onRetry: () => invalidatePolicies(ref),
         data: (all) {
           if (all.isEmpty) {
-            return const EmptyView(
+            return EmptyView(
               icon: Icons.folder_open_rounded,
-              title: 'No policies yet',
-              message: 'Add your health, life and motor policies to see them all in one place.',
+              title: 'Nothing here yet',
+              message: 'Add your health, life and motor policies and they will all live here.',
+              action: FilledButton.icon(
+                onPressed: () => context.push('/add'),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Add a policy'),
+              ),
             );
           }
           final shown = _filter == null ? all : all.where((p) => p.policyType == _filter).toList();
           return RefreshIndicator(
             onRefresh: () async => invalidatePolicies(ref),
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, 96),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, 128),
               children: [
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,

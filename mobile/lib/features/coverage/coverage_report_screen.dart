@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -196,9 +198,26 @@ class _ScenarioCarousel extends StatefulWidget {
 class _ScenarioCarouselState extends State<_ScenarioCarousel> {
   final _controller = PageController(viewportFraction: 0.86);
   int _page = 0;
+  Timer? _timer;
+  DateTime _lastTouch = DateTime.fromMillisecondsSinceEpoch(0);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _timer?.cancel();
+    if (!(MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
+      _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+        // Pause for a while after the user swipes or taps.
+        if (!mounted || DateTime.now().difference(_lastTouch) < const Duration(seconds: 10)) return;
+        final next = (_page + 1) % widget.scenarios.length;
+        _controller.animateToPage(next, duration: const Duration(milliseconds: 400), curve: Curves.easeOutCubic);
+      });
+    }
+  }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
   }
@@ -207,19 +226,22 @@ class _ScenarioCarouselState extends State<_ScenarioCarousel> {
   Widget build(BuildContext context) {
     final n = widget.scenarios.length;
     return Container(
-      color: const Color(0xFFEFF3FA),
+      color: AppColors.surfaceTint,
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
       child: Column(
         children: [
           SizedBox(
             height: 268,
-            child: PageView.builder(
-              controller: _controller,
-              itemCount: n,
-              onPageChanged: (i) => setState(() => _page = i),
-              itemBuilder: (_, i) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: _ScenarioCard(scenario: widget.scenarios[i], onTap: () => widget.onOpen(widget.scenarios[i])),
+            child: Listener(
+              onPointerDown: (_) => _lastTouch = DateTime.now(),
+              child: PageView.builder(
+                controller: _controller,
+                itemCount: n,
+                onPageChanged: (i) => setState(() => _page = i),
+                itemBuilder: (_, i) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: _ScenarioCard(scenario: widget.scenarios[i], onTap: () => widget.onOpen(widget.scenarios[i])),
+                ),
               ),
             ),
           ),
@@ -453,12 +475,34 @@ class _SectionView extends StatelessWidget {
         const SizedBox(height: 2),
         Text(section.subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
         const SizedBox(height: AppSpacing.sm),
-        for (final row in section.items)
-          Padding(
-            key: rowKeys[row.key],
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: _RowTile(row: row, onTap: () => onOpen(row)),
-          ),
+        if (section.key == 'add_ons')
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: EdgeInsets.zero,
+              initiallyExpanded: true,
+              title: Text(
+                '${section.items.length} add-ons',
+                style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+              ),
+              children: [
+                for (final row in section.items)
+                  Padding(
+                    key: rowKeys[row.key],
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: _RowTile(row: row, onTap: () => onOpen(row)),
+                  ),
+              ],
+            ),
+          )
+        else
+          for (final row in section.items)
+            Padding(
+              key: rowKeys[row.key],
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: _RowTile(row: row, onTap: () => onOpen(row)),
+            ),
       ],
     ),
   );

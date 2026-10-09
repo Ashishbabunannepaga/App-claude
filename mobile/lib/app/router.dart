@@ -13,6 +13,7 @@ import '../features/auth/presentation/onboarding_screen.dart';
 import '../features/auth/presentation/otp_screen.dart';
 import '../features/auth/presentation/profile_setup_screen.dart';
 import '../features/coverage/coverage_report_screen.dart';
+import '../features/emergency/emergency_screen.dart';
 import '../features/explore/explore_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/insights/insights_screen.dart';
@@ -86,6 +87,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, s) => CoverageReportScreen(initialType: s.uri.queryParameters['type'] ?? 'health'),
       ),
       GoRoute(path: '/rewards', builder: (_, _) => const RewardsScreen()),
+      GoRoute(path: '/emergency', builder: (_, _) => const EmergencyScreen()),
       GoRoute(path: '/family', builder: (_, _) => const FamilyScreen()),
       GoRoute(path: '/insights', builder: (_, _) => const InsightsScreen()),
       GoRoute(path: '/compare', builder: (_, _) => const CompareSelectScreen()),
