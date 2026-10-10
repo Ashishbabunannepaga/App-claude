@@ -129,8 +129,13 @@ class _Header extends ConsumerWidget {
       children: [
         Row(
           children: [
-            const BrandLogo(height: 38),
-            const Spacer(),
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: BrandLogo(height: 38)),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
             Pressable(
               semanticLabel: 'Coins: ${balance ?? 0}. Open rewards',
               onTap: () async {
