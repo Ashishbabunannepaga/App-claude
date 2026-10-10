@@ -45,18 +45,20 @@ class _CoverageReportScreenState extends ConsumerState<CoverageReportScreen> {
           if (widget.demo)
             Padding(
               padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm),
-              child: Row(
-                children: [
-                  for (final t in const ['health', 'life', 'motor'])
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.sm),
-                      child: _TypePill(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    for (final t in const ['health', 'life', 'motor'])
+                      _TypePill(
                         label: policyTypeLabel(t),
                         selected: t == _type,
                         onTap: () => setState(() => _type = t),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           Expanded(

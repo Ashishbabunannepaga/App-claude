@@ -25,7 +25,10 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
       backgroundColor: const Color(0xFFFFFBF0),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFF3D1),
-        title: _Toggle(earn: _earn, onChanged: (v) => setState(() => _earn = v)),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: _Toggle(earn: _earn, onChanged: (v) => setState(() => _earn = v)),
+        ),
         centerTitle: true,
       ),
       body: RefreshIndicator(
