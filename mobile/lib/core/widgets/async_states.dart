@@ -32,14 +32,16 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Padding(
+    // Scrolls instead of overflowing when text is large or the screen is short.
+    child: SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Icon(Icons.cloud_off_rounded, size: 48, color: AppColors.textSecondary),
           const SizedBox(height: AppSpacing.md),
-          Text(errorMessage(error), textAlign: TextAlign.center),
+          // Announced by screen readers when the error replaces the loading skeleton.
+          Semantics(liveRegion: true, child: Text(errorMessage(error), textAlign: TextAlign.center)),
           if (onRetry != null) ...[
             const SizedBox(height: AppSpacing.md),
             OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
@@ -59,7 +61,8 @@ class EmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Padding(
+    // Scrolls instead of overflowing when text is large or the screen is short.
+    child: SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,

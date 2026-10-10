@@ -129,27 +129,38 @@ class _Header extends ConsumerWidget {
       children: [
         Row(
           children: [
-            const BrandLogo(height: 38),
-            const Spacer(),
+            const Expanded(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: BrandLogo(height: 38)),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
             Pressable(
               semanticLabel: 'Coins: ${balance ?? 0}. Open rewards',
               onTap: () async {
                 await context.push('/rewards');
                 ref.invalidate(rewardsProvider);
               },
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(12, 5, 5, 5),
-                decoration: BoxDecoration(color: AppColors.goldTint, borderRadius: BorderRadius.circular(20)),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '${balance ?? 0}',
-                      style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.goldText),
+              // The visible chip stays compact; the tappable area is padded out to 48 dp.
+              child: SizedBox(
+                height: 48,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(12, 5, 5, 5),
+                    decoration: BoxDecoration(color: AppColors.goldTint, borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${balance ?? 0}',
+                          style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.goldText),
+                        ),
+                        const SizedBox(width: 6),
+                        const CoinIcon(size: 24),
+                      ],
                     ),
-                    const SizedBox(width: 6),
-                    const CoinIcon(size: 24),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -160,18 +171,24 @@ class _Header extends ConsumerWidget {
                 await context.push('/notifications');
                 ref.invalidate(unreadCountProvider);
               },
-              child: Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Badge(
-                  isLabelVisible: count > 0,
-                  label: Text('$count'),
-                  child: const Icon(Icons.notifications_none_rounded),
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: Center(
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Badge(
+                      isLabelVisible: count > 0,
+                      label: Text('$count'),
+                      child: const Icon(Icons.notifications_none_rounded),
+                    ),
+                  ),
                 ),
               ),
             ),

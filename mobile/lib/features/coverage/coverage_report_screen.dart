@@ -45,18 +45,20 @@ class _CoverageReportScreenState extends ConsumerState<CoverageReportScreen> {
           if (widget.demo)
             Padding(
               padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, AppSpacing.sm),
-              child: Row(
-                children: [
-                  for (final t in const ['health', 'life', 'motor'])
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppSpacing.sm),
-                      child: _TypePill(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: 0,
+                  children: [
+                    for (final t in const ['health', 'life', 'motor'])
+                      _TypePill(
                         label: policyTypeLabel(t),
                         selected: t == _type,
                         onTap: () => setState(() => _type = t),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           Expanded(
@@ -93,20 +95,24 @@ class _TypePill extends StatelessWidget {
     child: InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.textPrimary : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: selected ? AppColors.textPrimary : AppColors.border),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-            fontSize: 13,
+      // 4.5 dp of transparent padding inside the InkWell lifts the tap target to 48 dp without a taller pill.
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.5),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.textPrimary : AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: selected ? AppColors.textPrimary : AppColors.border),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: selected ? Colors.white : AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
           ),
         ),
       ),
@@ -375,7 +381,7 @@ class _Summary extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (report.rating != null) RatingBadge(report.rating!),
+                if (report.rating != null) ...[const SizedBox(width: AppSpacing.sm), RatingBadge(report.rating!)],
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -469,7 +475,7 @@ class _SectionView extends StatelessWidget {
                 child: Text(section.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
               ),
             ),
-            if (section.rating != null) RatingBadge(section.rating!),
+            if (section.rating != null) ...[const SizedBox(width: AppSpacing.sm), RatingBadge(section.rating!)],
           ],
         ),
         const SizedBox(height: 2),
