@@ -64,7 +64,7 @@ def retrieve(db: Session, policy_id: uuid.UUID, question: str, k: int) -> list[P
 
     Indian-language questions are expanded with English glossary terms, since wordings are English."""
     question = f"{question} {english_terms(question)}".strip()
-    [qvec] = get_embedder().embed([question])
+    qvec = get_embedder().embed_query(question)
     vector_hits = db.scalars(
         select(PolicyChunk)
         .where(PolicyChunk.policy_id == policy_id)

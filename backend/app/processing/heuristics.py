@@ -95,6 +95,11 @@ _DATE = (
     r"[a-z]*[\s\-,]+\d{4}|\d{4}-\d{2}-\d{2})"
 )
 _START = re.compile(r"(?:start|from|commencement|inception|effective)[^\n\d]{0,40}" + _DATE, re.IGNORECASE)
+# "Period of Insurance: 01/04/2026 to 31/03/2027" / "Policy period 1 Apr 2026 - 31 Mar 2027"
+_PERIOD = re.compile(
+    r"(?:period|tenure|duration|validity)[^\n\d]{0,40}" + _DATE + r"\s*(?:to|till|until|-|–)\s*" + _DATE,
+    re.IGNORECASE,
+)
 _END = re.compile(r"(?:end|to|expiry|expiring|till|valid up ?to|until)[^\n\d]{0,40}" + _DATE, re.IGNORECASE)
 _AMOUNT = r"(?:rs\.?|inr|₹)?\s*([0-9][0-9,]*(?:\.\d{1,2})?)"
 _PREMIUM = re.compile(r"(?:total\s+)?premium[^\n\d₹]{0,40}" + _AMOUNT, re.IGNORECASE)
@@ -151,8 +156,12 @@ def classify(text: str) -> str:
 
 
 def find_insurer(text: str) -> str | None:
-    lower = text.lower()
-    hits = [(lower.find(name.lower()), name) for name in KNOWN_INSURERS if name.lower() in lower]
+    # Whole words only: a bare substring test matched "LIC" inside "policy" and "public".
+    hits = []
+    for name in KNOWN_INSURERS:
+        m = re.search(rf"\b{re.escape(name)}\b", text, re.IGNORECASE)
+        if m:
+            hits.append((m.start(), name))
     return min(hits)[1] if hits else None
 
 
@@ -162,6 +171,11 @@ def find_policy_number(text: str) -> str | None:
 
 
 def find_dates(text: str) -> tuple[date | None, date | None]:
+    p = _PERIOD.search(text)
+    if p:
+        start, end = parse_date(p.group(1)), parse_date(p.group(2))
+        if start and end:
+            return start, end
     s = _START.search(text)
     e = _END.search(text, s.end() if s else 0) or _END.search(text)
     return (parse_date(s.group(1)) if s else None, parse_date(e.group(1)) if e else None)

@@ -1,7 +1,10 @@
 import json
 import re
+import time
 from abc import ABC, abstractmethod
 from typing import Any
+
+import httpx
 
 
 class AIProviderError(Exception):
@@ -38,3 +41,32 @@ def parse_json_object(text: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise AIProviderError("model returned non-object JSON")
     return value
+
+
+RETRY_STATUS = {429, 500, 502, 503, 504}
+
+
+def post_with_retry(
+    url: str, *, headers: dict[str, str], json: dict[str, Any], timeout: float, attempts: int = 3, label: str
+) -> httpx.Response:
+    """POST with retries on rate limits, server errors and network failures (1 s, 2 s backoff).
+
+    Errors name the provider and status only: the request body (policy text) and the key never reach logs.
+    """
+    for attempt in range(attempts):
+        try:
+            resp = httpx.post(url, headers=headers, json=json, timeout=timeout)
+        except httpx.TransportError as exc:
+            if attempt == attempts - 1:
+                raise AIProviderError(f"{label} request failed: {type(exc).__name__}") from exc
+        else:
+            if resp.status_code < 400:
+                return resp
+            if resp.status_code not in RETRY_STATUS or attempt == attempts - 1:
+                raise AIProviderError(f"{label} request failed: HTTP {resp.status_code}")
+            retry_after = resp.headers.get("retry-after", "")
+            if retry_after.isdigit():
+                time.sleep(min(int(retry_after), 10))
+                continue
+        time.sleep(2**attempt)
+    raise AIProviderError(f"{label} request failed")  # unreachable; keeps type checkers happy

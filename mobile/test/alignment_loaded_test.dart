@@ -126,7 +126,7 @@ void main() {
     for (final w in [320.0, 360.0, 412.0]) {
       for (final scale in [1.0, 1.3, 1.6]) {
         testWidgets('${entry.key} with data @ ${w.toInt()}px, text x$scale', (tester) async {
-          tester.view.physicalSize = Size(w, 800);
+          tester.view.physicalSize = Size(w, 2600);
           tester.view.devicePixelRatio = 1;
           addTearDown(tester.view.reset);
           await tester.pumpWidget(
@@ -163,4 +163,39 @@ void main() {
       }
     }
   }
+
+  testWidgets('home tiles add no blank gap on a phone with system insets', (tester) async {
+    tester.view.physicalSize = const Size(360, 2400); // tall, so the lazy list builds the tiles
+    tester.view.devicePixelRatio = 1;
+    tester.view.padding = const FakeViewPadding(top: 32, bottom: 120); // status bar + floating nav area
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPrefsProvider.overrideWithValue(prefs),
+          authControllerProvider.overrideWith(_SignedIn.new),
+          policiesProvider.overrideWith((ref) async => _policies),
+          portfolioProvider.overrideWith((ref) async => _portfolio()),
+          insightsProvider.overrideWith((ref) async => _insights()),
+          unreadCountProvider.overrideWith((ref) async => 3),
+          coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light(),
+          builder: (context, child) =>
+              MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+          home: const HomeScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final lastTile = tester.getRect(find.text('Emergency card'));
+    final nextSection = tester.getRect(find.text('Coming up'));
+    expect(
+      nextSection.top - lastTile.bottom,
+      lessThan(80),
+      reason: 'blank space between the tiles and the next section',
+    );
+  });
 }

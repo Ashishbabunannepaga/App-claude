@@ -69,6 +69,8 @@ def validate_extraction(raw: dict[str, Any], text: str) -> ValidatedExtraction:
                 conf = min(conf, 0.4)
         values[name], confidence[name] = value, round(conf, 3)
 
+    _plausibility(policy_type, values, confidence)
+
     start, end = values.get("start_date"), values.get("end_date")
     if start and end and start >= end:
         confidence["start_date"] = min(confidence["start_date"], 0.2)
@@ -77,6 +79,29 @@ def validate_extraction(raw: dict[str, Any], text: str) -> ValidatedExtraction:
     allowed = set(DETAIL_FIELDS[policy_type])
     details = {k: v for k, v in (raw.get("details") or {}).items() if k in allowed and v not in (None, "")}
     return ValidatedExtraction(policy_type, values, confidence, details)
+
+
+# Below these, a "sum insured" is almost certainly a misread (a page number, a count, a lakh figure without unit).
+MIN_SUM_INSURED = Decimal(10_000)
+MIN_PREMIUM = Decimal(100)
+
+
+def _plausibility(policy_type: str, values: dict[str, Any], confidence: dict[str, float]) -> None:
+    """Flags values that cannot be right so the user is asked to check them, instead of trusting them."""
+    cover, premium = values.get("sum_insured"), values.get("premium")
+    if isinstance(cover, Decimal) and cover < MIN_SUM_INSURED:
+        confidence["sum_insured"] = min(confidence["sum_insured"], 0.2)
+    if isinstance(premium, Decimal) and premium < MIN_PREMIUM:
+        confidence["premium"] = min(confidence["premium"], 0.2)
+    # An annual premium larger than the cover is not a real health or motor policy (life single-premium can be).
+    if (
+        policy_type in ("health", "motor")
+        and isinstance(cover, Decimal)
+        and isinstance(premium, Decimal)
+        and cover >= MIN_SUM_INSURED
+        and premium > cover
+    ):
+        confidence["premium"] = min(confidence["premium"], 0.2)
 
 
 def _is_iso(value: Any) -> bool:

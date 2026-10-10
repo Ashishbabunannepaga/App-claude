@@ -57,7 +57,8 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-4.1-mini"
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
-    embedding_provider: Literal["openai", "local", "hashing"] = "hashing"
+    gemini_embedding_model: str = "gemini-embedding-001"
+    embedding_provider: Literal["openai", "gemini", "local", "hashing"] = "hashing"
     # Self-hosted, multilingual (100+ languages incl. Hindi). Output is zero-padded to embedding_dim.
     local_embedding_model: str = "BAAI/bge-m3"
     openai_embedding_model: str = "text-embedding-3-small"

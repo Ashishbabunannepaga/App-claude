@@ -6,7 +6,7 @@ from functools import lru_cache
 
 import httpx
 
-from app.ai.providers.base import AIProviderError
+from app.ai.providers.base import AIProviderError, post_with_retry
 from app.core.config import get_settings
 
 _TOKEN = re.compile(r"[a-z0-9]+")
@@ -15,6 +15,10 @@ _TOKEN = re.compile(r"[a-z0-9]+")
 class EmbeddingProvider(ABC):
     @abstractmethod
     def embed(self, texts: list[str]) -> list[list[float]]: ...
+
+    def embed_query(self, text: str) -> list[float]:
+        """Embeds a search query. Providers with separate query/document modes override this."""
+        return self.embed([text])[0]
 
 
 class OpenAIEmbedder(EmbeddingProvider):
@@ -38,6 +42,55 @@ class OpenAIEmbedder(EmbeddingProvider):
                 raise AIProviderError(f"embedding request failed: {type(exc).__name__}") from exc
             out.extend(d["embedding"] for d in sorted(resp.json()["data"], key=lambda d: d["index"]))
         return out
+
+
+class GeminiEmbedder(EmbeddingProvider):
+    """Google gemini-embedding-001 (multilingual, Hindi included) through the official API.
+
+    `outputDimensionality` matches the database column, so no padding is needed. Vectors below the model's
+    native 3072 dimensions are not normalised by the API, so they are L2-normalised here.
+    """
+
+    def __init__(self, api_key: str, model: str, dim: int, timeout: float):
+        self.api_key, self.model, self.dim, self.timeout = api_key, model, dim, timeout
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        return self._embed(texts, "RETRIEVAL_DOCUMENT")
+
+    def embed_query(self, text: str) -> list[float]:
+        return self._embed([text], "RETRIEVAL_QUERY")[0]
+
+    def _embed(self, texts: list[str], task_type: str) -> list[list[float]]:
+        out: list[list[float]] = []
+        for i in range(0, len(texts), 100):  # API limit: 100 texts per batch
+            resp = post_with_retry(
+                f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:batchEmbedContents",
+                headers={"x-goog-api-key": self.api_key},
+                json={
+                    "requests": [
+                        {
+                            "model": f"models/{self.model}",
+                            "content": {"parts": [{"text": t}]},
+                            "taskType": task_type,
+                            "outputDimensionality": self.dim,
+                        }
+                        for t in texts[i : i + 100]
+                    ]
+                },
+                timeout=self.timeout,
+                label="gemini embedding",
+            )
+            try:
+                vectors = [e["values"] for e in resp.json()["embeddings"]]
+            except (KeyError, TypeError) as exc:
+                raise AIProviderError("gemini embedding returned an unexpected body") from exc
+            out.extend(_normalise(v) for v in vectors)
+        return out
+
+
+def _normalise(vector: list[float]) -> list[float]:
+    norm = math.sqrt(sum(v * v for v in vector)) or 1.0
+    return [v / norm for v in vector]
 
 
 class HashingEmbedder(EmbeddingProvider):
@@ -94,6 +147,10 @@ def get_embedder() -> EmbeddingProvider:
         if not s.openai_api_key:
             raise RuntimeError("OPENAI_API_KEY is required for openai embeddings")
         return OpenAIEmbedder(s.openai_api_key, s.openai_embedding_model, s.embedding_dim, s.ai_timeout_seconds)
+    if s.embedding_provider == "gemini":
+        if not s.gemini_api_key:
+            raise RuntimeError("GEMINI_API_KEY is required for gemini embeddings")
+        return GeminiEmbedder(s.gemini_api_key, s.gemini_embedding_model, s.embedding_dim, s.ai_timeout_seconds)
     if s.embedding_provider == "local":
         return LocalEmbedder(s.local_embedding_model, s.embedding_dim)
     return HashingEmbedder(s.embedding_dim)

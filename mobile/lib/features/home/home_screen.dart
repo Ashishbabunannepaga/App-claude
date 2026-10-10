@@ -58,9 +58,11 @@ class HomeScreen extends ConsumerWidget {
                   if (s.upcomingRenewals.isNotEmpty) ...[
                     const SectionHeader('Coming up'),
                     SizedBox(
-                      height: 118,
+                      // Grows with the phone's font size so the card's text never clips.
+                      height: MediaQuery.textScalerOf(context).scale(128),
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
+                        padding: EdgeInsets.zero,
                         itemCount: s.upcomingRenewals.length,
                         separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
                         itemBuilder: (_, i) => _RenewalCard(item: s.upcomingRenewals[i]),
@@ -299,14 +301,26 @@ class _Services extends ConsumerWidget {
         onTap: () => context.push('/emergency'),
       ),
     ];
-    return GridView.count(
-      crossAxisCount: 4,
-      mainAxisSpacing: AppSpacing.md,
-      crossAxisSpacing: AppSpacing.sm,
-      childAspectRatio: 0.78,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: tiles,
+    // Rows of four that size to their content. A GridView forces a fixed cell height, which clipped
+    // two-line labels on 360 dp phones and at large font sizes; as a nested scroll view it also added the
+    // floating nav bar's inset (~100 dp) as a blank gap under the tiles.
+    const perRow = 4;
+    return Column(
+      children: [
+        for (var i = 0; i < tiles.length; i += perRow)
+          Padding(
+            padding: EdgeInsets.only(top: i == 0 ? 0 : AppSpacing.md),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var j = i; j < i + perRow; j++) ...[
+                  if (j > i) const SizedBox(width: AppSpacing.sm),
+                  Expanded(child: j < tiles.length ? tiles[j] : const SizedBox()),
+                ],
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
