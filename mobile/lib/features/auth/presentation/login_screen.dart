@@ -81,30 +81,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Checkbox(value: _consent, onChanged: (v) => setState(() => _consent = v ?? false)),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text.rich(
-                      TextSpan(
-                        style: const TextStyle(color: AppColors.textSecondary),
-                        children: [
-                          const TextSpan(text: 'I agree to the '),
-                          _link('Privacy Policy', Env.privacyPolicyUrl),
-                          const TextSpan(text: ' and '),
-                          _link('Terms', Env.termsUrl),
-                          const TextSpan(
-                            text: ', and consent to my policy documents being processed to provide this service.',
-                          ),
-                        ],
+            MergeSemantics(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Checkbox(value: _consent, onChanged: (v) => setState(() => _consent = v ?? false)),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text.rich(
+                        TextSpan(
+                          style: const TextStyle(color: AppColors.textSecondary),
+                          children: [
+                            const TextSpan(text: 'I agree to the '),
+                            _link('Privacy Policy', Env.privacyPolicyUrl),
+                            const TextSpan(text: ' and '),
+                            _link('Terms', Env.termsUrl),
+                            const TextSpan(
+                              text: ', and consent to my policy documents being processed to provide this service.',
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.lg),
             FilledButton(

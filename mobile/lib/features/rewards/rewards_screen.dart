@@ -23,14 +23,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
     final rewards = ref.watch(rewardsProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBF0),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFF3D1),
-        title: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: _Toggle(earn: _earn, onChanged: (v) => setState(() => _earn = v)),
-        ),
-        centerTitle: true,
-      ),
+      appBar: AppBar(backgroundColor: const Color(0xFFFFF3D1), title: const Text('Rewards')),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(rewardsProvider),
         child: AsyncValueView(
@@ -40,6 +33,10 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
             padding: const EdgeInsets.only(bottom: AppSpacing.xl),
             children: [
               _Header(balance: r.balance),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: _Toggle(earn: _earn, onChanged: (v) => setState(() => _earn = v)),
+              ),
               Padding(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 child: _earn ? _EarnTab(rewards: r) : _UseTab(rewards: r),
@@ -63,30 +60,44 @@ class _Toggle extends StatelessWidget {
       selected: earn == value,
       button: true,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () => onChanged(value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-          decoration: BoxDecoration(
-            color: earn == value ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-              letterSpacing: 0.4,
-              color: earn == value ? AppColors.primary : Colors.white,
+        // 48 dp tap target around a 40 dp visual segment.
+        child: SizedBox(
+          height: 48,
+          child: Center(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              height: 40,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              decoration: BoxDecoration(
+                color: earn == value ? Colors.white : Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                  letterSpacing: 0.4,
+                  color: earn == value ? AppColors.primary : Colors.white,
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
     return Container(
-      padding: const EdgeInsets.all(3),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(24)),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [seg('EARN COINS', true), seg('USE COINS', false)]),
+      child: Row(
+        children: [
+          Expanded(child: seg('EARN COINS', true)),
+          Expanded(child: seg('USE COINS', false)),
+        ],
+      ),
     );
   }
 }

@@ -49,7 +49,7 @@ class _CoverageReportScreenState extends ConsumerState<CoverageReportScreen> {
                 alignment: Alignment.centerLeft,
                 child: Wrap(
                   spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
+                  runSpacing: 0,
                   children: [
                     for (final t in const ['health', 'life', 'motor'])
                       _TypePill(
@@ -95,20 +95,24 @@ class _TypePill extends StatelessWidget {
     child: InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.textPrimary : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: selected ? AppColors.textPrimary : AppColors.border),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
-            fontSize: 13,
+      // 4.5 dp of transparent padding inside the InkWell lifts the tap target to 48 dp without a taller pill.
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4.5),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.textPrimary : AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: selected ? AppColors.textPrimary : AppColors.border),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: selected ? Colors.white : AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
           ),
         ),
       ),
