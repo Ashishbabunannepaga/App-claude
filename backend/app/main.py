@@ -46,6 +46,22 @@ def create_app() -> FastAPI:
     def admin_ui() -> FileResponse:
         return FileResponse(admin_page, headers={"Cache-Control": "no-store", "X-Frame-Options": "DENY"})
 
+    static = Path(__file__).parent / "static"
+    page_headers = {"Cache-Control": "public, max-age=3600", "X-Frame-Options": "DENY"}
+
+    # Public legal pages linked from the app and the store listings (Play requires a privacy policy URL).
+    @app.get("/privacy", include_in_schema=False)
+    def privacy() -> FileResponse:
+        return FileResponse(static / "privacy.html", headers=page_headers)
+
+    @app.get("/terms", include_in_schema=False)
+    def terms() -> FileResponse:
+        return FileResponse(static / "terms.html", headers=page_headers)
+
+    @app.get("/legal.css", include_in_schema=False)
+    def legal_css() -> FileResponse:
+        return FileResponse(static / "legal.css", media_type="text/css", headers=page_headers)
+
     @app.get("/health", tags=["ops"])
     def health() -> dict:
         return {"status": "ok"}

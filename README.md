@@ -23,7 +23,7 @@ V1 core loop: **Add policy → Read → Understand → Ask → Track → Renew**
 | ![Welcome](docs/screenshots/v2/v2-01-welcome-1.png) | ![Welcome 3](docs/screenshots/v2/v2-03-welcome-3.png) | ![Home](docs/screenshots/v2/v2-20-home.png) | ![Portfolio](docs/screenshots/v2/v2-23-portfolio.png) |
 | ![Report](docs/screenshots/v2/v2-24-report-own.png) | ![Emergency](docs/screenshots/v2/v2-25-emergency.png) | ![Rewards](docs/screenshots/v2/v2-10-rewards.png) | ![Sample report](docs/screenshots/v2/v2-08-sample-report.png) |
 
-The earlier CoverSure-style UI is kept on branch `claude/insurance-mobile-app-yzzj6c` (commit `7560156`).
+The earlier v1 UI is archived on branch `release/v1` (commit `7560156`).
 
 ## Screenshots (v0.3)
 

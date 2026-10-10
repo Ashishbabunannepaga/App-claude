@@ -1,15 +1,13 @@
 <#
-  Runs one of the two CapitUp demos on your Android phone over Wi-Fi.
+  Runs CapitUp on your Android phone over Wi-Fi (an emulator can stay open; it is ignored).
 
   Examples (PowerShell, from the repo folder):
-    .\tools\demo\start-demo.ps1 -Variant v2
-    .\tools\demo\start-demo.ps1 -Variant v1 -Connect 192.168.1.50:41234
+    .\tools\demo\start-demo.ps1
+    .\tools\demo\start-demo.ps1 -Connect 192.168.1.50:41234
 
-  v2 = the modern UI (this branch), v1 = the CoverSure-style UI (folder ..\App-claude-v1, see docs\DEMO.md).
   Start the backend first (docs\DEMO.md, step 2).
 #>
 param(
-  [ValidateSet('v1', 'v2')][string]$Variant = 'v2',
   # The phone's "IP address & Port" from Developer options > Wireless debugging. Optional if already connected.
   [string]$Connect = ''
 )
@@ -19,10 +17,7 @@ $adb = Join-Path $env:LOCALAPPDATA 'Android\sdk\platform-tools\adb.exe'
 if (-not (Test-Path $adb)) { throw "adb not found at $adb. Install the Android SDK platform-tools via Android Studio." }
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
-$appRoot = if ($Variant -eq 'v1') { Join-Path (Split-Path $root -Parent) 'App-claude-v1' } else { $root }
-if (-not (Test-Path (Join-Path $appRoot 'mobile\pubspec.yaml'))) {
-  throw "Cannot find the $Variant app at $appRoot. For v1, create it first: see docs\DEMO.md step 1."
-}
+$appRoot = $root
 
 if ($Connect) { & $adb connect $Connect | Out-Host }
 

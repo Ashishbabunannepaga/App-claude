@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Debug builds install next to the other demo as "CapitUp v2" (see applicationIdSuffix in build.gradle.kts). -->
-<resources>
-    <string name="app_name">CapitUp v2</string>
-</resources>

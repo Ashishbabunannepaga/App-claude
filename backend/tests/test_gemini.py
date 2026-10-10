@@ -146,3 +146,10 @@ def test_period_of_insurance_gives_both_dates():
     from app.processing.heuristics import find_dates
 
     assert find_dates("Period of Insurance: 01/04/2026 to 31/03/2027") == (date(2026, 4, 1), date(2027, 3, 31))
+
+
+def test_legal_pages_are_served(client):
+    for path in ("/privacy", "/terms"):
+        r = client.get(path)
+        assert r.status_code == 200 and "text/html" in r.headers["content-type"]
+    assert "Google (Gemini API)" in client.get("/privacy").text

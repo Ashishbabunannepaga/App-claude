@@ -29,20 +29,22 @@ class Env {
   static const firebaseAndroidAppId = String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
   static const firebaseIosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
 
-  static const String privacyPolicyUrl = String.fromEnvironment(
-    'PRIVACY_URL',
-    defaultValue: 'https://example.com/privacy',
-  ); // TODO: real URL
-  static const String termsUrl = String.fromEnvironment(
-    'TERMS_URL',
-    defaultValue: 'https://example.com/terms',
-  ); // TODO: real URL
-  static const String supportEmail = String.fromEnvironment(
-    'SUPPORT_EMAIL',
-    defaultValue: 'support@example.com',
-  ); // TODO: real address
+  // Legal pages are served by the backend (/privacy, /terms), so they work as soon as the API is live.
+  static const String _privacyUrl = String.fromEnvironment('PRIVACY_URL');
+  static const String _termsUrl = String.fromEnvironment('TERMS_URL');
+  static String get privacyPolicyUrl => _privacyUrl.isNotEmpty ? _privacyUrl : '${apiOrigin.toString()}/privacy';
+  static String get termsUrl => _termsUrl.isNotEmpty ? _termsUrl : '${apiOrigin.toString()}/terms';
+
+  static const String supportEmail = String.fromEnvironment('SUPPORT_EMAIL', defaultValue: 'support@example.com');
   static const String grievanceOfficer = String.fromEnvironment(
     'GRIEVANCE_OFFICER',
     defaultValue: 'Grievance Officer, grievance@example.com',
-  ); // TODO
+  );
+
+  /// Settings a store build must not ship with. Empty in a correct production build.
+  static List<String> releaseProblems() => [
+    if (!apiBaseUrl.startsWith('https://')) 'API_BASE_URL must be https:// (got $apiBaseUrl)',
+    if (supportEmail.endsWith('@example.com')) 'SUPPORT_EMAIL is a placeholder',
+    if (grievanceOfficer.contains('example.com')) 'GRIEVANCE_OFFICER is a placeholder',
+  ];
 }

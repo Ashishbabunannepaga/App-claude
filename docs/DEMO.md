@@ -1,28 +1,15 @@
-# Showing two demos from one phone
+# Running the demo on your phone
 
-Both demos use the **same backend**, and they install side by side, so people can open either one and compare.
+Login: mobile `9876543210`, OTP `246810` (needs the demo settings in `backend\.env`, see the beginner guide).
 
-| Demo | Look | Branch | App on the phone |
-|---|---|---|---|
-| **v1** | CoverSure-style (navy, list screens) | `claude/insurance-mobile-app-yzzj6c` | "CapitUp" |
-| **v2** | Modern illustrated (teal + gold) | `claude/capitup-demo-v1-v2` (this branch) | "CapitUp v2" |
-
-Login for both: mobile `9876543210`, OTP `246810` (needs the demo settings in `backend\.env`, see the beginner guide).
-
-## 1. Get both versions on your PC (once)
+## 1. Get the latest code
 
 ```powershell
 cd C:\Users\babua\Documents\App-claude
 git fetch origin
-git checkout claude/capitup-demo-v1-v2
+git checkout main
 git pull
-
-# A second folder holding the v1 branch, next to the first:
-git worktree add ..\App-claude-v1 claude/insurance-mobile-app-yzzj6c
 ```
-
-If Git says the branch doesn't exist locally, use:
-`git worktree add ..\App-claude-v1 -b claude/insurance-mobile-app-yzzj6c origin/claude/insurance-mobile-app-yzzj6c`
 
 ## 2. Start the backend (leave it running)
 
@@ -30,91 +17,66 @@ If Git says the branch doesn't exist locally, use:
 docker compose up -d
 cd C:\Users\babua\Documents\App-claude\backend
 .venv\Scripts\activate
+pip install -r requirements.txt
 alembic upgrade head
+python -m app.scripts.ai_check          # optional: checks your AI key (see "Real AI" below)
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Optional sample policies (backend running): `python ..\tools\demo\make_pdfs.py ..\demo_pdfs` then `python ..\tools\demo\seed.py ..\demo_pdfs`.
 
-## 3. Connect the phone over Wi-Fi (wireless debugging)
+## 3. Connect the phone over Wi-Fi (once per session)
 
-**On the PC**, find your Wi-Fi address (the phone and PC must be on the same Wi-Fi):
-
-```powershell
-ipconfig
-```
-
-Look under **Wireless LAN adapter Wi-Fi** for **IPv4 Address**, e.g. `192.168.1.20`. Or in one line:
-
-```powershell
-(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -like '*Wi-Fi*' -and $_.IPAddress -notlike '169.*' } | Select-Object -First 1).IPAddress
-```
-
-**On the phone (I2221):** Settings > Developer options > turn on **Wireless debugging**. The screen shows:
-
-- **IP address & Port** (e.g. `192.168.1.50:41234`): used to connect.
-- **Pair device with pairing code**: shows a *different* IP:port and a 6-digit code: used once to pair.
-
-**Back on the PC:**
+On the phone (I2221): Settings > Developer options > **Wireless debugging** on. Then on the PC:
 
 ```powershell
 $adb = "C:\Users\babua\AppData\Local\Android\sdk\platform-tools\adb.exe"
-
-# Pair once (use the pairing address and type the 6-digit code when asked):
-& $adb pair 192.168.1.50:PAIRING_PORT
-
-# Connect (use "IP address & Port" from the main Wireless debugging screen):
-& $adb connect 192.168.1.50:CONNECT_PORT
-
-& $adb devices        # the phone must say "device", not "offline"
+& $adb pair PHONE_IP:PAIRING_PORT       # once; type the 6-digit code ("Pair device with pairing code")
+& $adb connect PHONE_IP:CONNECT_PORT    # "IP address & Port" on the Wireless debugging screen
+& $adb devices                          # the phone must say "device"
 ```
 
-Replace `192.168.1.50` with the phone's address and the ports with what the phone shows. The connect port changes each time Wireless debugging is switched off and on, and the phone's address can change after a router restart.
+Replace `PHONE_IP:...` with the numbers the phone shows. If `adb devices` already lists the phone (a long
+`adb-...._adb-tls-connect._tcp` name), skip this step.
 
 In Android Studio you can do the same: the device drop-down > **Pair Devices Using Wi-Fi**.
 
-## 4. Run a demo
-
-One command per demo (from `C:\Users\babua\Documents\App-claude`):
+## 4. Run the app
 
 ```powershell
-.\tools\demo\start-demo.ps1 -Variant v2 -Connect 192.168.1.50:CONNECT_PORT
-.\tools\demo\start-demo.ps1 -Variant v1
+.\tools\demo\start-demo.ps1
 ```
 
-Run **v2 first, press `q`, then run v1** (or the reverse). The first build of each takes 3 to 5 minutes. After that, **both apps stay installed**: open "CapitUp" (v1) or "CapitUp v2" from the phone's app list.
+It finds the phone (an open emulator is ignored), forwards port 8000 so the phone reaches the backend,
+and runs the app. The first build takes 3 to 5 minutes. If the script is blocked, run once:
+`Set-ExecutionPolicy -Scope Process Bypass`.
 
-If the script is blocked, run once: `Set-ExecutionPolicy -Scope Process Bypass`.
-
-### Doing it by hand instead
+By hand instead (copy the phone's name from `adb devices`):
 
 ```powershell
-$adb = "C:\Users\babua\AppData\Local\Android\sdk\platform-tools\adb.exe"
-& $adb -s 192.168.1.50:CONNECT_PORT reverse tcp:8000 tcp:8000
-cd C:\Users\babua\Documents\App-claude\mobile          # v2
-flutter run -d 192.168.1.50:CONNECT_PORT --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
+$phone = "adb-XXXX._adb-tls-connect._tcp"
+& $adb -s $phone reverse tcp:8000 tcp:8000
+cd C:\Users\babua\Documents\App-claude\mobile
+flutter run -d $phone --dart-define=API_BASE_URL=http://127.0.0.1:8000/api/v1
 ```
 
-For v1, use `cd C:\Users\babua\Documents\App-claude-v1\mobile`.
+## Real AI (Gemini)
 
-### Without the USB-style port forward (use the PC's Wi-Fi address)
+1. Create a key at https://aistudio.google.com/apikey (your own Google account).
+2. In `backend\.env` set:
+   ```
+   AI_PROVIDER=gemini
+   EMBEDDING_PROVIDER=gemini
+   GEMINI_API_KEY=your-key-here
+   ```
+3. Restart the backend, then run `python -m app.scripts.ai_check`. Both lines should say `[OK]`.
+4. Policies uploaded before the switch keep their old (mock) search index: run
+   `python -m app.scripts.reembed` once, or re-upload them.
 
-Run once as Administrator to let the phone reach the backend:
+Never paste the key into chat, code or Git. `.env` is ignored by Git.
+
+## Reset the welcome screens
 
 ```powershell
-New-NetFirewallRule -DisplayName "CapitUp API 8000" -Direction Inbound -Protocol TCP -LocalPort 8000 -Action Allow
+& $adb -s $phone shell pm clear com.insureiq.insureiq
 ```
-
-Then run with `--dart-define=API_BASE_URL=http://192.168.1.20:8000/api/v1` (your PC's address from step 3).
-
-## Reset the welcome screens on a demo
-
-```powershell
-& $adb -s 192.168.1.50:CONNECT_PORT shell pm clear com.insureiq.insureiq.v2   # v2
-& $adb -s 192.168.1.50:CONNECT_PORT shell pm clear com.insureiq.insureiq      # v1
-```
-
-## Notes
-
-- The side-by-side setup (a different app id and name for debug builds on this branch) could not be built in the cloud session, which has no Android SDK. It is a small Gradle change; tell me if the first build complains.
-- Release builds keep the normal app id. The `.v2` suffix applies to debug builds only.
