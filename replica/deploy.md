@@ -14,12 +14,12 @@ Status key: ✅ done and checked here · 🟡 done in code, you must finish an a
 | Open S1/S2 bugs | ✅ none known. Fixed from the phone test: blank gap under Home tiles, "LIC" as insurer on non-LIC policies, missing start date, ₹1 sum insured accepted without a warning |
 | Parity | ✅ 100/100, must-haves 7 of 7 (self-assessed against our own feature list) |
 | Rebrand sweep | ✅ clean (`sweep.py` exit 0) |
-| Store listing lint | ❌ not written yet (`/replica-launch`) |
+| Store listing lint | ✅ `replica/launch/listing.json` passes `listing.py` (0 errors, 0 warnings); data-safety answers and review notes in `replica/launch/store-notes.md` |
 | Production build: backend | 🟡 `Dockerfile` present (gunicorn + uvicorn, non-root user); not built here (no Docker in the cloud session) |
 | Production build: app | 🟡 not built here (no Android SDK in the cloud session). Run `flutter build appbundle` on your PC, see below |
 | Privacy policy and terms | 🟡 served by the backend at `/privacy` and `/terms`, every processor listed. **DRAFT**: fill the [brackets] and get a lawyer's review (DPDP Act 2023) |
 | Account deletion | ✅ in the app (Profile > Privacy); data purged after the grace period by the scheduled job |
-| App icon, name, splash | ✅ CapitUp. 🟡 Export a 1024 px icon for the store from the trimmed logo |
+| App icon, name, splash | ✅ CapitUp icon on Android (incl. adaptive), iOS and web, branded splash, 512 px Play icon (`tools/brand`). Made from the in-app mark; swap in a designer version of your logo if you prefer |
 | Release signing | 🟡 reads `android/key.properties`; you create the upload key (below). Without it Play rejects the bundle |
 | Release guard | ✅ a production build refuses to start with an http:// API or placeholder support/grievance details |
 | Production config guard | ✅ backend refuses to start in production with mock AI, hashing embeddings, console OTP, local storage, log push, in-memory rate limits, weak secrets or eager tasks |
@@ -70,11 +70,10 @@ Upload `build\app\outputs\bundle\release\app-release.aab` to Play Console > Inte
 
 ## Watch (after launch)
 - [ ] Uptime check on `https://api.YOURDOMAIN/health`
-- [ ] Error tracking (Sentry, free tier) on the API and the app; no policy text in reports
+- [ ] Error tracking: built in (API, worker, app) and scrubbed of personal data; create a Sentry project and set `SENTRY_DSN` on the host and as a `--dart-define` in the app build
 - [ ] Alert on Gemini errors (`ai_unavailable` failures in the logs) and quota
 - [ ] Do the core flow on the live API from the phone: sign in, upload, check details, report, ask AI
 
 ## Not done yet (next)
-- Store listing and screenshots (`/replica-launch`)
-- Crash reporting in the app (Crashlytics or Sentry)
+- Store screenshots from the real phone (list in `replica/launch/store-notes.md`)
 - Dark mode, Hindi UI
