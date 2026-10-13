@@ -70,7 +70,7 @@ Upload `build\app\outputs\bundle\release\app-release.aab` to Play Console > Inte
 
 ## Watch (after launch)
 - [ ] Uptime check on `https://api.YOURDOMAIN/health`
-- [ ] Error tracking: built in (API, worker, app) and scrubbed of personal data; create a Sentry project and set `SENTRY_DSN` on the host and as a `--dart-define` in the app build
+- [ ] Error tracking: built in and scrubbed of personal data. The app sends Dart crashes to the API (`/api/v1/client-errors`), which forwards them with its own errors: create a Sentry project and set `SENTRY_DSN` on the host only. Native crashes and ANRs: Play Console > Android vitals
 - [ ] Alert on Gemini errors (`ai_unavailable` failures in the logs) and quota
 - [ ] Do the core flow on the live API from the phone: sign in, upload, check details, report, ask AI
 

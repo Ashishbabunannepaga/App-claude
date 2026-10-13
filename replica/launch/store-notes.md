@@ -36,7 +36,7 @@ Answers for the app as built. Re-check if you add analytics or ads.
 | Health info (health policy details, family members covered) | Yes | No | App functionality | No |
 | Files and docs (uploaded policies) | Yes | No | App functionality | No |
 | App activity: Other user-generated content (questions asked) | Yes | No | App functionality | Yes |
-| App info and performance: Crash logs, Diagnostics | Yes, only if `SENTRY_DSN` is set | No | Analytics (stability) | No |
+| App info and performance: Crash logs, Diagnostics | Yes (crash type and stack trace, numbers and emails masked) | No | Analytics (stability) | No |
 | Device or other IDs (push token) | Yes, if notifications allowed | No | App functionality | Yes |
 
 - Processors acting for you (Google Gemini, host, storage, SMS, Firebase) count as **service providers**, not "sharing", under Play's definitions.

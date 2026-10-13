@@ -1,5 +1,7 @@
 # Running the demo on your phone
 
+Build or run errors: see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 Login: mobile `9876543210`, OTP `246810` (needs the demo settings in `backend\.env`, see the beginner guide).
 
 ## 1. Get the latest code
