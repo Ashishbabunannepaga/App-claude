@@ -50,9 +50,45 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
+          flutter-version: "3.47.6"  # same as the development PC, so CI fails when the PC would
           channel: stable
           cache: true
       - run: flutter pub get
       - run: dart format --output=none --set-exit-if-changed lib test
       - run: flutter analyze
       - run: flutter test
+
+  # Unit tests cannot catch Gradle, plugin or manifest problems (a native plugin once broke the Android build
+  # while every test passed). This job builds the real APK the way `flutter run` does on the PC.
+  android-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.47.6"
+          channel: stable
+          cache: true
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('mobile/android/**/*.kts', 'mobile/android/gradle/wrapper/gradle-wrapper.properties', 'mobile/pubspec.lock') }}
+      - run: flutter pub get
+      - name: Debug APK (what `flutter run` builds)
+        run: flutter build apk --debug
+      - name: Release APK with production settings (release guard, R8, resources)
+        run: >-
+          flutter build apk --release
+          --dart-define=ENV=production
+          --dart-define=API_BASE_URL=https://api.example.org/api/v1
+          --dart-define=SUPPORT_EMAIL=support@capitup.test
+          --dart-define=GRIEVANCE_OFFICER="CI check, grievance@capitup.test"

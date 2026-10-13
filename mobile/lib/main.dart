@@ -12,6 +12,7 @@ import 'core/security/app_lock.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  CrashReporter().install(); // first, so start-up errors are reported too
   // A production build with test settings must fail at once, in internal testing, not reach users.
   if (Env.isProduction) {
     final problems = Env.releaseProblems();
@@ -22,7 +23,5 @@ Future<void> main() async {
   await initializeDateFormatting('en_IN');
   final prefs = await SharedPreferences.getInstance();
   await PushService.init();
-  await runWithErrorTracking(
-    () => runApp(ProviderScope(overrides: [sharedPrefsProvider.overrideWithValue(prefs)], child: const InsureApp())),
-  );
+  runApp(ProviderScope(overrides: [sharedPrefsProvider.overrideWithValue(prefs)], child: const InsureApp()));
 }

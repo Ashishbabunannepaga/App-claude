@@ -22,8 +22,8 @@ class Env {
     return Uri(scheme: uri.scheme, host: uri.host, port: uri.port);
   }
 
-  /// Sentry crash reporting (a public client key, not a secret). Off when unset.
-  static const sentryDsn = String.fromEnvironment('SENTRY_DSN');
+  /// Shown in crash reports so a fix can be matched to a release. Set with `--dart-define=APP_VERSION=1.0.0+1`.
+  static const appVersion = String.fromEnvironment('APP_VERSION', defaultValue: 'dev');
 
   // Firebase (push). Public client config, not secrets. Push is disabled when unset.
   static const firebaseApiKey = String.fromEnvironment('FIREBASE_API_KEY');

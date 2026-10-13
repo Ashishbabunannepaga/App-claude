@@ -1,25 +1,40 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:insureiq/core/observability.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() {
-  test('crash reports drop user and request data', () {
-    final event = SentryEvent(
-      user: SentryUser(id: 'u1'),
-      request: SentryRequest(url: 'https://api/x', data: {'question': 'Is maternity covered?'}),
-    );
-    final out = scrubEvent(event, Hint())!;
-    expect(out.user, isNull);
-    expect(out.request, isNull);
+  test('reports mask numbers and emails and carry no user data', () {
+    final r = CrashReporter();
+    final body = r.buildReport(
+      StateError('Policy P/171100/01/2026/004521 for asha@example.com, phone 98765 43210'),
+      StackTrace.fromString('#0 main (file:///lib/main.dart:1)'),
+      fatal: true,
+    )!;
+    final message = body['message']! as String;
+    expect(message, isNot(contains('004521')));
+    expect(message, isNot(contains('asha@')));
+    expect(message, isNot(contains('43210')));
+    expect(message, contains('[number]'));
+    expect(body.keys, isNot(contains('user')));
+    expect(body['error_type'], 'StateError');
+    expect(body['fatal'], true);
   });
 
-  test('breadcrumbs keep the type but lose their text', () {
-    final out = scrubBreadcrumb(
-      Breadcrumb(message: 'Answer: your room rent is capped', type: 'debug', data: {'k': 'v'}),
-      Hint(),
+  test('the same crash is sent once, and at most N per session', () {
+    final r = CrashReporter(maxPerSession: 2);
+    final stack = StackTrace.fromString('#0 a (file:///a.dart:1)');
+    expect(r.buildReport(StateError('x'), stack, fatal: false), isNotNull);
+    expect(r.buildReport(StateError('x'), stack, fatal: false), isNull); // duplicate
+    expect(r.buildReport(ArgumentError('y'), stack, fatal: false), isNotNull);
+    expect(r.buildReport(FormatException('z'), stack, fatal: false), isNull); // budget used up
+  });
+
+  test('long messages and stacks are capped', () {
+    final body = CrashReporter().buildReport(
+      Exception('a' * 2000),
+      StackTrace.fromString('#0 f\n' * 3000),
+      fatal: false,
     )!;
-    expect(out.type, 'debug');
-    expect(out.message, isNull);
-    expect(out.data, anyOf(isNull, isEmpty));
+    expect((body['message']! as String).length, lessThanOrEqualTo(300));
+    expect((body['stack']! as String).length, lessThanOrEqualTo(8000));
   });
 }

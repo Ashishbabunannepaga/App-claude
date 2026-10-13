@@ -8,6 +8,7 @@ from fastapi.responses import FileResponse
 from app.api.v1 import (
     admin,
     auth,
+    client_errors,
     coverage,
     documents,
     family,
@@ -39,7 +40,20 @@ def create_app() -> FastAPI:
         app.add_middleware(CORSMiddleware, allow_origins=s.cors_origins, allow_methods=["*"], allow_headers=["*"])
     install_error_handlers(app)
     # intelligence before policies: its static paths (/policies/compare) must win over /policies/{id}.
-    for module in (auth, me, family, documents, intelligence, coverage, policies, notifications, support, files, admin):
+    for module in (
+        auth,
+        client_errors,
+        me,
+        family,
+        documents,
+        intelligence,
+        coverage,
+        policies,
+        notifications,
+        support,
+        files,
+        admin,
+    ):
         app.include_router(module.router, prefix=s.api_prefix)
 
     admin_page = Path(__file__).parent / "static" / "admin.html"
