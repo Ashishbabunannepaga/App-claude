@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app/app.dart';
 import 'core/config/env.dart';
+import 'core/observability.dart';
 import 'core/push/push_service.dart';
 import 'core/security/app_lock.dart';
 
@@ -21,6 +22,7 @@ Future<void> main() async {
   await initializeDateFormatting('en_IN');
   final prefs = await SharedPreferences.getInstance();
   await PushService.init();
-  // TODO(Week 9): Crashlytics (no policy content in crash reports).
-  runApp(ProviderScope(overrides: [sharedPrefsProvider.overrideWithValue(prefs)], child: const InsureApp()));
+  await runWithErrorTracking(
+    () => runApp(ProviderScope(overrides: [sharedPrefsProvider.overrideWithValue(prefs)], child: const InsureApp())),
+  );
 }
