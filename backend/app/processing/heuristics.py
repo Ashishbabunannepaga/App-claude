@@ -101,7 +101,23 @@ _PERIOD = re.compile(
     re.IGNORECASE,
 )
 _END = re.compile(r"(?:end|to|expiry|expiring|till|valid up ?to|until)[^\n\d]{0,40}" + _DATE, re.IGNORECASE)
-_AMOUNT = r"(?:rs\.?|inr|₹)?\s*([0-9][0-9,]*(?:\.\d{1,2})?)"
+# Indian policies write amounts as "5,00,000", "Rs. 5 Lakh", "₹10 lacs", "1.5 Cr". The unit is part of the match.
+_UNIT = r"(?:lakhs?|lacs?|crores?|cr|l)\b"
+_AMOUNT = r"(?:rs\.?|inr|₹)?\s*([0-9][0-9,]*(?:\.\d{1,2})?(?:\s*" + _UNIT + r")?)"
+_MULTIPLIER = {
+    "lakh": 10**5,
+    "lakhs": 10**5,
+    "lac": 10**5,
+    "lacs": 10**5,
+    "l": 10**5,
+    "crore": 10**7,
+    "crores": 10**7,
+    "cr": 10**7,
+}
+# A number, optionally followed by an Indian unit; not a percentage ("10% of sum insured").
+_AMOUNT_VALUE = re.compile(
+    r"(?<!\d)(?<!\d[.,])([0-9][0-9,]*(?:\.\d+)?)(?![\d.,]*\s*%)\s*(" + _UNIT + r")?", re.IGNORECASE
+)
 _PREMIUM = re.compile(r"(?:total\s+)?premium[^\n\d₹]{0,40}" + _AMOUNT, re.IGNORECASE)
 _SUM_INSURED = re.compile(
     r"(?:sum\s+insured|sum\s+assured|cover(?:age)?\s+amount|idv)[^\n\d₹]{0,40}" + _AMOUNT, re.IGNORECASE
@@ -119,6 +135,12 @@ _DATE_FORMATS = [
     "%d-%b-%Y",
     "%d %b, %Y",
     "%d %B, %Y",
+    "%d-%B-%Y",
+    "%d/%b/%Y",
+    "%B %d, %Y",
+    "%b %d, %Y",
+    "%B %d %Y",
+    "%b %d %Y",
 ]
 
 
@@ -126,6 +148,7 @@ def parse_date(value: str | None) -> date | None:
     if not value:
         return None
     v = re.sub(r"\s+", " ", value.strip().replace("Sept", "Sep").replace("sept", "sep"))
+    v = re.sub(r"(\d)(st|nd|rd|th)\b", r"\1", v)  # "1st April 2026"
     for fmt in _DATE_FORMATS:
         try:
             return datetime.strptime(v, fmt).date()
@@ -134,14 +157,35 @@ def parse_date(value: str | None) -> date | None:
     return None
 
 
-def parse_amount(value: str | float | int | None) -> Decimal | None:
-    if value is None or value == "":
+def parse_amount(value: str | float | int | Decimal | None) -> Decimal | None:
+    """Rupee amount from a number or text: "5,00,000", "Rs. 5,00,000/-", "₹10 lakh", "1.5 Cr", "INR 25,000"."""
+    if value is None or value == "" or isinstance(value, bool):
         return None
-    try:
-        amount = Decimal(str(value).replace(",", "").replace("₹", "").strip())
-    except InvalidOperation:
+    if isinstance(value, int | float | Decimal):
+        amount = Decimal(str(value))
+    else:
+        m = _AMOUNT_VALUE.search(str(value))
+        if not m:
+            return None
+        try:
+            amount = Decimal(m.group(1).replace(",", ""))
+        except InvalidOperation:
+            return None
+        unit = (m.group(2) or "").lower()
+        amount *= _MULTIPLIER.get(unit, 1)
+    if amount <= 0:
         return None
-    return amount if amount > 0 else None
+    return amount.quantize(Decimal(1)) if amount == amount.to_integral_value() else amount
+
+
+def amounts_in_text(text: str) -> set[int]:
+    """Every rupee amount written in the text, units applied (for grounding checks)."""
+    found = set()
+    for m in _AMOUNT_VALUE.finditer(text):
+        amount = parse_amount(m.group(0))
+        if amount is not None:
+            found.add(int(amount))
+    return found
 
 
 def normalise(text: str) -> str:

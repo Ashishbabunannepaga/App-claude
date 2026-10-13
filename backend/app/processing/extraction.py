@@ -109,5 +109,5 @@ def _is_iso(value: Any) -> bool:
 
 
 def _amount_in_text(amount: Decimal, text: str) -> bool:
-    numbers = {n.replace(",", "").split(".")[0] for n in re.findall(r"\d[\d,]*(?:\.\d+)?", text)}
-    return str(int(amount)) in numbers
+    # Matches "5,00,000", "500000" and "Rs. 5 Lakh" alike.
+    return int(amount) in h.amounts_in_text(text)
