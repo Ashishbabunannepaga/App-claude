@@ -1,0 +1,16 @@
+{
+  "avoid": ["CoverSure", "Cover Sure", "Coversure"],
+  "app_store": {
+    "name": "CapitUp: Insurance Organiser",
+    "subtitle": "Your policies, in plain words",
+    "promotional_text": "Upload a health, life or motor policy and see what it covers, what it does not, and when it renews. Ask questions in English or Hindi.",
+    "description": "CapitUp keeps every insurance policy your family holds in one place and explains it in plain words.\n\nUpload the PDF or a photo of the policy. CapitUp reads it, fills in the insurer, policy number, dates, cover and premium, and asks you to check anything it is unsure about.\n\nWhat you get:\n- A coverage report for each policy: what is covered, what has limits, what is not covered\n- Answers to real questions, such as \"Will a delivery bill be paid?\" or \"Is flood damage to the engine covered?\"\n- Ask anything about your policy, in English or Hindi, with the clause the answer comes from\n- Renewal reminders before a policy lapses\n- Family members and nominees, so the right people are named on the right policies\n- An emergency card with 112, 108 and your policy numbers, one tap away\n- Compare two of your own policies side by side\n\nWhat CapitUp is not: it is not an insurer, broker or agent, and it does not sell insurance. Explanations come from your own document; your policy wording and your insurer's decision always prevail.\n\nYour documents stay private to your account. You can delete your account and all your data from the app at any time.",
+    "keywords": "policy,health,life,motor,car,renewal,nominee,claim,coverage,family,premium,hindi,mediclaim,term",
+    "whats_new": "First release: coverage reports, Ask AI in English and Hindi, renewal reminders and an emergency card."
+  },
+  "google_play": {
+    "title": "CapitUp: Insurance Organiser",
+    "short_description": "Keep your family's insurance policies in one place and understand your cover.",
+    "full_description": "CapitUp keeps every insurance policy your family holds in one place and explains it in plain words.\n\nUpload the PDF or a photo of the policy. CapitUp reads it, fills in the insurer, policy number, dates, cover and premium, and asks you to check anything it is unsure about.\n\nWHAT YOU GET\n- A coverage report for each policy: what is covered, what has limits, what is not covered\n- Answers to real questions, such as \"Will a delivery bill be paid?\" or \"Is flood damage to the engine covered?\"\n- Ask anything about your policy, in English or Hindi, with the clause the answer comes from\n- Renewal reminders before a policy lapses\n- Family members and nominees, so the right people are named on the right policies\n- An emergency card with 112, 108 and your policy numbers, one tap away\n- Compare two of your own policies side by side\n- Earn coins for keeping things organised (coins have no cash value)\n\nWHAT CAPITUP IS NOT\nCapitUp is not an insurer, broker or agent, and it does not sell insurance. Explanations come from your own document and may contain mistakes; your policy wording and your insurer's decision always prevail.\n\nYOUR DATA\nDocuments stay private to your account and are used only to give you this service. You can delete your account and all your data from the app at any time. Privacy policy: see the link on this page."
+  }
+}
