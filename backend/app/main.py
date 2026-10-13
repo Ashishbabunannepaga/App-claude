@@ -20,11 +20,13 @@ from app.api.v1 import (
 )
 from app.core.config import get_settings
 from app.core.errors import install_error_handlers
+from app.core.observability import init_error_tracking
 
 
 def create_app() -> FastAPI:
     s = get_settings()
     logging.basicConfig(level=logging.INFO)
+    init_error_tracking("api")
     is_prod = s.env == "production"
     app = FastAPI(
         title=s.app_name,

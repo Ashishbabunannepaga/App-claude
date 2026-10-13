@@ -1,8 +1,10 @@
 from celery import Celery
 
 from app.core.config import get_settings
+from app.core.observability import init_error_tracking
 
 settings = get_settings()
+init_error_tracking("worker")
 celery_app = Celery("insureiq", broker=settings.redis_url, backend=settings.redis_url, include=["app.workers.tasks"])
 celery_app.conf.update(
     task_acks_late=True,

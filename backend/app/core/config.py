@@ -75,6 +75,10 @@ class Settings(BaseSettings):
     # Rate limiting: "memory" (single process) or "redis" (shared across replicas)
     rate_limit_backend: Literal["memory", "redis"] = "memory"
 
+    # Error tracking (Sentry). Unset = off. No personal data is sent (app/core/observability.py).
+    sentry_dsn: str | None = None
+    sentry_traces_sample_rate: float = 0.0
+
     # Admin API (read-mostly ops view). Unset = admin disabled.
     admin_api_token: str | None = None
 
