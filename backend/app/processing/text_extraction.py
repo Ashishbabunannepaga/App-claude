@@ -33,6 +33,8 @@ def _ocr_image(image) -> str:
     provider = get_settings().ocr_provider
     if provider == "none":
         raise ExtractionError("ocr_unavailable")
+    if provider == "gemini":
+        return _gemini_ocr(image)
     if provider == "paddle":
         return _paddle_ocr(image)
     import pytesseract
@@ -43,7 +45,29 @@ def _ocr_image(image) -> str:
         langs = "+".join(lang for lang in langs.split("+") if lang in available) or "eng"
         return pytesseract.image_to_string(image, lang=langs)
     except pytesseract.TesseractNotFoundError as exc:
+        # Tesseract is a system program, often missing on Windows PCs and slim servers. With a Gemini key,
+        # photos and scanned PDFs still work instead of failing with "ocr_unavailable".
+        if get_settings().gemini_api_key:
+            return _gemini_ocr(image)
         raise ExtractionError("ocr_unavailable") from exc
+
+
+GEMINI_OCR_MAX_SIDE = 2000  # px; enough for small print, keeps each request well under the 20 MB inline limit
+
+
+def _gemini_ocr(image) -> str:
+    from app.ai.providers.gemini import GeminiProvider
+
+    s = get_settings()
+    if not s.gemini_api_key:
+        raise ExtractionError("ocr_unavailable")
+    img = image.convert("RGB")
+    img.thumbnail((GEMINI_OCR_MAX_SIDE, GEMINI_OCR_MAX_SIDE))
+    buf = io.BytesIO()
+    img.save(buf, format="JPEG", quality=90)
+    return GeminiProvider(s.gemini_api_key, s.gemini_model, s.ai_timeout_seconds).transcribe(
+        buf.getvalue(), "image/jpeg"
+    )
 
 
 @lru_cache

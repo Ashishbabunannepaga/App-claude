@@ -153,3 +153,50 @@ def test_legal_pages_are_served(client):
         r = client.get(path)
         assert r.status_code == 200 and "text/html" in r.headers["content-type"]
     assert "Google (Gemini API)" in client.get("/privacy").text
+
+
+def test_photo_is_read_by_gemini_when_tesseract_is_missing(fake_post, monkeypatch):
+    import io
+
+    import pytesseract
+    from PIL import Image
+
+    from app.core.config import get_settings
+    from app.processing.text_extraction import extract_text
+
+    def no_tesseract(*a, **k):
+        raise pytesseract.TesseractNotFoundError()
+
+    monkeypatch.setattr(pytesseract, "get_languages", no_tesseract)
+    monkeypatch.setattr(get_settings(), "gemini_api_key", "k")
+    page = "Star Health\nPolicy No: P/171100/01/2026/004521\nSum Insured: Rs. 5 Lakh\nPeriod: 01/04/2026 to 31/03/2027"
+    calls = fake_post(_answer(page))
+    buf = io.BytesIO()
+    Image.new("RGB", (3000, 4000), "white").save(buf, format="PNG")
+
+    out = extract_text(buf.getvalue(), "image/png")
+
+    assert out.method == "ocr" and "004521" in out.full_text
+    part = calls.requests[0]["json"]["contents"][0]["parts"][0]["inline_data"]
+    assert part["mime_type"] == "image/jpeg"  # downscaled and re-encoded, not the raw upload
+    assert calls.requests[0]["json"]["generationConfig"]["temperature"] == 0
+
+
+def test_without_tesseract_or_gemini_key_photo_fails_clearly(monkeypatch):
+    import io
+
+    import pytesseract
+    import pytest
+    from PIL import Image
+
+    from app.core.config import get_settings
+    from app.processing.text_extraction import ExtractionError, extract_text
+
+    monkeypatch.setattr(
+        pytesseract, "get_languages", lambda **k: (_ for _ in ()).throw(pytesseract.TesseractNotFoundError())
+    )
+    monkeypatch.setattr(get_settings(), "gemini_api_key", None)
+    buf = io.BytesIO()
+    Image.new("RGB", (100, 100), "white").save(buf, format="PNG")
+    with pytest.raises(ExtractionError, match="ocr_unavailable"):
+        extract_text(buf.getvalue(), "image/png")

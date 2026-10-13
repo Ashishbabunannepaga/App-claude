@@ -83,7 +83,9 @@ class Settings(BaseSettings):
     admin_api_token: str | None = None
 
     # OCR
-    ocr_provider: Literal["tesseract", "paddle", "none"] = "tesseract"
+    ocr_provider: Literal["tesseract", "paddle", "gemini", "none"] = (
+        "tesseract"  # tesseract falls back to gemini when missing
+    )
     ocr_languages: str = "eng+hin"  # tesseract language packs; PaddleOCR uses ocr_paddle_lang
     ocr_paddle_lang: str = "en"
 
