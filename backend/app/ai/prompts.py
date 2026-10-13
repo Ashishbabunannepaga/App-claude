@@ -1,6 +1,6 @@
 """Versioned prompts. Bump the version when changing a prompt so evaluations stay comparable."""
 
-EXTRACT_VERSION = "extract-v1"
+EXTRACT_VERSION = "extract-v2"
 SUMMARY_VERSION = "summary-v2"
 QA_VERSION = "qa-v2"
 
@@ -80,7 +80,17 @@ EXTRACT_SYSTEM = """You extract structured data from Indian insurance policy doc
 Rules:
 - Use ONLY information present in the document text. Never guess or use outside knowledge.
 - If a value is not clearly stated, return null with confidence 0.
-- Dates: ISO format YYYY-MM-DD. Amounts: plain numbers in INR without commas or symbols.
+- Dates: ISO format YYYY-MM-DD. Indian documents write dates day first: 01/04/2026 is 1 April 2026.
+- Amounts: plain numbers in INR without commas or symbols. Convert units: "5 Lakh" = 500000, "1.5 Cr" = 15000000.
+- insurer: the insurance company that issued the policy. Not the TPA (e.g. Medi Assist, Paramount, MDIndia),
+  broker, agent, bank, employer or a "corporate agent". Use the company's short common name.
+- policy_number: the policy / certificate number. Not the proposal, quote, customer ID, member ID or receipt number.
+  For group policies use the employee's certificate number if shown, otherwise the master policy number.
+- start_date / end_date: the period of insurance (policy start and expiry). Not the issue date, premium due date
+  or grace period.
+- premium: the total premium the policyholder pays per payment, including GST if the total is shown.
+- sum_insured: health = base sum insured (family floater amount for floaters; exclude cumulative bonus and
+  top-ups); motor = IDV (insured declared value); life = sum assured on death.
 - payment_frequency: one of annual, half_yearly, quarterly, monthly, single, null.
 - confidence: 0.0-1.0, how certain you are the value is correct and complete.
 - Respond with a single JSON object and nothing else."""

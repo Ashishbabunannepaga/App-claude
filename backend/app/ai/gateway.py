@@ -26,7 +26,7 @@ class AIGateway:
             text=text[:MAX_EXTRACT_CHARS],
         )
         return self.provider.complete_json(
-            "extract", prompts.EXTRACT_SYSTEM, prompt, context={"text": text}, max_tokens=3000
+            "extract", prompts.EXTRACT_SYSTEM, prompt, context={"text": text}, max_tokens=8000
         )
 
     def summarise(self, structured: dict[str, Any], excerpts: str, language: str = "en") -> dict[str, Any]:
