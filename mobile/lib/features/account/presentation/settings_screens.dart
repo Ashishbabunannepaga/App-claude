@@ -61,24 +61,24 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Personal details')),
+    appBar: AppBar(title: Text(context.l10n.personalDetails)),
     body: ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
         TextField(
           controller: _name,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(labelText: 'Full name'),
+          decoration: InputDecoration(labelText: context.l10n.fullName),
         ),
         const SizedBox(height: AppSpacing.md),
         InputDecorator(
-          decoration: const InputDecoration(labelText: 'Mobile number', enabled: false),
+          decoration: InputDecoration(labelText: context.l10n.mobileNumber, enabled: false),
           child: Text(_user.phone ?? _user.email ?? ''),
         ),
         const SizedBox(height: AppSpacing.md),
         OutlinedButton.icon(
           icon: const Icon(Icons.cake_outlined),
-          label: Text(_dob == null ? 'Date of birth' : formatDate(_dob)),
+          label: Text(_dob == null ? context.l10n.dateOfBirth : formatDate(_dob)),
           onPressed: () async {
             final picked = await showDatePicker(
               context: context,
@@ -95,20 +95,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             Expanded(
               child: TextField(
                 controller: _city,
-                decoration: const InputDecoration(labelText: 'City'),
+                decoration: InputDecoration(labelText: context.l10n.city),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(
               child: TextField(
                 controller: _state,
-                decoration: const InputDecoration(labelText: 'State'),
+                decoration: InputDecoration(labelText: context.l10n.state),
               ),
             ),
           ],
         ),
         const SizedBox(height: AppSpacing.lg),
-        FilledButton(onPressed: _saving ? null : _save, child: const Text('Save')),
+        FilledButton(onPressed: _saving ? null : _save, child: Text(context.l10n.save)),
       ],
     ),
   );
@@ -129,7 +129,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
+      appBar: AppBar(title: Text(context.l10n.notifications)),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
@@ -139,59 +139,33 @@ class NotificationSettingsScreen extends ConsumerWidget {
                 SwitchListTile(
                   value: user?.notifyRenewals ?? true,
                   onChanged: (v) => update('notify_renewals', v),
-                  title: const Text('Renewal reminders'),
-                  subtitle: const Text('90, 60, 30, 15, 7 and 1 day before a policy expires'),
+                  title: Text(context.l10n.renewalReminders),
+                  subtitle: Text(context.l10n.renewalRemindersHelp),
                 ),
                 SwitchListTile(
                   value: user?.notifyProcessing ?? true,
                   onChanged: (v) => update('notify_processing', v),
-                  title: const Text('Policy updates'),
-                  subtitle: const Text('When a document has been read and is ready to review'),
+                  title: Text(context.l10n.policyUpdates),
+                  subtitle: Text(context.l10n.policyUpdatesHelp),
                 ),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          const Text(
-            'We never send promotional notifications, and notifications never show your policy numbers, '
-            'amounts or health details.',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
+          Text(context.l10n.notificationsPromise, style: const TextStyle(color: AppColors.textSecondary)),
         ],
       ),
     );
   }
 }
 
-const _faqs = [
-  (
-    'Is my data safe?',
-    'Your documents are stored encrypted and are only accessible to you. We do not sell your data or share it '
-        'with insurers or agents.',
-  ),
-  (
-    'How does the AI answer my questions?',
-    'It reads only your own policy document and shows the page its answer came from. If the answer is not in your '
-        'document it will say so instead of guessing.',
-  ),
-  (
-    'The details extracted from my policy are wrong. What do I do?',
-    'Open the policy, tap the ⋮ menu and choose "Edit details". Anything you correct is saved as confirmed by you.',
-  ),
-  (
-    'Which documents can I upload?',
-    'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected '
-        'PDFs must be unlocked first.',
-  ),
-  (
-    'Do you sell insurance?',
-    'No. ${Brand.name} helps you organise and understand the policies you already have. We do not sell or recommend '
-        'insurance products.',
-  ),
-  (
-    'How do I delete my account?',
-    'Profile → Privacy & data → Delete account. Your data is permanently deleted after 7 days.',
-  ),
+List<(String, String)> _faqs(AppLocalizations t) => [
+  (t.faqSafeQ, t.faqSafeA),
+  (t.faqAiQ, t.faqAiA),
+  (t.faqWrongQ, t.faqWrongA),
+  (t.faqUploadQ, t.faqUploadA),
+  (t.faqSellQ, t.faqSellA(Brand.name)),
+  (t.faqDeleteQ, t.faqDeleteA),
 ];
 
 class SupportScreen extends ConsumerStatefulWidget {
@@ -217,7 +191,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
     try {
       await ref.read(accountRepositoryProvider).contactSupport(_category, _message.text.trim());
       _message.clear();
-      if (mounted) _snack(context, 'Thanks — we\'ll get back to you within 2 working days.');
+      if (mounted) _snack(context, context.l10n.supportThanks);
     } on ApiException catch (e) {
       if (mounted) _snack(context, e.message);
     } finally {
@@ -227,15 +201,15 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Help & support')),
+    appBar: AppBar(title: Text(context.l10n.helpSupport)),
     body: ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        const SectionHeader('Frequently asked questions'),
+        SectionHeader(context.l10n.faqTitle),
         Card(
           child: Column(
             children: [
-              for (final (q, a) in _faqs)
+              for (final (q, a) in _faqs(context.l10n))
                 ExpansionTile(
                   shape: const Border(),
                   title: Text(q, style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -246,16 +220,16 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             ],
           ),
         ),
-        const SectionHeader('Contact us'),
+        SectionHeader(context.l10n.contactUs),
         DropdownButtonFormField<String>(
           initialValue: _category,
-          decoration: const InputDecoration(labelText: 'Topic'),
-          items: const [
-            DropdownMenuItem(value: 'question', child: Text('A question')),
-            DropdownMenuItem(value: 'problem', child: Text('Something isn\'t working')),
-            DropdownMenuItem(value: 'feedback', child: Text('Feedback')),
-            DropdownMenuItem(value: 'privacy', child: Text('Privacy / my data')),
-            DropdownMenuItem(value: 'grievance', child: Text('Complaint (grievance)')),
+          decoration: InputDecoration(labelText: context.l10n.topic),
+          items: [
+            DropdownMenuItem(value: 'question', child: Text(context.l10n.topicQuestion)),
+            DropdownMenuItem(value: 'problem', child: Text(context.l10n.topicProblem)),
+            DropdownMenuItem(value: 'feedback', child: Text(context.l10n.topicFeedback)),
+            DropdownMenuItem(value: 'privacy', child: Text(context.l10n.topicPrivacy)),
+            DropdownMenuItem(value: 'grievance', child: Text(context.l10n.topicGrievance)),
           ],
           onChanged: (v) => setState(() => _category = v ?? _category),
         ),
@@ -266,14 +240,17 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           maxLines: 8,
           maxLength: 4000,
           onChanged: (_) => setState(() {}),
-          decoration: const InputDecoration(hintText: 'How can we help?'),
+          decoration: InputDecoration(hintText: context.l10n.howCanWeHelp),
         ),
-        FilledButton(onPressed: _message.text.trim().length < 5 || _sending ? null : _send, child: const Text('Send')),
+        FilledButton(
+          onPressed: _message.text.trim().length < 5 || _sending ? null : _send,
+          child: Text(context.l10n.send),
+        ),
         const SizedBox(height: AppSpacing.md),
         TextButton.icon(
           onPressed: () => launchUrl(Uri(scheme: 'mailto', path: Env.supportEmail)),
           icon: const Icon(Icons.mail_outline_rounded),
-          label: const Text('Email us instead'),
+          label: Text(context.l10n.emailUsInstead),
         ),
       ],
     ),
@@ -304,17 +281,14 @@ class PrivacyScreen extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete your account?'),
-        content: const Text(
-          'Your account will be disabled now. All your policies, documents and data will be permanently '
-          'deleted after 7 days. Logging in again within 7 days cancels the deletion.',
-        ),
+        title: Text(context.l10n.deleteAccountQ),
+        content: Text(context.l10n.deleteAccountBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.cancel)),
           TextButton(
             onPressed: () => Navigator.pop(c, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Delete account'),
+            child: Text(context.l10n.deleteAccount),
           ),
         ],
       ),
@@ -329,19 +303,12 @@ class PrivacyScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-    appBar: AppBar(title: const Text('Privacy & data')),
+    appBar: AppBar(title: Text(context.l10n.privacyData)),
     body: ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        const Card(
-          child: Padding(
-            padding: EdgeInsets.all(AppSpacing.md),
-            child: Text(
-              'We use your policy documents only to show, explain and remind you about your own insurance. '
-              'Documents are encrypted, never sold, and never shared with insurers or agents. '
-              'AI processing uses providers contractually barred from training on your data.',
-            ),
-          ),
+        Card(
+          child: Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(context.l10n.privacyPromise)),
         ),
         const SizedBox(height: AppSpacing.md),
         Card(
@@ -349,19 +316,19 @@ class PrivacyScreen extends ConsumerWidget {
             children: [
               ListTile(
                 leading: const Icon(Icons.download_rounded),
-                title: const Text('Download my data'),
-                subtitle: const Text('A copy of your profile, policies and questions'),
+                title: Text(context.l10n.downloadMyData),
+                subtitle: Text(context.l10n.downloadMyDataHelp),
                 onTap: () => _export(context, ref),
               ),
               ListTile(
                 leading: const Icon(Icons.privacy_tip_outlined),
-                title: const Text('Privacy policy'),
+                title: Text(context.l10n.privacyPolicyItem),
                 onTap: () => launchUrl(Uri.parse(Env.privacyPolicyUrl)),
               ),
-              const ListTile(
-                leading: Icon(Icons.gavel_rounded),
-                title: Text('Grievance officer'),
-                subtitle: Text(Env.grievanceOfficer),
+              ListTile(
+                leading: const Icon(Icons.gavel_rounded),
+                title: Text(context.l10n.grievanceOfficer),
+                subtitle: const Text(Env.grievanceOfficer),
               ),
             ],
           ),
@@ -370,8 +337,8 @@ class PrivacyScreen extends ConsumerWidget {
         Card(
           child: ListTile(
             leading: const Icon(Icons.delete_forever_outlined, color: AppColors.error),
-            title: const Text('Delete account', style: TextStyle(color: AppColors.error)),
-            subtitle: const Text('Permanently delete all your data'),
+            title: Text(context.l10n.deleteAccount, style: const TextStyle(color: AppColors.error)),
+            subtitle: Text(context.l10n.deleteAccountHelp),
             onTap: () => _delete(context, ref),
           ),
         ),
@@ -390,12 +357,12 @@ class AppLockTile extends ConsumerWidget {
     final lock = ref.watch(appLockProvider);
     return SwitchListTile(
       secondary: const Icon(Icons.lock_outline_rounded, color: AppColors.textSecondary),
-      title: const Text('App lock'),
-      subtitle: const Text('Use fingerprint, face or device PIN to open the app'),
+      title: Text(context.l10n.appLock),
+      subtitle: Text(context.l10n.appLockHelp),
       value: lock.enabled,
       onChanged: (v) async {
         final ok = await ref.read(appLockProvider.notifier).setEnabled(v);
-        if (!ok && context.mounted) _snack(context, 'Set up a screen lock on your phone first.');
+        if (!ok && context.mounted) _snack(context, context.l10n.setUpScreenLock);
       },
     );
   }
@@ -422,7 +389,7 @@ class LanguageTile extends ConsumerWidget {
     final current = ref.watch(authControllerProvider).user?.preferredLanguage ?? 'en';
     return ListTile(
       leading: const Icon(Icons.translate_rounded, color: AppColors.textSecondary),
-      title: const Text('AI answer language'),
+      title: Text(context.l10n.aiAnswerLanguage),
       subtitle: Text(answerLanguages[current] ?? 'English'),
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: () async {
@@ -433,12 +400,11 @@ class LanguageTile extends ConsumerWidget {
             child: ListView(
               shrinkWrap: true,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
                   child: Text(
-                    'Summaries and answers about your policies will be written in this language. '
-                    'You can ask questions in it too.',
-                    style: TextStyle(color: AppColors.textSecondary),
+                    context.l10n.aiAnswerLanguageHelp,
+                    style: const TextStyle(color: AppColors.textSecondary),
                   ),
                 ),
                 for (final e in answerLanguages.entries)

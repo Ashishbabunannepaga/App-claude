@@ -202,7 +202,7 @@ class _Header extends ConsumerWidget {
           name.isEmpty ? context.l10n.helloThere : context.l10n.hiName(name),
           style: Theme.of(context).textTheme.headlineMedium,
         ),
-        Text(context.l10n.homeSubtitle, style: TextStyle(color: AppColors.textSecondary)),
+        Text(context.l10n.homeSubtitle, style: const TextStyle(color: AppColors.textSecondary)),
       ],
     );
   }

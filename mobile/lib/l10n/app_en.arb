@@ -29,10 +29,22 @@
   "getOtp": "Get OTP",
   "otpTitle": "Enter the 6-digit code",
   "otpSentTo": "Sent to {identifier}",
-  "@otpSentTo": {"placeholders": {"identifier": {"type": "String"}}},
+  "@otpSentTo": {
+    "placeholders": {
+      "identifier": {
+        "type": "String"
+      }
+    }
+  },
   "verify": "Verify",
   "resendIn": "Resend code in {seconds}s",
-  "@resendIn": {"placeholders": {"seconds": {"type": "int"}}},
+  "@resendIn": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
   "resendCode": "Resend code",
   "nameTitle": "What should we call you?",
   "fullName": "Full name",
@@ -43,7 +55,13 @@
   "navProfile": "Profile",
   "addPolicy": "Add policy",
   "hiName": "Hi {name}",
-  "@hiName": {"placeholders": {"name": {"type": "String"}}},
+  "@hiName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "helloThere": "Hello there",
   "homeSubtitle": "Here's where your cover stands today.",
   "whatToDo": "What would you like to do?",
@@ -59,5 +77,69 @@
   "addAPolicy": "Add a policy",
   "seeSampleReport": "See a sample report",
   "coinsEarned": "+{coins} coins earned",
-  "@coinsEarned": {"placeholders": {"coins": {"type": "int"}}}
+  "@coinsEarned": {
+    "placeholders": {
+      "coins": {
+        "type": "int"
+      }
+    }
+  },
+  "personalDetails": "Personal details",
+  "dateOfBirth": "Date of birth",
+  "city": "City",
+  "state": "State",
+  "save": "Save",
+  "notifications": "Notifications",
+  "renewalReminders": "Renewal reminders",
+  "renewalRemindersHelp": "90, 60, 30, 15, 7 and 1 day before a policy expires",
+  "policyUpdates": "Policy updates",
+  "policyUpdatesHelp": "When a document has been read and is ready to review",
+  "notificationsPromise": "We never send promotional notifications, and notifications never show your policy numbers, amounts or health details.",
+  "faqSafeQ": "Is my data safe?",
+  "faqSafeA": "Your documents are stored encrypted and are only accessible to you. We do not sell your data or share it with insurers or agents.",
+  "faqAiQ": "How does the AI answer my questions?",
+  "faqAiA": "It reads only your own policy document and shows the page its answer came from. If the answer is not in your document it will say so instead of guessing.",
+  "faqWrongQ": "The details extracted from my policy are wrong. What do I do?",
+  "faqWrongA": "Open the policy, tap the ⋮ menu and choose \"Edit details\". Anything you correct is saved as confirmed by you.",
+  "faqUploadQ": "Which documents can I upload?",
+  "faqUploadA": "PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.",
+  "faqSellQ": "Do you sell insurance?",
+  "faqSellA": "No. {app} helps you organise and understand the policies you already have. We do not sell or recommend insurance products.",
+  "@faqSellA": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "faqDeleteQ": "How do I delete my account?",
+  "faqDeleteA": "Profile → Privacy & data → Delete account. Your data is permanently deleted after 7 days.",
+  "supportThanks": "Thanks — we'll get back to you within 2 working days.",
+  "helpSupport": "Help & support",
+  "faqTitle": "Frequently asked questions",
+  "contactUs": "Contact us",
+  "topic": "Topic",
+  "topicQuestion": "A question",
+  "topicProblem": "Something isn't working",
+  "topicFeedback": "Feedback",
+  "topicPrivacy": "Privacy / my data",
+  "topicGrievance": "Complaint (grievance)",
+  "howCanWeHelp": "How can we help?",
+  "send": "Send",
+  "emailUsInstead": "Email us instead",
+  "deleteAccountQ": "Delete your account?",
+  "deleteAccountBody": "Your account will be disabled now. All your policies, documents and data will be permanently deleted after 7 days. Logging in again within 7 days cancels the deletion.",
+  "deleteAccount": "Delete account",
+  "privacyData": "Privacy & data",
+  "privacyPromise": "We use your policy documents only to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or agents. AI processing uses providers contractually barred from training on your data.",
+  "downloadMyData": "Download my data",
+  "downloadMyDataHelp": "A copy of your profile, policies and questions",
+  "privacyPolicyItem": "Privacy policy",
+  "grievanceOfficer": "Grievance officer",
+  "deleteAccountHelp": "Permanently delete all your data",
+  "appLock": "App lock",
+  "appLockHelp": "Use fingerprint, face or device PIN to open the app",
+  "setUpScreenLock": "Set up a screen lock on your phone first.",
+  "aiAnswerLanguage": "AI answer language",
+  "aiAnswerLanguageHelp": "Summaries and answers about your policies will be written in this language. You can ask questions in it too."
 }

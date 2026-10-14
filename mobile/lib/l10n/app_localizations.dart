@@ -427,6 +427,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+{coins} coins earned'**
   String coinsEarned(int coins);
+
+  /// No description provided for @personalDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal details'**
+  String get personalDetails;
+
+  /// No description provided for @dateOfBirth.
+  ///
+  /// In en, this message translates to:
+  /// **'Date of birth'**
+  String get dateOfBirth;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @state.
+  ///
+  /// In en, this message translates to:
+  /// **'State'**
+  String get state;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @renewalReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal reminders'**
+  String get renewalReminders;
+
+  /// No description provided for @renewalRemindersHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'90, 60, 30, 15, 7 and 1 day before a policy expires'**
+  String get renewalRemindersHelp;
+
+  /// No description provided for @policyUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy updates'**
+  String get policyUpdates;
+
+  /// No description provided for @policyUpdatesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'When a document has been read and is ready to review'**
+  String get policyUpdatesHelp;
+
+  /// No description provided for @notificationsPromise.
+  ///
+  /// In en, this message translates to:
+  /// **'We never send promotional notifications, and notifications never show your policy numbers, amounts or health details.'**
+  String get notificationsPromise;
+
+  /// No description provided for @faqSafeQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Is my data safe?'**
+  String get faqSafeQ;
+
+  /// No description provided for @faqSafeA.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are stored encrypted and are only accessible to you. We do not sell your data or share it with insurers or agents.'**
+  String get faqSafeA;
+
+  /// No description provided for @faqAiQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How does the AI answer my questions?'**
+  String get faqAiQ;
+
+  /// No description provided for @faqAiA.
+  ///
+  /// In en, this message translates to:
+  /// **'It reads only your own policy document and shows the page its answer came from. If the answer is not in your document it will say so instead of guessing.'**
+  String get faqAiA;
+
+  /// No description provided for @faqWrongQ.
+  ///
+  /// In en, this message translates to:
+  /// **'The details extracted from my policy are wrong. What do I do?'**
+  String get faqWrongQ;
+
+  /// No description provided for @faqWrongA.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the policy, tap the ⋮ menu and choose \"Edit details\". Anything you correct is saved as confirmed by you.'**
+  String get faqWrongA;
+
+  /// No description provided for @faqUploadQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Which documents can I upload?'**
+  String get faqUploadQ;
+
+  /// No description provided for @faqUploadA.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.'**
+  String get faqUploadA;
+
+  /// No description provided for @faqSellQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you sell insurance?'**
+  String get faqSellQ;
+
+  /// No description provided for @faqSellA.
+  ///
+  /// In en, this message translates to:
+  /// **'No. {app} helps you organise and understand the policies you already have. We do not sell or recommend insurance products.'**
+  String faqSellA(String app);
+
+  /// No description provided for @faqDeleteQ.
+  ///
+  /// In en, this message translates to:
+  /// **'How do I delete my account?'**
+  String get faqDeleteQ;
+
+  /// No description provided for @faqDeleteA.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile → Privacy & data → Delete account. Your data is permanently deleted after 7 days.'**
+  String get faqDeleteA;
+
+  /// No description provided for @supportThanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks — we\'ll get back to you within 2 working days.'**
+  String get supportThanks;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & support'**
+  String get helpSupport;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently asked questions'**
+  String get faqTitle;
+
+  /// No description provided for @contactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get contactUs;
+
+  /// No description provided for @topic.
+  ///
+  /// In en, this message translates to:
+  /// **'Topic'**
+  String get topic;
+
+  /// No description provided for @topicQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'A question'**
+  String get topicQuestion;
+
+  /// No description provided for @topicProblem.
+  ///
+  /// In en, this message translates to:
+  /// **'Something isn\'t working'**
+  String get topicProblem;
+
+  /// No description provided for @topicFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get topicFeedback;
+
+  /// No description provided for @topicPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy / my data'**
+  String get topicPrivacy;
+
+  /// No description provided for @topicGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint (grievance)'**
+  String get topicGrievance;
+
+  /// No description provided for @howCanWeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How can we help?'**
+  String get howCanWeHelp;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @emailUsInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Email us instead'**
+  String get emailUsInstead;
+
+  /// No description provided for @deleteAccountQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get deleteAccountQ;
+
+  /// No description provided for @deleteAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account will be disabled now. All your policies, documents and data will be permanently deleted after 7 days. Logging in again within 7 days cancels the deletion.'**
+  String get deleteAccountBody;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @privacyData.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & data'**
+  String get privacyData;
+
+  /// No description provided for @privacyPromise.
+  ///
+  /// In en, this message translates to:
+  /// **'We use your policy documents only to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or agents. AI processing uses providers contractually barred from training on your data.'**
+  String get privacyPromise;
+
+  /// No description provided for @downloadMyData.
+  ///
+  /// In en, this message translates to:
+  /// **'Download my data'**
+  String get downloadMyData;
+
+  /// No description provided for @downloadMyDataHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A copy of your profile, policies and questions'**
+  String get downloadMyDataHelp;
+
+  /// No description provided for @privacyPolicyItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get privacyPolicyItem;
+
+  /// No description provided for @grievanceOfficer.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance officer'**
+  String get grievanceOfficer;
+
+  /// No description provided for @deleteAccountHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete all your data'**
+  String get deleteAccountHelp;
+
+  /// No description provided for @appLock.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock'**
+  String get appLock;
+
+  /// No description provided for @appLockHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint, face or device PIN to open the app'**
+  String get appLockHelp;
+
+  /// No description provided for @setUpScreenLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up a screen lock on your phone first.'**
+  String get setUpScreenLock;
+
+  /// No description provided for @aiAnswerLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'AI answer language'**
+  String get aiAnswerLanguage;
+
+  /// No description provided for @aiAnswerLanguageHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Summaries and answers about your policies will be written in this language. You can ask questions in it too.'**
+  String get aiAnswerLanguageHelp;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

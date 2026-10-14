@@ -59,7 +59,7 @@ class AppLockController extends Notifier<AppLockState> {
     if (s == AppLifecycleState.paused) _backgroundedAt = DateTime.now();
     if (s == AppLifecycleState.resumed && _backgroundedAt != null) {
       if (DateTime.now().difference(_backgroundedAt!) > _relockAfter) {
-        state = AppLockState(enabled: true, locked: true);
+        state = const AppLockState(enabled: true, locked: true);
       }
       _backgroundedAt = null;
     }

@@ -25,7 +25,7 @@ void main() {
     expect(r.buildReport(StateError('x'), stack, fatal: false), isNotNull);
     expect(r.buildReport(StateError('x'), stack, fatal: false), isNull); // duplicate
     expect(r.buildReport(ArgumentError('y'), stack, fatal: false), isNotNull);
-    expect(r.buildReport(FormatException('z'), stack, fatal: false), isNull); // budget used up
+    expect(r.buildReport(const FormatException('z'), stack, fatal: false), isNull); // budget used up
   });
 
   test('long messages and stacks are capped', () {

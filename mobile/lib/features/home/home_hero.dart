@@ -118,17 +118,17 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
       ),
       child: Stack(
         children: [
-          Positioned(right: -22, top: -18, child: SceneArt(Scene.shield, size: 180, backdrop: false)),
+          const Positioned(right: -22, top: -18, child: SceneArt(Scene.shield, size: 180, backdrop: false)),
           Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 190,
                   child: Text(
                     'Will your policy cover',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -373,15 +373,15 @@ class ExpertReviewCard extends ConsumerWidget {
         color: const Color(0xFFEDEAFB),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
-      child: Row(
+      child: const Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 28,
             backgroundColor: Colors.white,
             child: Icon(Icons.support_agent_rounded, color: AppColors.life, size: 30),
           ),
-          const SizedBox(width: AppSpacing.md),
-          const Expanded(
+          SizedBox(width: AppSpacing.md),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -394,7 +394,7 @@ class ExpertReviewCard extends ConsumerWidget {
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_rounded),
+          Icon(Icons.arrow_forward_rounded),
         ],
       ),
     ),

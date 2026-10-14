@@ -184,4 +184,167 @@ class AppLocalizationsEn extends AppLocalizations {
   String coinsEarned(int coins) {
     return '+$coins coins earned';
   }
+
+  @override
+  String get personalDetails => 'Personal details';
+
+  @override
+  String get dateOfBirth => 'Date of birth';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get state => 'State';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get renewalReminders => 'Renewal reminders';
+
+  @override
+  String get renewalRemindersHelp => '90, 60, 30, 15, 7 and 1 day before a policy expires';
+
+  @override
+  String get policyUpdates => 'Policy updates';
+
+  @override
+  String get policyUpdatesHelp => 'When a document has been read and is ready to review';
+
+  @override
+  String get notificationsPromise =>
+      'We never send promotional notifications, and notifications never show your policy numbers, amounts or health details.';
+
+  @override
+  String get faqSafeQ => 'Is my data safe?';
+
+  @override
+  String get faqSafeA =>
+      'Your documents are stored encrypted and are only accessible to you. We do not sell your data or share it with insurers or agents.';
+
+  @override
+  String get faqAiQ => 'How does the AI answer my questions?';
+
+  @override
+  String get faqAiA =>
+      'It reads only your own policy document and shows the page its answer came from. If the answer is not in your document it will say so instead of guessing.';
+
+  @override
+  String get faqWrongQ => 'The details extracted from my policy are wrong. What do I do?';
+
+  @override
+  String get faqWrongA =>
+      'Open the policy, tap the ⋮ menu and choose \"Edit details\". Anything you correct is saved as confirmed by you.';
+
+  @override
+  String get faqUploadQ => 'Which documents can I upload?';
+
+  @override
+  String get faqUploadA =>
+      'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.';
+
+  @override
+  String get faqSellQ => 'Do you sell insurance?';
+
+  @override
+  String faqSellA(String app) {
+    return 'No. $app helps you organise and understand the policies you already have. We do not sell or recommend insurance products.';
+  }
+
+  @override
+  String get faqDeleteQ => 'How do I delete my account?';
+
+  @override
+  String get faqDeleteA => 'Profile → Privacy & data → Delete account. Your data is permanently deleted after 7 days.';
+
+  @override
+  String get supportThanks => 'Thanks — we\'ll get back to you within 2 working days.';
+
+  @override
+  String get helpSupport => 'Help & support';
+
+  @override
+  String get faqTitle => 'Frequently asked questions';
+
+  @override
+  String get contactUs => 'Contact us';
+
+  @override
+  String get topic => 'Topic';
+
+  @override
+  String get topicQuestion => 'A question';
+
+  @override
+  String get topicProblem => 'Something isn\'t working';
+
+  @override
+  String get topicFeedback => 'Feedback';
+
+  @override
+  String get topicPrivacy => 'Privacy / my data';
+
+  @override
+  String get topicGrievance => 'Complaint (grievance)';
+
+  @override
+  String get howCanWeHelp => 'How can we help?';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get emailUsInstead => 'Email us instead';
+
+  @override
+  String get deleteAccountQ => 'Delete your account?';
+
+  @override
+  String get deleteAccountBody =>
+      'Your account will be disabled now. All your policies, documents and data will be permanently deleted after 7 days. Logging in again within 7 days cancels the deletion.';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get privacyData => 'Privacy & data';
+
+  @override
+  String get privacyPromise =>
+      'We use your policy documents only to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or agents. AI processing uses providers contractually barred from training on your data.';
+
+  @override
+  String get downloadMyData => 'Download my data';
+
+  @override
+  String get downloadMyDataHelp => 'A copy of your profile, policies and questions';
+
+  @override
+  String get privacyPolicyItem => 'Privacy policy';
+
+  @override
+  String get grievanceOfficer => 'Grievance officer';
+
+  @override
+  String get deleteAccountHelp => 'Permanently delete all your data';
+
+  @override
+  String get appLock => 'App lock';
+
+  @override
+  String get appLockHelp => 'Use fingerprint, face or device PIN to open the app';
+
+  @override
+  String get setUpScreenLock => 'Set up a screen lock on your phone first.';
+
+  @override
+  String get aiAnswerLanguage => 'AI answer language';
+
+  @override
+  String get aiAnswerLanguageHelp =>
+      'Summaries and answers about your policies will be written in this language. You can ask questions in it too.';
 }
