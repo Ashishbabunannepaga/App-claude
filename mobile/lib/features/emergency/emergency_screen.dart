@@ -10,6 +10,7 @@ import '../../core/widgets/async_states.dart';
 import '../../core/widgets/policy_card.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
+import '../../core/locale.dart';
 
 /// Everything needed in the first minutes of an emergency: national emergency numbers and the policy numbers to
 /// quote, one tap away. Insurer helplines are printed on the policy document, so we point there rather than
@@ -20,7 +21,7 @@ class EmergencyScreen extends ConsumerWidget {
   Future<void> _call(BuildContext context, String number) async {
     final ok = await launchUrl(Uri(scheme: 'tel', path: number));
     if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not open the dialler for $number')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.couldNotDial(number))));
     }
   }
 
@@ -28,7 +29,7 @@ class EmergencyScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final policies = ref.watch(policiesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Emergency card')),
+      appBar: AppBar(title: Text(context.l10n.emergencyCard)),
       body: AsyncValueView(
         value: policies,
         onRetry: () => invalidatePolicies(ref),
@@ -52,57 +53,50 @@ class EmergencyScreen extends ConsumerWidget {
                   children: [
                     const Icon(Icons.emergency_rounded, color: Colors.white, size: 36),
                     const SizedBox(height: AppSpacing.sm),
-                    const Text(
-                      'In an emergency, call first.',
-                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
+                    Text(
+                      context.l10n.callFirst,
+                      style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Insurance questions can wait. Get help, then use the details below.',
-                      style: TextStyle(color: Color(0xE6FFFFFF)),
-                    ),
+                    Text(context.l10n.insuranceCanWait, style: const TextStyle(color: Color(0xE6FFFFFF))),
                     const SizedBox(height: AppSpacing.md),
                     Row(
                       children: [
                         Expanded(
-                          child: _CallButton(label: 'Emergency', number: '112', onTap: () => _call(context, '112')),
+                          child: _CallButton(
+                            label: context.l10n.emergency,
+                            number: '112',
+                            onTap: () => _call(context, '112'),
+                          ),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
-                          child: _CallButton(label: 'Ambulance', number: '108', onTap: () => _call(context, '108')),
+                          child: _CallButton(
+                            label: context.l10n.ambulance,
+                            number: '108',
+                            onTap: () => _call(context, '108'),
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SectionHeader('Your policy numbers'),
+              SectionHeader(context.l10n.yourPolicyNumbers),
               if (live.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
-                  child: Text(
-                    'Add a policy and its number will show here, ready to quote at the hospital or to your insurer.',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  child: Text(context.l10n.addPolicyNumberHint, style: const TextStyle(color: AppColors.textSecondary)),
                 ),
               for (final p in live)
                 Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                   child: _PolicyNumber(policy: p),
                 ),
-              const SectionHeader('Good to know'),
-              const _Tip(
-                icon: Icons.local_hospital_rounded,
-                text: 'For planned cashless treatment, tell the hospital desk your insurer and policy number first.',
-              ),
-              const _Tip(
-                icon: Icons.phone_in_talk_rounded,
-                text: 'Your insurer\'s claims helpline is printed on your policy document and e-card. Keep it handy.',
-              ),
-              const _Tip(
-                icon: Icons.timer_outlined,
-                text: 'Many policies want an intimation within 24 hours of an emergency admission. Check the time limit in your wording.',
-              ),
+              SectionHeader(context.l10n.goodToKnow),
+              _Tip(icon: Icons.local_hospital_rounded, text: context.l10n.tipCashless),
+              _Tip(icon: Icons.phone_in_talk_rounded, text: context.l10n.tipHelpline),
+              _Tip(icon: Icons.timer_outlined, text: context.l10n.tipIntimation),
             ],
           );
         },
@@ -120,7 +114,7 @@ class _CallButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Pressable(
     onTap: onTap,
-    semanticLabel: 'Call $label $number',
+    semanticLabel: context.l10n.callLabel(label, number),
     child: Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
@@ -168,7 +162,7 @@ class _PolicyNumber extends StatelessWidget {
               children: [
                 Text(policy.displayName, style: const TextStyle(fontWeight: FontWeight.w800)),
                 Text(
-                  number ?? 'Policy number not added yet',
+                  number ?? context.l10n.policyNumberNotAdded,
                   style: TextStyle(
                     fontSize: 15,
                     letterSpacing: number == null ? 0 : 0.5,
@@ -176,7 +170,7 @@ class _PolicyNumber extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${policyTypeLabel(policy.policyType)} · valid till ${formatDate(policy.endDate)}',
+                  context.l10n.validTill(policyTypeLabel(policy.policyType), formatDate(policy.endDate)),
                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                 ),
               ],
@@ -184,12 +178,12 @@ class _PolicyNumber extends StatelessWidget {
           ),
           if (number != null)
             IconButton(
-              tooltip: 'Copy policy number',
+              tooltip: context.l10n.copyPolicyNumber,
               icon: const Icon(Icons.copy_rounded),
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: number));
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Policy number copied')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.policyNumberCopied)));
                 }
               },
             ),

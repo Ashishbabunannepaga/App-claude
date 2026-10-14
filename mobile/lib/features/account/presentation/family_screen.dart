@@ -8,6 +8,7 @@ import '../../../core/widgets/async_states.dart';
 import '../../policy/data/models.dart';
 import '../../policy/data/policy_repository.dart';
 import '../data/account_repository.dart';
+import '../../../core/locale.dart';
 
 const relations = ['self', 'spouse', 'child', 'parent', 'other'];
 
@@ -27,20 +28,20 @@ class FamilyScreen extends ConsumerWidget {
     final family = ref.watch(familyProvider);
     final policies = ref.watch(policiesProvider).value ?? [];
     return Scaffold(
-      appBar: AppBar(title: const Text('Family')),
+      appBar: AppBar(title: Text(context.l10n.family)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showMemberSheet(context, ref),
         icon: const Icon(Icons.person_add_alt_1_rounded),
-        label: const Text('Add member'),
+        label: Text(context.l10n.addMember),
       ),
       body: AsyncValueView(
         value: family,
         onRetry: () => ref.invalidate(familyProvider),
         data: (members) => members.isEmpty
-            ? const EmptyView(
+            ? EmptyView(
                 icon: Icons.family_restroom_rounded,
-                title: 'Add your family',
-                message: 'Add the people covered by your policies to see who is protected and where the gaps are.',
+                title: context.l10n.addYourFamily,
+                message: context.l10n.addFamilyMessage,
               )
             : ListView(
                 padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, 96),
@@ -82,7 +83,7 @@ class _MemberCard extends StatelessWidget {
         title: Text(member.fullName, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(
           uncovered
-              ? '${humanise(member.relation)} · Not linked to any policy'
+              ? '${humanise(member.relation)} · ${context.l10n.notLinked}'
               : '${humanise(member.relation)} · ${types.join(', ')}',
           style: TextStyle(color: uncovered ? AppColors.warning : AppColors.textSecondary),
         ),
@@ -170,7 +171,7 @@ class _MemberFormState extends ConsumerState<_MemberForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            widget.member == null ? 'Add family member' : 'Edit family member',
+            widget.member == null ? context.l10n.addFamilyMember : context.l10n.editFamilyMember,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: AppSpacing.md),
@@ -191,12 +192,12 @@ class _MemberFormState extends ConsumerState<_MemberForm> {
             controller: _name,
             textCapitalization: TextCapitalization.words,
             onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(labelText: 'Full name', errorText: _error),
+            decoration: InputDecoration(labelText: context.l10n.fullName, errorText: _error),
           ),
           const SizedBox(height: AppSpacing.md),
           OutlinedButton.icon(
             icon: const Icon(Icons.cake_outlined),
-            label: Text(_dob == null ? 'Date of birth (optional)' : formatDate(_dob)),
+            label: Text(_dob == null ? context.l10n.dobOptional : formatDate(_dob)),
             onPressed: () async {
               final picked = await showDatePicker(
                 context: context,
@@ -208,12 +209,12 @@ class _MemberFormState extends ConsumerState<_MemberForm> {
             },
           ),
           const SizedBox(height: AppSpacing.lg),
-          FilledButton(onPressed: _name.text.trim().isEmpty || _saving ? null : _save, child: const Text('Save')),
+          FilledButton(onPressed: _name.text.trim().isEmpty || _saving ? null : _save, child: Text(context.l10n.save)),
           if (widget.member != null)
             TextButton(
               onPressed: _delete,
               style: TextButton.styleFrom(foregroundColor: AppColors.error),
-              child: const Text('Remove member'),
+              child: Text(context.l10n.removeMember),
             ),
         ],
       ),

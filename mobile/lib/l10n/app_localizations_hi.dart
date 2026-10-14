@@ -1034,4 +1034,243 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get expertPitch => 'आपके कवर और आगे क्या करना है, इस पर 30 मिनट की बातचीत। कोई बिक्री नहीं।';
+
+  @override
+  String get sugMaternity => 'क्या मैटरनिटी (डिलीवरी) कवर है?';
+
+  @override
+  String get sugRoomRent => 'रूम रेंट की सीमा क्या है?';
+
+  @override
+  String get sugPed => 'पहले से मौजूद बीमारियों (PED) के लिए वेटिंग पीरियड कितना है?';
+
+  @override
+  String get sugExcluded => 'क्या-क्या कवर नहीं है?';
+
+  @override
+  String get sugZeroDep => 'क्या ज़ीरो डेप्रिसिएशन शामिल है?';
+
+  @override
+  String get sugIdv => 'मेरी IDV कितनी है?';
+
+  @override
+  String get sugRoadside => 'क्या रोडसाइड असिस्टेंस कवर है?';
+
+  @override
+  String get sugDeathBenefit => 'डेथ बेनिफ़िट कितना है?';
+
+  @override
+  String get sugNominee => 'नॉमिनी कौन है?';
+
+  @override
+  String get sugSurrender => 'क्या मैं यह पॉलिसी सरेंडर कर सकता/सकती हूँ?';
+
+  @override
+  String get sugCover => 'यह पॉलिसी क्या-क्या कवर करती है?';
+
+  @override
+  String get askAboutYourPolicy => 'अपनी पॉलिसी के बारे में पूछें';
+
+  @override
+  String get checkingDocument => 'आपका पॉलिसी दस्तावेज़ देखा जा रहा है…';
+
+  @override
+  String get askAQuestion => 'एक सवाल पूछें…';
+
+  @override
+  String get askAnythingPolicy => 'इस पॉलिसी के बारे में कुछ भी पूछें';
+
+  @override
+  String get answersFromDocument => 'जवाब सिर्फ़ आपके पॉलिसी दस्तावेज़ से आते हैं, साथ में वह पेज भी जहाँ वे मिले।';
+
+  @override
+  String pageLabel(String page) {
+    return 'पेज $page';
+  }
+
+  @override
+  String sourceLabel(String source) {
+    return 'स्रोत: $source';
+  }
+
+  @override
+  String get policyDocument => 'पॉलिसी दस्तावेज़';
+
+  @override
+  String confidenceLabel(String level) {
+    String _temp0 = intl.Intl.selectLogic(level, {
+      'high': 'ज़्यादा',
+      'medium': 'मध्यम',
+      'low': 'कम',
+      'other': '$level',
+    });
+    return 'भरोसा: $_temp0';
+  }
+
+  @override
+  String get fileTooBig => 'फ़ाइल 20 MB से छोटी होनी चाहिए।';
+
+  @override
+  String get wrongFileType => 'कृपया PDF, JPG या PNG फ़ाइल चुनें।';
+
+  @override
+  String get addAPolicyTitle => 'पॉलिसी जोड़ें';
+
+  @override
+  String get uploadIntro =>
+      'अपनी पॉलिसी का दस्तावेज़ अपलोड करें, हम उसे आपके लिए पढ़ेंगे। ध्यान रखें कि उसमें पॉलिसी नंबर, शुरू और खत्म होने की तारीख, प्रीमियम, कवर की रकम और बीमा कंपनी/प्लान का नाम दिखे।';
+
+  @override
+  String uploadingPercent(int percent) {
+    return 'अपलोड हो रहा है… $percent%';
+  }
+
+  @override
+  String get uploadPdf => 'पॉलिसी की PDF अपलोड करें';
+
+  @override
+  String get recommendedBest => 'सुझाया गया · सबसे सटीक';
+
+  @override
+  String get takePhoto => 'फ़ोटो खींचें';
+
+  @override
+  String get photoTip => 'पॉलिसी को समतल और अच्छी रोशनी वाली जगह पर रखें';
+
+  @override
+  String get uploadPhoto => 'पॉलिसी की फ़ोटो अपलोड करें';
+
+  @override
+  String get jpgOrPng => 'JPG या PNG';
+
+  @override
+  String get enterManually => 'जानकारी खुद भरें';
+
+  @override
+  String get noDocumentNeeded => 'दस्तावेज़ की ज़रूरत नहीं';
+
+  @override
+  String get importGmail => 'Gmail से इम्पोर्ट करें';
+
+  @override
+  String get docsEncrypted => 'आपके दस्तावेज़ एन्क्रिप्टेड हैं और सिर्फ़ आपको दिखते हैं।';
+
+  @override
+  String couldNotDial(String number) {
+    return '$number के लिए डायलर नहीं खुल सका';
+  }
+
+  @override
+  String get callFirst => 'इमरजेंसी में पहले कॉल करें।';
+
+  @override
+  String get insuranceCanWait => 'बीमा के सवाल बाद में। पहले मदद लें, फिर नीचे की जानकारी का इस्तेमाल करें।';
+
+  @override
+  String get emergency => 'इमरजेंसी';
+
+  @override
+  String get ambulance => 'एम्बुलेंस';
+
+  @override
+  String get yourPolicyNumbers => 'आपके पॉलिसी नंबर';
+
+  @override
+  String get addPolicyNumberHint =>
+      'पॉलिसी जोड़ें, उसका नंबर यहाँ दिखेगा — अस्पताल या बीमा कंपनी को बताने के लिए तैयार।';
+
+  @override
+  String get goodToKnow => 'जानने लायक';
+
+  @override
+  String get tipCashless =>
+      'पहले से तय कैशलेस इलाज के लिए, सबसे पहले अस्पताल डेस्क को अपनी बीमा कंपनी और पॉलिसी नंबर बताएँ।';
+
+  @override
+  String get tipHelpline =>
+      'बीमा कंपनी की क्लेम हेल्पलाइन आपके पॉलिसी दस्तावेज़ और ई-कार्ड पर छपी होती है। उसे पास रखें।';
+
+  @override
+  String get tipIntimation =>
+      'कई पॉलिसियों में इमरजेंसी भर्ती के 24 घंटे के अंदर सूचना देनी होती है। अपनी पॉलिसी में समय-सीमा देखें।';
+
+  @override
+  String callLabel(String label, String number) {
+    return '$label $number पर कॉल करें';
+  }
+
+  @override
+  String get policyNumberNotAdded => 'पॉलिसी नंबर अभी जोड़ा नहीं गया';
+
+  @override
+  String validTill(String type, String date) {
+    return '$type · $date तक वैध';
+  }
+
+  @override
+  String get copyPolicyNumber => 'पॉलिसी नंबर कॉपी करें';
+
+  @override
+  String get policyNumberCopied => 'पॉलिसी नंबर कॉपी हो गया';
+
+  @override
+  String get rewards => 'रिवॉर्ड';
+
+  @override
+  String get earnCoins => 'कॉइन कमाएँ';
+
+  @override
+  String get useCoins => 'कॉइन इस्तेमाल करें';
+
+  @override
+  String get yourCoins => 'आपके कॉइन';
+
+  @override
+  String coinsCount(int count) {
+    return '$count कॉइन';
+  }
+
+  @override
+  String get earnedForOrganising => 'अपना बीमा व्यवस्थित करने के लिए मिले';
+
+  @override
+  String get waysToEarn => 'कमाने के तरीके';
+
+  @override
+  String progressDone(String progress) {
+    return '$progress पूरा';
+  }
+
+  @override
+  String get history => 'इतिहास';
+
+  @override
+  String get useYourCoins => 'अपने कॉइन इस्तेमाल करें';
+
+  @override
+  String get perksOnTheWay => 'फ़ायदे जल्द आ रहे हैं। कमाते रहिए — लॉन्च होने पर आपके कॉइन तैयार रहेंगे।';
+
+  @override
+  String get familyTitle => 'परिवार';
+
+  @override
+  String get addMember => 'सदस्य जोड़ें';
+
+  @override
+  String get addYourFamily => 'अपना परिवार जोड़ें';
+
+  @override
+  String get addFamilyMessage => 'अपनी पॉलिसियों में कवर लोगों को जोड़ें, ताकि दिखे कि कौन सुरक्षित है और कहाँ कमी है।';
+
+  @override
+  String get notLinked => 'किसी पॉलिसी से जुड़ा नहीं';
+
+  @override
+  String get addFamilyMember => 'परिवार का सदस्य जोड़ें';
+
+  @override
+  String get editFamilyMember => 'परिवार के सदस्य की जानकारी बदलें';
+
+  @override
+  String get removeMember => 'सदस्य हटाएँ';
 }

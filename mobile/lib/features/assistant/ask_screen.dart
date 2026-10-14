@@ -8,17 +8,13 @@ import '../../core/widgets/demo_badge.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
 import '../policy/presentation/clauses_screen.dart';
+import '../../core/locale.dart';
 
-const _suggestions = {
-  'health': [
-    'Is maternity covered?',
-    'What is the room rent limit?',
-    'What is the waiting period for pre-existing diseases?',
-    'What is excluded?',
-  ],
-  'motor': ['Is zero depreciation included?', 'What is my IDV?', 'Is roadside assistance covered?'],
-  'life': ['What is the death benefit?', 'Who is the nominee?', 'Can I surrender this policy?'],
-  'other': ['What does this policy cover?', 'What is excluded?'],
+Map<String, List<String>> _suggestions(AppLocalizations t) => {
+  'health': [t.sugMaternity, t.sugRoomRent, t.sugPed, t.sugExcluded],
+  'motor': [t.sugZeroDep, t.sugIdv, t.sugRoadside],
+  'life': [t.sugDeathBenefit, t.sugNominee, t.sugSurrender],
+  'other': [t.sugCover, t.sugExcluded],
 };
 
 final _historyProvider = FutureProvider.autoDispose.family<List<Answer>, String>(
@@ -88,7 +84,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Ask about your policy'),
+            Text(context.l10n.askAboutYourPolicy),
             if (policy.value != null)
               Text(policy.value!.displayName, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
           ],
@@ -108,7 +104,9 @@ class _AskScreenState extends ConsumerState<AskScreen> {
                 }
                 if (all.isEmpty && _pending == null) {
                   return _Suggestions(
-                    questions: _suggestions[policy.value?.policyType ?? 'other'] ?? _suggestions['other']!,
+                    questions:
+                        _suggestions(context.l10n)[policy.value?.policyType ?? 'other'] ??
+                        _suggestions(context.l10n)['other']!,
                     onTap: _ask,
                   );
                 }
@@ -119,13 +117,13 @@ class _AskScreenState extends ConsumerState<AskScreen> {
                     for (final a in all) ...[_QuestionBubble(a.question), _AnswerBubble(a)],
                     if (_pending != null) ...[
                       _QuestionBubble(_pending!),
-                      const Padding(
-                        padding: EdgeInsets.all(AppSpacing.md),
+                      Padding(
+                        padding: const EdgeInsets.all(AppSpacing.md),
                         child: Row(
                           children: [
-                            SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-                            SizedBox(width: AppSpacing.sm),
-                            Text('Checking your policy document…', style: TextStyle(color: AppColors.textSecondary)),
+                            const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(context.l10n.checkingDocument, style: const TextStyle(color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
@@ -154,7 +152,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
                       maxLines: 4,
                       textInputAction: TextInputAction.send,
                       onSubmitted: _ask,
-                      decoration: const InputDecoration(hintText: 'Ask a question…', counterText: ''),
+                      decoration: InputDecoration(hintText: context.l10n.askAQuestion, counterText: ''),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -183,12 +181,9 @@ class _Suggestions extends StatelessWidget {
     children: [
       const Icon(Icons.auto_awesome_rounded, size: 40, color: AppColors.secondary),
       const SizedBox(height: AppSpacing.md),
-      Text('Ask anything about this policy', style: Theme.of(context).textTheme.titleLarge),
+      Text(context.l10n.askAnythingPolicy, style: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: AppSpacing.sm),
-      const Text(
-        'Answers come only from your policy document, with the page they were found on.',
-        style: TextStyle(color: AppColors.textSecondary),
-      ),
+      Text(context.l10n.answersFromDocument, style: const TextStyle(color: AppColors.textSecondary)),
       const SizedBox(height: AppSpacing.lg),
       Wrap(
         spacing: AppSpacing.sm,
@@ -235,15 +230,15 @@ class _AnswerBubble extends StatelessWidget {
         children: [
           DemoAiBadge(provider: answer.provider),
           if (!answer.answerable)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 6),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
               child: Row(
                 children: [
-                  Icon(Icons.help_outline_rounded, size: 16, color: AppColors.warning),
-                  SizedBox(width: 4),
+                  const Icon(Icons.help_outline_rounded, size: 16, color: AppColors.warning),
+                  const SizedBox(width: 4),
                   Text(
-                    'Not found in your document',
-                    style: TextStyle(color: AppColors.warning, fontWeight: FontWeight.w600, fontSize: 12),
+                    context.l10n.statusUnknown,
+                    style: const TextStyle(color: AppColors.warning, fontWeight: FontWeight.w600, fontSize: 12),
                   ),
                 ],
               ),
@@ -269,7 +264,10 @@ class _AnswerBubble extends StatelessWidget {
                         ClauseTypeBadge(c.type),
                         const SizedBox(width: AppSpacing.sm),
                         if (c.page != null)
-                          Text('Page ${c.page}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                          Text(
+                            context.l10n.pageLabel('${c.page}'),
+                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          ),
                       ],
                     ),
                     const SizedBox(height: 4),
@@ -288,7 +286,7 @@ class _AnswerBubble extends StatelessWidget {
                   dense: true,
                   leading: const Icon(Icons.bookmark_outline_rounded, size: 18, color: AppColors.secondary),
                   title: Text(
-                    'Source: ${c.label.isEmpty ? 'policy document' : c.label}',
+                    context.l10n.sourceLabel(c.label.isEmpty ? context.l10n.policyDocument : c.label),
                     style: const TextStyle(color: AppColors.secondary, fontSize: 13),
                   ),
                   children: [Text('“${c.excerpt}”', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13))],
@@ -296,7 +294,7 @@ class _AnswerBubble extends StatelessWidget {
               ),
             if (answer.confidence != 'high')
               Text(
-                'Confidence: ${answer.confidence}',
+                context.l10n.confidenceLabel(answer.confidence),
                 style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
           ],

@@ -495,5 +495,144 @@
   "requestCall": "Request call",
   "requestSent": "Request sent. Our team will call you on your registered number.",
   "talkToExpert": "Talk to an expert",
-  "expertPitch": "A 30-minute walk through your cover and what to do next. No selling."
+  "expertPitch": "A 30-minute walk through your cover and what to do next. No selling.",
+  "sugMaternity": "Is maternity covered?",
+  "sugRoomRent": "What is the room rent limit?",
+  "sugPed": "What is the waiting period for pre-existing diseases?",
+  "sugExcluded": "What is excluded?",
+  "sugZeroDep": "Is zero depreciation included?",
+  "sugIdv": "What is my IDV?",
+  "sugRoadside": "Is roadside assistance covered?",
+  "sugDeathBenefit": "What is the death benefit?",
+  "sugNominee": "Who is the nominee?",
+  "sugSurrender": "Can I surrender this policy?",
+  "sugCover": "What does this policy cover?",
+  "askAboutYourPolicy": "Ask about your policy",
+  "checkingDocument": "Checking your policy document…",
+  "askAQuestion": "Ask a question…",
+  "askAnythingPolicy": "Ask anything about this policy",
+  "answersFromDocument": "Answers come only from your policy document, with the page they were found on.",
+  "pageLabel": "Page {page}",
+  "@pageLabel": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "sourceLabel": "Source: {source}",
+  "@sourceLabel": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "policyDocument": "policy document",
+  "confidenceLabel": "Confidence: {level, select, high{high} medium{medium} low{low} other{{level}}}",
+  "@confidenceLabel": {
+    "placeholders": {
+      "level": {
+        "type": "String"
+      }
+    }
+  },
+  "fileTooBig": "File must be under 20 MB.",
+  "wrongFileType": "Please choose a PDF, JPG or PNG file.",
+  "addAPolicyTitle": "Add a policy",
+  "uploadIntro": "Upload your policy document and we'll read it for you. Make sure it shows the policy number, start and end dates, premium, cover amount and insurer/plan name.",
+  "uploadingPercent": "Uploading… {percent}%",
+  "@uploadingPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "uploadPdf": "Upload policy PDF",
+  "recommendedBest": "Recommended · Best accuracy",
+  "takePhoto": "Take a photo",
+  "photoTip": "Place the policy on a flat, well-lit surface",
+  "uploadPhoto": "Upload a photo of the policy",
+  "jpgOrPng": "JPG or PNG",
+  "enterManually": "Enter details manually",
+  "noDocumentNeeded": "No document needed",
+  "importGmail": "Import from Gmail",
+  "docsEncrypted": "Your documents are encrypted and only visible to you.",
+  "couldNotDial": "Could not open the dialler for {number}",
+  "@couldNotDial": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "callFirst": "In an emergency, call first.",
+  "insuranceCanWait": "Insurance questions can wait. Get help, then use the details below.",
+  "emergency": "Emergency",
+  "ambulance": "Ambulance",
+  "yourPolicyNumbers": "Your policy numbers",
+  "addPolicyNumberHint": "Add a policy and its number will show here, ready to quote at the hospital or to your insurer.",
+  "goodToKnow": "Good to know",
+  "tipCashless": "For planned cashless treatment, tell the hospital desk your insurer and policy number first.",
+  "tipHelpline": "Your insurer's claims helpline is printed on your policy document and e-card. Keep it handy.",
+  "tipIntimation": "Many policies want an intimation within 24 hours of an emergency admission. Check the time limit in your wording.",
+  "callLabel": "Call {label} {number}",
+  "@callLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "policyNumberNotAdded": "Policy number not added yet",
+  "validTill": "{type} · valid till {date}",
+  "@validTill": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "copyPolicyNumber": "Copy policy number",
+  "policyNumberCopied": "Policy number copied",
+  "rewards": "Rewards",
+  "earnCoins": "EARN COINS",
+  "useCoins": "USE COINS",
+  "yourCoins": "Your coins",
+  "coinsCount": "{count, plural, =1{1 coin} other{{count} coins}}",
+  "@coinsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "earnedForOrganising": "Earned for organising your insurance",
+  "waysToEarn": "Ways to earn",
+  "progressDone": "{progress} done",
+  "@progressDone": {
+    "placeholders": {
+      "progress": {
+        "type": "String"
+      }
+    }
+  },
+  "history": "History",
+  "useYourCoins": "Use your coins",
+  "perksOnTheWay": "Perks are on the way. Keep earning — your coins will be ready when they launch.",
+  "familyTitle": "Family",
+  "addMember": "Add member",
+  "addYourFamily": "Add your family",
+  "addFamilyMessage": "Add the people covered by your policies to see who is protected and where the gaps are.",
+  "notLinked": "Not linked to any policy",
+  "addFamilyMember": "Add family member",
+  "editFamilyMember": "Edit family member",
+  "removeMember": "Remove member"
 }

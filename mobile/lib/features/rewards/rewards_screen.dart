@@ -7,6 +7,7 @@ import '../../core/utils/formatters.dart';
 import '../../core/widgets/async_states.dart';
 import '../coverage/coverage_data.dart';
 import '../coverage/coverage_widgets.dart';
+import '../../core/locale.dart';
 
 class RewardsScreen extends ConsumerStatefulWidget {
   const RewardsScreen({super.key});
@@ -23,7 +24,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
     final rewards = ref.watch(rewardsProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBF0),
-      appBar: AppBar(backgroundColor: const Color(0xFFFFF3D1), title: const Text('Rewards')),
+      appBar: AppBar(backgroundColor: const Color(0xFFFFF3D1), title: Text(context.l10n.rewards)),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(rewardsProvider),
         child: AsyncValueView(
@@ -94,8 +95,8 @@ class _Toggle extends StatelessWidget {
       decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(24)),
       child: Row(
         children: [
-          Expanded(child: seg('EARN COINS', true)),
-          Expanded(child: seg('USE COINS', false)),
+          Expanded(child: seg(context.l10n.earnCoins, true)),
+          Expanded(child: seg(context.l10n.useCoins, false)),
         ],
       ),
     );
@@ -136,19 +137,16 @@ class _Header extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        const Text('Your coins', style: TextStyle(color: AppColors.textSecondary)),
+        Text(context.l10n.yourCoins, style: const TextStyle(color: AppColors.textSecondary)),
         Semantics(
-          label: '$balance coins',
+          label: context.l10n.coinsCount(balance),
           excludeSemantics: true,
           child: Text(
             formatIndianNumber(balance),
             style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: AppColors.primary),
           ),
         ),
-        const Text(
-          'Earned for organising your insurance',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
-        ),
+        Text(context.l10n.earnedForOrganising, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
       ],
     ),
   );
@@ -162,7 +160,7 @@ class _EarnTab extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      const Text('Ways to earn', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+      Text(context.l10n.waysToEarn, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
       const SizedBox(height: AppSpacing.sm),
       for (final t in rewards.tasks)
         Padding(
@@ -173,7 +171,7 @@ class _EarnTab extends StatelessWidget {
                   ? const Icon(Icons.check_circle_rounded, color: AppColors.accent)
                   : const Icon(Icons.radio_button_unchecked_rounded, color: AppColors.textSecondary),
               title: Text(t.title, style: const TextStyle(fontWeight: FontWeight.w600)),
-              subtitle: t.progress != null ? Text('${t.progress} done') : null,
+              subtitle: t.progress != null ? Text(context.l10n.progressDone('${t.progress}')) : null,
               trailing: CoinChip('+${t.coins}'),
               onTap: t.done ? null : () => context.push(t.route),
             ),
@@ -181,7 +179,7 @@ class _EarnTab extends StatelessWidget {
         ),
       if (rewards.history.isNotEmpty) ...[
         const SizedBox(height: AppSpacing.md),
-        const Text('History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+        Text(context.l10n.history, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
         const SizedBox(height: AppSpacing.sm),
         Card(
           child: Column(
@@ -221,19 +219,19 @@ class _UseTab extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      const Text(
-        'Use your coins',
+      Text(
+        context.l10n.useYourCoins,
         textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
+        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800),
       ),
       const SizedBox(height: AppSpacing.md),
       Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(color: const Color(0xFFFFE6E6), borderRadius: BorderRadius.circular(12)),
-        child: const Text(
-          'Perks are on the way. Keep earning — your coins will be ready when they launch.',
+        child: Text(
+          context.l10n.perksOnTheWay,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Color(0xFF9B1C1C)),
+          style: const TextStyle(color: Color(0xFF9B1C1C)),
         ),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -263,7 +261,7 @@ class _UseTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
-                const FilledButton(onPressed: null, child: Text('Coming soon')),
+                FilledButton(onPressed: null, child: Text(context.l10n.comingSoon)),
               ],
             ),
           ),

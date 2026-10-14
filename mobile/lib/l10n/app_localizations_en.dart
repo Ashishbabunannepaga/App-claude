@@ -1038,4 +1038,240 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expertPitch => 'A 30-minute walk through your cover and what to do next. No selling.';
+
+  @override
+  String get sugMaternity => 'Is maternity covered?';
+
+  @override
+  String get sugRoomRent => 'What is the room rent limit?';
+
+  @override
+  String get sugPed => 'What is the waiting period for pre-existing diseases?';
+
+  @override
+  String get sugExcluded => 'What is excluded?';
+
+  @override
+  String get sugZeroDep => 'Is zero depreciation included?';
+
+  @override
+  String get sugIdv => 'What is my IDV?';
+
+  @override
+  String get sugRoadside => 'Is roadside assistance covered?';
+
+  @override
+  String get sugDeathBenefit => 'What is the death benefit?';
+
+  @override
+  String get sugNominee => 'Who is the nominee?';
+
+  @override
+  String get sugSurrender => 'Can I surrender this policy?';
+
+  @override
+  String get sugCover => 'What does this policy cover?';
+
+  @override
+  String get askAboutYourPolicy => 'Ask about your policy';
+
+  @override
+  String get checkingDocument => 'Checking your policy document…';
+
+  @override
+  String get askAQuestion => 'Ask a question…';
+
+  @override
+  String get askAnythingPolicy => 'Ask anything about this policy';
+
+  @override
+  String get answersFromDocument => 'Answers come only from your policy document, with the page they were found on.';
+
+  @override
+  String pageLabel(String page) {
+    return 'Page $page';
+  }
+
+  @override
+  String sourceLabel(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String get policyDocument => 'policy document';
+
+  @override
+  String confidenceLabel(String level) {
+    String _temp0 = intl.Intl.selectLogic(level, {'high': 'high', 'medium': 'medium', 'low': 'low', 'other': '$level'});
+    return 'Confidence: $_temp0';
+  }
+
+  @override
+  String get fileTooBig => 'File must be under 20 MB.';
+
+  @override
+  String get wrongFileType => 'Please choose a PDF, JPG or PNG file.';
+
+  @override
+  String get addAPolicyTitle => 'Add a policy';
+
+  @override
+  String get uploadIntro =>
+      'Upload your policy document and we\'ll read it for you. Make sure it shows the policy number, start and end dates, premium, cover amount and insurer/plan name.';
+
+  @override
+  String uploadingPercent(int percent) {
+    return 'Uploading… $percent%';
+  }
+
+  @override
+  String get uploadPdf => 'Upload policy PDF';
+
+  @override
+  String get recommendedBest => 'Recommended · Best accuracy';
+
+  @override
+  String get takePhoto => 'Take a photo';
+
+  @override
+  String get photoTip => 'Place the policy on a flat, well-lit surface';
+
+  @override
+  String get uploadPhoto => 'Upload a photo of the policy';
+
+  @override
+  String get jpgOrPng => 'JPG or PNG';
+
+  @override
+  String get enterManually => 'Enter details manually';
+
+  @override
+  String get noDocumentNeeded => 'No document needed';
+
+  @override
+  String get importGmail => 'Import from Gmail';
+
+  @override
+  String get docsEncrypted => 'Your documents are encrypted and only visible to you.';
+
+  @override
+  String couldNotDial(String number) {
+    return 'Could not open the dialler for $number';
+  }
+
+  @override
+  String get callFirst => 'In an emergency, call first.';
+
+  @override
+  String get insuranceCanWait => 'Insurance questions can wait. Get help, then use the details below.';
+
+  @override
+  String get emergency => 'Emergency';
+
+  @override
+  String get ambulance => 'Ambulance';
+
+  @override
+  String get yourPolicyNumbers => 'Your policy numbers';
+
+  @override
+  String get addPolicyNumberHint =>
+      'Add a policy and its number will show here, ready to quote at the hospital or to your insurer.';
+
+  @override
+  String get goodToKnow => 'Good to know';
+
+  @override
+  String get tipCashless =>
+      'For planned cashless treatment, tell the hospital desk your insurer and policy number first.';
+
+  @override
+  String get tipHelpline =>
+      'Your insurer\'s claims helpline is printed on your policy document and e-card. Keep it handy.';
+
+  @override
+  String get tipIntimation =>
+      'Many policies want an intimation within 24 hours of an emergency admission. Check the time limit in your wording.';
+
+  @override
+  String callLabel(String label, String number) {
+    return 'Call $label $number';
+  }
+
+  @override
+  String get policyNumberNotAdded => 'Policy number not added yet';
+
+  @override
+  String validTill(String type, String date) {
+    return '$type · valid till $date';
+  }
+
+  @override
+  String get copyPolicyNumber => 'Copy policy number';
+
+  @override
+  String get policyNumberCopied => 'Policy number copied';
+
+  @override
+  String get rewards => 'Rewards';
+
+  @override
+  String get earnCoins => 'EARN COINS';
+
+  @override
+  String get useCoins => 'USE COINS';
+
+  @override
+  String get yourCoins => 'Your coins';
+
+  @override
+  String coinsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count coins', one: '1 coin');
+    return '$_temp0';
+  }
+
+  @override
+  String get earnedForOrganising => 'Earned for organising your insurance';
+
+  @override
+  String get waysToEarn => 'Ways to earn';
+
+  @override
+  String progressDone(String progress) {
+    return '$progress done';
+  }
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get useYourCoins => 'Use your coins';
+
+  @override
+  String get perksOnTheWay => 'Perks are on the way. Keep earning — your coins will be ready when they launch.';
+
+  @override
+  String get familyTitle => 'Family';
+
+  @override
+  String get addMember => 'Add member';
+
+  @override
+  String get addYourFamily => 'Add your family';
+
+  @override
+  String get addFamilyMessage =>
+      'Add the people covered by your policies to see who is protected and where the gaps are.';
+
+  @override
+  String get notLinked => 'Not linked to any policy';
+
+  @override
+  String get addFamilyMember => 'Add family member';
+
+  @override
+  String get editFamilyMember => 'Edit family member';
+
+  @override
+  String get removeMember => 'Remove member';
 }

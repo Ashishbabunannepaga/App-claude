@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/policy_repository.dart';
+import '../../../core/locale.dart';
 
 const _maxBytes = 20 * 1024 * 1024;
 
@@ -31,12 +32,12 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
     if (file == null) return;
     final size = await file.length();
     if (size != null && size > _maxBytes) {
-      setState(() => _error = 'File must be under 20 MB.');
+      setState(() => _error = context.l10n.fileTooBig);
       return;
     }
     final ext = file.extension?.toLowerCase();
     if (!['pdf', 'jpg', 'jpeg', 'png'].contains(ext)) {
-      setState(() => _error = 'Please choose a PDF, JPG or PNG file.');
+      setState(() => _error = context.l10n.wrongFileType);
       return;
     }
     await _upload(await file.readAsBytes(), file.name);
@@ -69,62 +70,62 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
   Widget build(BuildContext context) {
     final uploading = _progress != null;
     return Scaffold(
-      appBar: AppBar(title: const Text('Add a policy')),
+      appBar: AppBar(title: Text(context.l10n.addAPolicyTitle)),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          const Text(
-            'Upload your policy document and we\'ll read it for you. Make sure it shows the policy number, '
-            'start and end dates, premium, cover amount and insurer/plan name.',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
+          Text(context.l10n.uploadIntro, style: const TextStyle(color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.lg),
           if (uploading) ...[
-            Text('Uploading… ${(_progress! * 100).round()}%'),
+            Text(context.l10n.uploadingPercent((_progress! * 100).round())),
             const SizedBox(height: AppSpacing.sm),
             LinearProgressIndicator(value: _progress),
           ] else ...[
             _SourceTile(
               icon: Icons.picture_as_pdf_rounded,
-              title: 'Upload policy PDF',
-              subtitle: 'Recommended · Best accuracy',
+              title: context.l10n.uploadPdf,
+              subtitle: context.l10n.recommendedBest,
               onTap: () => _pick(images: false),
             ),
             if (!kIsWeb)
               _SourceTile(
                 icon: Icons.photo_camera_rounded,
-                title: 'Take a photo',
-                subtitle: 'Place the policy on a flat, well-lit surface',
+                title: context.l10n.takePhoto,
+                subtitle: context.l10n.photoTip,
                 onTap: _capture,
               ),
             _SourceTile(
               icon: Icons.photo_library_rounded,
-              title: 'Upload a photo of the policy',
-              subtitle: 'JPG or PNG',
+              title: context.l10n.uploadPhoto,
+              subtitle: context.l10n.jpgOrPng,
               onTap: () => _pick(images: true),
             ),
             // TODO(P2): multi-page scanner with edge detection.
             _SourceTile(
               icon: Icons.edit_note_rounded,
-              title: 'Enter details manually',
-              subtitle: 'No document needed',
+              title: context.l10n.enterManually,
+              subtitle: context.l10n.noDocumentNeeded,
               onTap: () => context.pushReplacement('/add/manual'),
             ),
-            const _SourceTile(icon: Icons.mail_outline_rounded, title: 'Import from Gmail', subtitle: 'Coming soon'),
+            _SourceTile(
+              icon: Icons.mail_outline_rounded,
+              title: context.l10n.importGmail,
+              subtitle: context.l10n.comingSoon,
+            ),
           ],
           if (_error != null) ...[
             const SizedBox(height: AppSpacing.md),
             Text(_error!, style: const TextStyle(color: AppColors.error)),
           ],
           const SizedBox(height: AppSpacing.lg),
-          const Row(
+          Row(
             children: [
-              Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.textSecondary),
-              SizedBox(width: AppSpacing.sm),
+              const Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.textSecondary),
+              const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: Text(
-                  'Your documents are encrypted and only visible to you.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                  context.l10n.docsEncrypted,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                 ),
               ),
             ],

@@ -1999,6 +1999,426 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A 30-minute walk through your cover and what to do next. No selling.'**
   String get expertPitch;
+
+  /// No description provided for @sugMaternity.
+  ///
+  /// In en, this message translates to:
+  /// **'Is maternity covered?'**
+  String get sugMaternity;
+
+  /// No description provided for @sugRoomRent.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the room rent limit?'**
+  String get sugRoomRent;
+
+  /// No description provided for @sugPed.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the waiting period for pre-existing diseases?'**
+  String get sugPed;
+
+  /// No description provided for @sugExcluded.
+  ///
+  /// In en, this message translates to:
+  /// **'What is excluded?'**
+  String get sugExcluded;
+
+  /// No description provided for @sugZeroDep.
+  ///
+  /// In en, this message translates to:
+  /// **'Is zero depreciation included?'**
+  String get sugZeroDep;
+
+  /// No description provided for @sugIdv.
+  ///
+  /// In en, this message translates to:
+  /// **'What is my IDV?'**
+  String get sugIdv;
+
+  /// No description provided for @sugRoadside.
+  ///
+  /// In en, this message translates to:
+  /// **'Is roadside assistance covered?'**
+  String get sugRoadside;
+
+  /// No description provided for @sugDeathBenefit.
+  ///
+  /// In en, this message translates to:
+  /// **'What is the death benefit?'**
+  String get sugDeathBenefit;
+
+  /// No description provided for @sugNominee.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is the nominee?'**
+  String get sugNominee;
+
+  /// No description provided for @sugSurrender.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I surrender this policy?'**
+  String get sugSurrender;
+
+  /// No description provided for @sugCover.
+  ///
+  /// In en, this message translates to:
+  /// **'What does this policy cover?'**
+  String get sugCover;
+
+  /// No description provided for @askAboutYourPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your policy'**
+  String get askAboutYourPolicy;
+
+  /// No description provided for @checkingDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your policy document…'**
+  String get checkingDocument;
+
+  /// No description provided for @askAQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question…'**
+  String get askAQuestion;
+
+  /// No description provided for @askAnythingPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything about this policy'**
+  String get askAnythingPolicy;
+
+  /// No description provided for @answersFromDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers come only from your policy document, with the page they were found on.'**
+  String get answersFromDocument;
+
+  /// No description provided for @pageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page}'**
+  String pageLabel(String page);
+
+  /// No description provided for @sourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String sourceLabel(String source);
+
+  /// No description provided for @policyDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'policy document'**
+  String get policyDocument;
+
+  /// No description provided for @confidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confidence: {level, select, high{high} medium{medium} low{low} other{{level}}}'**
+  String confidenceLabel(String level);
+
+  /// No description provided for @fileTooBig.
+  ///
+  /// In en, this message translates to:
+  /// **'File must be under 20 MB.'**
+  String get fileTooBig;
+
+  /// No description provided for @wrongFileType.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a PDF, JPG or PNG file.'**
+  String get wrongFileType;
+
+  /// No description provided for @addAPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a policy'**
+  String get addAPolicyTitle;
+
+  /// No description provided for @uploadIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your policy document and we\'ll read it for you. Make sure it shows the policy number, start and end dates, premium, cover amount and insurer/plan name.'**
+  String get uploadIntro;
+
+  /// No description provided for @uploadingPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading… {percent}%'**
+  String uploadingPercent(int percent);
+
+  /// No description provided for @uploadPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload policy PDF'**
+  String get uploadPdf;
+
+  /// No description provided for @recommendedBest.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended · Best accuracy'**
+  String get recommendedBest;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get takePhoto;
+
+  /// No description provided for @photoTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the policy on a flat, well-lit surface'**
+  String get photoTip;
+
+  /// No description provided for @uploadPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload a photo of the policy'**
+  String get uploadPhoto;
+
+  /// No description provided for @jpgOrPng.
+  ///
+  /// In en, this message translates to:
+  /// **'JPG or PNG'**
+  String get jpgOrPng;
+
+  /// No description provided for @enterManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter details manually'**
+  String get enterManually;
+
+  /// No description provided for @noDocumentNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'No document needed'**
+  String get noDocumentNeeded;
+
+  /// No description provided for @importGmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from Gmail'**
+  String get importGmail;
+
+  /// No description provided for @docsEncrypted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are encrypted and only visible to you.'**
+  String get docsEncrypted;
+
+  /// No description provided for @couldNotDial.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the dialler for {number}'**
+  String couldNotDial(String number);
+
+  /// No description provided for @callFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'In an emergency, call first.'**
+  String get callFirst;
+
+  /// No description provided for @insuranceCanWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance questions can wait. Get help, then use the details below.'**
+  String get insuranceCanWait;
+
+  /// No description provided for @emergency.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get emergency;
+
+  /// No description provided for @ambulance.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambulance'**
+  String get ambulance;
+
+  /// No description provided for @yourPolicyNumbers.
+  ///
+  /// In en, this message translates to:
+  /// **'Your policy numbers'**
+  String get yourPolicyNumbers;
+
+  /// No description provided for @addPolicyNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a policy and its number will show here, ready to quote at the hospital or to your insurer.'**
+  String get addPolicyNumberHint;
+
+  /// No description provided for @goodToKnow.
+  ///
+  /// In en, this message translates to:
+  /// **'Good to know'**
+  String get goodToKnow;
+
+  /// No description provided for @tipCashless.
+  ///
+  /// In en, this message translates to:
+  /// **'For planned cashless treatment, tell the hospital desk your insurer and policy number first.'**
+  String get tipCashless;
+
+  /// No description provided for @tipHelpline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your insurer\'s claims helpline is printed on your policy document and e-card. Keep it handy.'**
+  String get tipHelpline;
+
+  /// No description provided for @tipIntimation.
+  ///
+  /// In en, this message translates to:
+  /// **'Many policies want an intimation within 24 hours of an emergency admission. Check the time limit in your wording.'**
+  String get tipIntimation;
+
+  /// No description provided for @callLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {label} {number}'**
+  String callLabel(String label, String number);
+
+  /// No description provided for @policyNumberNotAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy number not added yet'**
+  String get policyNumberNotAdded;
+
+  /// No description provided for @validTill.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · valid till {date}'**
+  String validTill(String type, String date);
+
+  /// No description provided for @copyPolicyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy policy number'**
+  String get copyPolicyNumber;
+
+  /// No description provided for @policyNumberCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy number copied'**
+  String get policyNumberCopied;
+
+  /// No description provided for @rewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewards;
+
+  /// No description provided for @earnCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'EARN COINS'**
+  String get earnCoins;
+
+  /// No description provided for @useCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'USE COINS'**
+  String get useCoins;
+
+  /// No description provided for @yourCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Your coins'**
+  String get yourCoins;
+
+  /// No description provided for @coinsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 coin} other{{count} coins}}'**
+  String coinsCount(int count);
+
+  /// No description provided for @earnedForOrganising.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned for organising your insurance'**
+  String get earnedForOrganising;
+
+  /// No description provided for @waysToEarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Ways to earn'**
+  String get waysToEarn;
+
+  /// No description provided for @progressDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{progress} done'**
+  String progressDone(String progress);
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @useYourCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your coins'**
+  String get useYourCoins;
+
+  /// No description provided for @perksOnTheWay.
+  ///
+  /// In en, this message translates to:
+  /// **'Perks are on the way. Keep earning — your coins will be ready when they launch.'**
+  String get perksOnTheWay;
+
+  /// No description provided for @familyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familyTitle;
+
+  /// No description provided for @addMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Add member'**
+  String get addMember;
+
+  /// No description provided for @addYourFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your family'**
+  String get addYourFamily;
+
+  /// No description provided for @addFamilyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the people covered by your policies to see who is protected and where the gaps are.'**
+  String get addFamilyMessage;
+
+  /// No description provided for @notLinked.
+  ///
+  /// In en, this message translates to:
+  /// **'Not linked to any policy'**
+  String get notLinked;
+
+  /// No description provided for @addFamilyMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Add family member'**
+  String get addFamilyMember;
+
+  /// No description provided for @editFamilyMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit family member'**
+  String get editFamilyMember;
+
+  /// No description provided for @removeMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove member'**
+  String get removeMember;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
