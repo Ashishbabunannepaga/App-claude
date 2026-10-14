@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/brand.dart';
+import '../../../core/locale.dart';
 import '../../../core/security/app_lock.dart';
 import '../../../core/ui/art.dart';
 
@@ -39,32 +40,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   int _page = 0;
 
-  static const _pages = [
-    _Page(
-      Scene.organise,
-      AppColors.surfaceTint,
-      'All your cover, one place',
-      'Health, life and motor policies for the whole family, kept safe and easy to find.',
-    ),
-    _Page(
-      Scene.ask,
-      Color(0xFFFFF3D6),
-      'Ask in plain words',
-      'Every answer points to the page it came from, or tells you it isn\'t in your policy.',
-    ),
-    _Page(
-      Scene.remind,
-      Color(0xFFEDEAFB),
-      'Renewals never sneak up',
-      'A gentle nudge well before your policy ends, so you are never left uncovered.',
-    ),
-    _Page(
-      Scene.family,
-      Color(0xFFFDECEC),
-      'Family and nominees, sorted',
-      'See who is covered, who gets what, and what to do if something happens.',
-    ),
+  static const _scenes = [
+    (Scene.organise, AppColors.surfaceTint),
+    (Scene.ask, Color(0xFFFFF3D6)),
+    (Scene.remind, Color(0xFFEDEAFB)),
+    (Scene.family, Color(0xFFFDECEC)),
   ];
+
+  List<_Page> _pagesFor(AppLocalizations t) {
+    final text = [
+      (t.onb1Title, t.onb1Body),
+      (t.onb2Title, t.onb2Body),
+      (t.onb3Title, t.onb3Body),
+      (t.onb4Title, t.onb4Body),
+    ];
+    return [for (var i = 0; i < _scenes.length; i++) _Page(_scenes[i].$1, _scenes[i].$2, text[i].$1, text[i].$2)];
+  }
 
   @override
   void dispose() {
@@ -76,11 +67,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final last = _page == _pages.length - 1;
+    final t = context.l10n;
+    final pages = _pagesFor(t);
+    final last = _page == pages.length - 1;
     final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     return AnimatedContainer(
       duration: reduce ? Duration.zero : const Duration(milliseconds: 350),
-      color: _pages[_page].bg,
+      color: pages[_page].bg,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
@@ -88,25 +81,41 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.sm, 0),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: FittedBox(fit: BoxFit.scaleDown, child: BrandLogo(height: 44)),
+                // On a narrow phone with large text the two buttons shrink rather than overflow; the logo
+                // keeps at least 72 px.
+                child: LayoutBuilder(
+                  builder: (context, box) => Row(
+                    children: [
+                      const Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: FittedBox(fit: BoxFit.scaleDown, child: BrandLogo(height: 44)),
+                        ),
                       ),
-                    ),
-                    TextButton(onPressed: _finish, child: const Text('Skip')),
-                  ],
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: (box.maxWidth - 72).clamp(0, double.infinity)),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const LanguageSwitch(),
+                              TextButton(onPressed: _finish, child: Text(t.skip)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(
                 child: PageView.builder(
                   controller: _controller,
-                  itemCount: _pages.length,
+                  itemCount: pages.length,
                   onPageChanged: (i) => setState(() => _page = i),
                   itemBuilder: (context, i) {
-                    final p = _pages[i];
+                    final p = pages[i];
                     return LayoutBuilder(
                       builder: (context, box) {
                         // The illustration takes what the screen can spare, so small phones never overflow.
@@ -146,7 +155,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for (var i = 0; i < _pages.length; i++)
+                  for (var i = 0; i < pages.length; i++)
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 220),
                       margin: const EdgeInsets.all(4),
@@ -168,7 +177,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(last ? 'Get started' : 'Next'),
+                      Text(last ? t.getStarted : t.next),
                       const SizedBox(width: 8),
                       const Icon(Icons.arrow_forward_rounded, size: 20),
                     ],

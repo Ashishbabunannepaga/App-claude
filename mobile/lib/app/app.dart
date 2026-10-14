@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/brand.dart';
+import '../core/locale.dart';
 import '../core/push/push_service.dart';
 import '../core/security/app_lock.dart';
 import '../features/account/data/account_repository.dart';
@@ -24,6 +26,14 @@ class InsureApp extends ConsumerWidget {
       title: Brand.name,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      locale: ref.watch(appLocaleProvider),
+      supportedLocales: AppLocaleController.supported,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routerConfig: router,
       builder: (context, child) => AppLockGate(child: child ?? const SizedBox.shrink()),
     );

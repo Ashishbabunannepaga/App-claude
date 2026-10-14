@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
 import 'package:insureiq/features/auth/data/auth_repository.dart';
 import 'package:insureiq/features/insights/insights_screen.dart';
@@ -59,7 +60,12 @@ class FakeRepo extends PolicyRepository {
 
 Widget _app(Widget child) => ProviderScope(
   overrides: [policyRepositoryProvider.overrideWithValue(FakeRepo())],
-  child: MaterialApp(theme: AppTheme.light(), home: child),
+  child: MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    theme: AppTheme.light(),
+    home: child,
+  ),
 );
 
 void main() {
@@ -147,7 +153,13 @@ void main() {
       'action_link': null,
       'policy_id': null,
     });
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: InsightTile(insight))));
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(body: InsightTile(insight)),
+      ),
+    );
     expect(find.text('No health insurance found'), findsOneWidget);
     expect(find.text('Add policy →'), findsOneWidget);
     expect(find.byIcon(Icons.priority_high_rounded), findsOneWidget);

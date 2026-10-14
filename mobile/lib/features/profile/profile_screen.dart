@@ -53,6 +53,7 @@ class ProfileScreen extends ConsumerWidget {
                 tile(Icons.family_restroom_rounded, 'Family members', () => context.push('/family')),
                 tile(Icons.notifications_none_rounded, 'Notifications', () => context.push('/settings/notifications')),
                 const AppLockTile(),
+                const AppLanguageTile(),
                 const LanguageTile(),
                 tile(Icons.shield_outlined, 'Privacy & data', () => context.push('/privacy')),
               ],

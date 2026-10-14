@@ -9,7 +9,7 @@ Status key: ✅ done and checked here · 🟡 done in code, you must finish an a
 | Check | Result |
 |---|---|
 | Backend tests | ✅ 65 passed (`pytest`), lint and format clean (`ruff`) |
-| App tests | ✅ 208 passed (`flutter test`), `flutter analyze` clean. Includes layout sweeps at 320–412 px and 1.0–1.6× text, and accessibility checks |
+| App tests | ✅ 346 passed (`flutter test`), `flutter analyze` clean. Includes layout sweeps at 320–412 px and 1.0–1.6× text in English and Hindi, and accessibility checks |
 | Real-device test | 🟡 first phone run done on the Vivo I2221 (10 Oct); the fixes from it are in. One more full pass after these changes |
 | Open S1/S2 bugs | ✅ none known. Fixed from the phone test: blank gap under Home tiles, "LIC" as insurer on non-LIC policies, missing start date, ₹1 sum insured accepted without a warning |
 | Parity | ✅ 100/100, must-haves 7 of 7 (self-assessed against our own feature list) |
@@ -76,4 +76,5 @@ Upload `build\app\outputs\bundle\release\app-release.aab` to Play Console > Inte
 
 ## Not done yet (next)
 - Store screenshots from the real phone (list in `replica/launch/store-notes.md`)
-- Dark mode, Hindi UI
+- Hindi UI: first pass done (sign-in, onboarding, home, tabs; language switch on the first screen and in Profile). Wording is a DRAFT for a native speaker to review; other screens still English
+- Dark mode

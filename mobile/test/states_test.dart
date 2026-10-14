@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
 import 'package:insureiq/core/network/api_exception.dart';
 import 'package:insureiq/core/widgets/async_states.dart';
@@ -35,6 +36,8 @@ void main() {
           await tester.pumpWidget(
             ProviderScope(
               child: MaterialApp(
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
                 theme: AppTheme.light(),
                 builder: (context, child) => MediaQuery(
                   data: MediaQuery.of(context).copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),

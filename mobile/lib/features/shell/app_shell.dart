@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../core/locale.dart';
 import '../../core/ui/pressable.dart';
 
 /// Floating pill navigation with a centre "Add policy" button.
@@ -9,17 +10,20 @@ class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.shell});
   final StatefulNavigationShell shell;
 
-  static const _tabs = [
-    (Icons.home_outlined, Icons.home_rounded, 'Home'),
-    (Icons.folder_outlined, Icons.folder_rounded, 'Portfolio'),
-    (Icons.explore_outlined, Icons.explore_rounded, 'Explore'),
-    (Icons.person_outline_rounded, Icons.person_rounded, 'Profile'),
+  static const _icons = [
+    (Icons.home_outlined, Icons.home_rounded),
+    (Icons.folder_outlined, Icons.folder_rounded),
+    (Icons.explore_outlined, Icons.explore_rounded),
+    (Icons.person_outline_rounded, Icons.person_rounded),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final t = context.l10n;
+    final labels = [t.navHome, t.navPortfolio, t.navExplore, t.navProfile];
+    final tabs = [for (var i = 0; i < _icons.length; i++) (_icons[i].$1, _icons[i].$2, labels[i])];
     Widget tab(int i) {
-      final (icon, selectedIcon, label) = _tabs[i];
+      final (icon, selectedIcon, label) = tabs[i];
       final selected = shell.currentIndex == i;
       return Expanded(
         child: Semantics(
@@ -87,7 +91,7 @@ class AppShell extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Pressable(
-                    semanticLabel: 'Add policy',
+                    semanticLabel: t.addPolicy,
                     onTap: () => context.push('/add'),
                     child: Container(
                       width: 56,

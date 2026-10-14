@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
 import 'package:insureiq/core/security/app_lock.dart';
@@ -141,6 +142,8 @@ void main() {
                 coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
               ],
               child: MaterialApp(
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
                 theme: AppTheme.light(),
                 builder: (context, child) => MediaQuery(
                   data: MediaQuery.of(context).copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
@@ -181,6 +184,8 @@ void main() {
           coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
         ],
         child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           theme: AppTheme.light(),
           builder: (context, child) =>
               MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),

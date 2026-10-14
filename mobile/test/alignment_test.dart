@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
 import 'package:insureiq/core/security/app_lock.dart';
@@ -25,6 +26,8 @@ import 'coverage_test.dart' show FakeCoverageRepo;
 /// larger system text sizes. Flutter throws on overflow, so a clipped or misaligned layout fails here.
 const _widths = [320.0, 360.0, 390.0, 412.0];
 const _textScales = [1.0, 1.3, 1.6];
+// Hindi words run longer than English, so every screen is also checked in Hindi.
+const _locales = [Locale('en'), Locale('hi')];
 
 Policy _policy() => Policy.fromJson({
   'id': 'p1',
@@ -71,32 +74,38 @@ void main() {
   };
 
   for (final entry in screens.entries) {
-    for (final w in _widths) {
-      for (final scale in _textScales) {
-        testWidgets('${entry.key} @ ${w.toInt()}px, text x$scale', (tester) async {
-          final view = tester.view;
-          view.physicalSize = Size(w, 780);
-          view.devicePixelRatio = 1;
-          addTearDown(view.reset);
-          await tester.pumpWidget(
-            ProviderScope(
-              overrides: [
-                coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
-                sharedPrefsProvider.overrideWithValue(prefs),
-              ],
-              child: MaterialApp(
-                theme: AppTheme.light(),
-                builder: (context, child) => MediaQuery(
-                  data: MediaQuery.of(context).copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
-                  child: child!,
+    for (final locale in _locales) {
+      for (final w in _widths) {
+        for (final scale in _textScales) {
+          testWidgets('${entry.key} [${locale.languageCode}] @ ${w.toInt()}px, text x$scale', (tester) async {
+            final view = tester.view;
+            view.physicalSize = Size(w, 780);
+            view.devicePixelRatio = 1;
+            addTearDown(view.reset);
+            await tester.pumpWidget(
+              ProviderScope(
+                overrides: [
+                  coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
+                  sharedPrefsProvider.overrideWithValue(prefs),
+                ],
+                child: MaterialApp(
+                  localizationsDelegates: AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  locale: locale,
+                  theme: AppTheme.light(),
+                  builder: (context, child) => MediaQuery(
+                    data: MediaQuery.of(context)
+                        .copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
+                    child: child!,
+                  ),
+                  home: entry.value(),
                 ),
-                home: entry.value(),
               ),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
-        });
+            );
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+          });
+        }
       }
     }
   }

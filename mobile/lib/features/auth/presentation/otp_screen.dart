@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/auth_controller.dart';
@@ -80,9 +81,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
-            Text('Enter the 6-digit code', style: Theme.of(context).textTheme.headlineMedium),
+            Text(context.l10n.otpTitle, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),
-            Text('Sent to ${widget.args.identifier}', style: const TextStyle(color: AppColors.textSecondary)),
+            Text(
+              context.l10n.otpSentTo(widget.args.identifier),
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
             const SizedBox(height: AppSpacing.lg),
             TextField(
               controller: _code,
@@ -104,13 +108,13 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               onPressed: _code.text.length == 6 && !_loading ? _verify : null,
               child: _loading
                   ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Verify'),
+                  : Text(context.l10n.verify),
             ),
             const SizedBox(height: AppSpacing.md),
             Center(
               child: TextButton(
                 onPressed: _secondsLeft > 0 ? null : _resend,
-                child: Text(_secondsLeft > 0 ? 'Resend code in ${_secondsLeft}s' : 'Resend code'),
+                child: Text(_secondsLeft > 0 ? context.l10n.resendIn(_secondsLeft) : context.l10n.resendCode),
               ),
             ),
           ],

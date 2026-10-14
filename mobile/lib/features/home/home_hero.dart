@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/locale.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/network/api_exception.dart';
 import '../../core/ui/art.dart';
@@ -170,18 +171,18 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
                     style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.ink),
                     onPressed: _openReport,
                     icon: const Icon(Icons.fact_check_rounded),
-                    label: const Text('See your coverage report'),
+                    label: Text(context.l10n.seeCoverageReport),
                   ),
                 ] else ...[
                   FilledButton(
                     style: FilledButton.styleFrom(backgroundColor: AppColors.gold, foregroundColor: AppColors.ink),
                     onPressed: () => context.push('/add'),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Flexible(child: Text('Add a policy', overflow: TextOverflow.ellipsis)),
-                        SizedBox(width: AppSpacing.sm),
-                        CoinChip('+50'),
+                        Flexible(child: Text(context.l10n.addAPolicy, overflow: TextOverflow.ellipsis)),
+                        const SizedBox(width: AppSpacing.sm),
+                        const CoinChip('+50'),
                       ],
                     ),
                   ),
@@ -192,7 +193,7 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
                       side: const BorderSide(color: Color(0x66FFFFFF), width: 1.5),
                     ),
                     onPressed: () => context.push('/report/sample'),
-                    child: const Text('See a sample report'),
+                    child: Text(context.l10n.seeSampleReport),
                   ),
                 ],
               ],

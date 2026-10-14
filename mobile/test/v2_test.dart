@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
 import 'package:insureiq/core/ui/art.dart';
 import 'package:insureiq/core/ui/skeleton.dart';
@@ -16,6 +17,8 @@ Widget _app(Widget child, {List overrides = const []}) => ProviderScope(
   // ignore: argument_type_not_assignable
   overrides: [...overrides],
   child: MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     theme: AppTheme.light(),
     builder: (context, child) =>
         MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),

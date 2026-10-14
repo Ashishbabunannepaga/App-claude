@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/locale.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/brand.dart';
 import '../../../core/config/env.dart';
@@ -59,12 +60,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: AppSpacing.xl),
             const Align(alignment: Alignment.centerLeft, child: BrandLogo(height: 64)),
             const SizedBox(height: AppSpacing.lg),
-            Text('All your insurance.\nOne place. Clearly explained.', style: theme.textTheme.headlineMedium),
+            Text(context.l10n.loginHeadline, style: theme.textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),
-            const Text(
-              'Add your policies, understand what you\'re covered for, and never miss a renewal.',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
-            ),
+            Text(context.l10n.loginSubhead, style: const TextStyle(color: AppColors.textSecondary, fontSize: 16)),
             const SizedBox(height: AppSpacing.xl),
             TextField(
               controller: _phone,
@@ -74,7 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               autofillHints: const [AutofillHints.telephoneNumberNational],
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                labelText: 'Mobile number',
+                labelText: context.l10n.mobileNumber,
                 prefixText: '+91  ',
                 counterText: '',
                 errorText: _error,
@@ -93,13 +91,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         TextSpan(
                           style: const TextStyle(color: AppColors.textSecondary),
                           children: [
-                            const TextSpan(text: 'I agree to the '),
-                            _link('Privacy Policy', Env.privacyPolicyUrl),
-                            const TextSpan(text: ' and '),
-                            _link('Terms', Env.termsUrl),
-                            const TextSpan(
-                              text: ', and consent to my policy documents being processed to provide this service.',
-                            ),
+                            TextSpan(text: context.l10n.consentStart),
+                            _link(context.l10n.privacyPolicy, Env.privacyPolicyUrl),
+                            TextSpan(text: context.l10n.consentAnd),
+                            _link(context.l10n.terms, Env.termsUrl),
+                            TextSpan(text: context.l10n.consentEnd),
                           ],
                         ),
                       ),
@@ -113,7 +109,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               onPressed: _valid && _consent && !_loading ? _submit : null,
               child: _loading
                   ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Get OTP'),
+                  : Text(context.l10n.getOtp),
             ),
           ],
         ),

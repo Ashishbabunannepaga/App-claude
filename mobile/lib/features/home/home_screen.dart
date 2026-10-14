@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/locale.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/brand.dart';
 import '../../core/push/push_prompt.dart';
@@ -53,10 +54,10 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.md),
                     _ReviewBanner(count: s.pendingVerification),
                   ],
-                  const SectionHeader('What would you like to do?'),
+                  SectionHeader(context.l10n.whatToDo),
                   const _Services(),
                   if (s.upcomingRenewals.isNotEmpty) ...[
-                    const SectionHeader('Coming up'),
+                    SectionHeader(context.l10n.comingUp),
                     SizedBox(
                       // Grows with the phone's font size so the card's text never clips.
                       height: MediaQuery.textScalerOf(context).scale(128),
@@ -73,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
                   if (s.totalPolicies > 0) ...[
                     SectionHeader(
                       'Your policies',
-                      action: TextButton(onPressed: () => context.go('/portfolio'), child: const Text('See all')),
+                      action: TextButton(onPressed: () => context.go('/portfolio'), child: Text(context.l10n.seeAll)),
                     ),
                     ...?policies.value
                         ?.take(3)
@@ -119,7 +120,7 @@ class _Header extends ConsumerWidget {
               children: [
                 const CoinIcon(size: 26),
                 const SizedBox(width: 10),
-                Text('+${after - before} coins earned', style: const TextStyle(fontWeight: FontWeight.w800)),
+                Text(context.l10n.coinsEarned(after - before), style: const TextStyle(fontWeight: FontWeight.w800)),
               ],
             ),
           ),
@@ -197,8 +198,11 @@ class _Header extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        Text(name.isEmpty ? 'Hello there' : 'Hi $name', style: Theme.of(context).textTheme.headlineMedium),
-        const Text('Here\'s where your cover stands today.', style: TextStyle(color: AppColors.textSecondary)),
+        Text(
+          name.isEmpty ? context.l10n.helloThere : context.l10n.hiName(name),
+          style: Theme.of(context).textTheme.headlineMedium,
+        ),
+        Text(context.l10n.homeSubtitle, style: TextStyle(color: AppColors.textSecondary)),
       ],
     );
   }
@@ -247,16 +251,17 @@ class _Services extends ConsumerWidget {
       context.push('/policy/$id$suffix');
     }
 
+    final t = context.l10n;
     final tiles = <Widget>[
       ServiceTile(
         icon: Icons.add_moderator_rounded,
-        label: 'Add policy',
+        label: t.addPolicy,
         color: AppColors.primary,
         onTap: () => context.push('/add'),
       ),
       ServiceTile(
         icon: Icons.fact_check_rounded,
-        label: 'Coverage report',
+        label: t.coverageReport,
         color: AppColors.motor,
         onTap: () async {
           final id = await pickPolicy(context, ref);
@@ -266,37 +271,37 @@ class _Services extends ConsumerWidget {
       ),
       ServiceTile(
         icon: Icons.auto_awesome_rounded,
-        label: 'Ask AI',
+        label: t.askAi,
         color: AppColors.life,
         onTap: () => withPolicy('/ask', empty: 'Add a policy first, then you can ask questions about it.'),
       ),
       ServiceTile(
         icon: Icons.support_agent_rounded,
-        label: 'Claim help',
+        label: t.claimHelp,
         color: AppColors.warning,
         onTap: () => context.go('/explore'),
       ),
       ServiceTile(
         icon: Icons.family_restroom_rounded,
-        label: 'Family',
+        label: t.family,
         color: AppColors.health,
         onTap: () => context.push('/family'),
       ),
       ServiceTile(
         icon: Icons.groups_rounded,
-        label: 'Nominees',
+        label: t.nominees,
         color: AppColors.primaryDark,
         onTap: () => withPolicy('/nominees', empty: 'Add a policy first to record its nominees.'),
       ),
       ServiceTile(
         icon: Icons.compare_arrows_rounded,
-        label: 'Compare',
+        label: t.compare,
         color: AppColors.motor,
         onTap: () => context.push('/compare'),
       ),
       ServiceTile(
         icon: Icons.emergency_rounded,
-        label: 'Emergency card',
+        label: t.emergencyCard,
         color: AppColors.error,
         onTap: () => context.push('/emergency'),
       ),

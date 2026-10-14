@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/locale.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/auth_controller.dart';
@@ -46,19 +47,19 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
             const SizedBox(height: AppSpacing.xl),
-            Text('What should we call you?', style: Theme.of(context).textTheme.headlineMedium),
+            Text(context.l10n.nameTitle, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.lg),
             TextField(
               controller: _name,
               textCapitalization: TextCapitalization.words,
               autofillHints: const [AutofillHints.name],
               onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(labelText: 'Full name', errorText: _error),
+              decoration: InputDecoration(labelText: context.l10n.fullName, errorText: _error),
             ),
             const SizedBox(height: AppSpacing.md),
             OutlinedButton.icon(
               icon: const Icon(Icons.cake_outlined),
-              label: Text(_dob == null ? 'Date of birth (optional)' : '${_dob!.day}/${_dob!.month}/${_dob!.year}'),
+              label: Text(_dob == null ? context.l10n.dobOptional : '${_dob!.day}/${_dob!.month}/${_dob!.year}'),
               onPressed: () async {
                 final now = DateTime.now();
                 final picked = await showDatePicker(
@@ -73,7 +74,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             const SizedBox(height: AppSpacing.xl),
             FilledButton(
               onPressed: _name.text.trim().isEmpty || _loading ? null : _save,
-              child: const Text('Continue'),
+              child: Text(context.l10n.continueAction),
             ),
           ],
         ),

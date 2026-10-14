@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/locale.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/brand.dart';
 import '../../../core/config/env.dart';
@@ -412,7 +413,7 @@ const answerLanguages = {
   'ml': 'മലയാളം (Malayalam)',
 };
 
-/// Language for AI summaries and answers. The app's own screens stay in English for now.
+/// Language for AI summaries and answers (server-side, per user). The screens' language is [AppLanguageTile].
 class LanguageTile extends ConsumerWidget {
   const LanguageTile({super.key});
 
@@ -457,6 +458,47 @@ class LanguageTile extends ConsumerWidget {
         } on ApiException catch (e) {
           if (context.mounted) _snack(context, e.message);
         }
+      },
+    );
+  }
+}
+
+/// The language of the app's own screens (stored on the phone).
+class AppLanguageTile extends ConsumerWidget {
+  const AppLanguageTile({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.l10n;
+    final current = ref.watch(appLocaleProvider);
+    return ListTile(
+      leading: const Icon(Icons.language_rounded, color: AppColors.textSecondary),
+      title: Text(t.appLanguage),
+      subtitle: Text(t.languageName),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () async {
+        final picked = await showModalBottomSheet<Locale>(
+          context: context,
+          showDragHandle: true,
+          builder: (c) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
+                  child: Text(t.appLanguageHelp, style: const TextStyle(color: AppColors.textSecondary)),
+                ),
+                for (final l in AppLocaleController.supported)
+                  ListTile(
+                    title: Text(lookupAppLocalizations(l).languageName),
+                    trailing: l == current ? const Icon(Icons.check_rounded, color: AppColors.accent) : null,
+                    onTap: () => Navigator.pop(c, l),
+                  ),
+              ],
+            ),
+          ),
+        );
+        if (picked != null) await ref.read(appLocaleProvider.notifier).set(picked);
       },
     );
   }

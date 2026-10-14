@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
 import 'package:insureiq/core/widgets/policy_card.dart';
 import 'package:insureiq/features/policy/data/models.dart';
@@ -18,6 +19,8 @@ Policy _policy({bool verified = true, String status = 'expiring_soon', int? days
 );
 
 Widget _wrap(Widget child) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
   theme: AppTheme.light(),
   home: Scaffold(body: child),
 );
