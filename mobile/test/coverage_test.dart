@@ -122,7 +122,7 @@ void main() {
     await tester.pump();
     expect(find.text('Will your policy cover'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 400));
-    expect(find.text(heroScenarios.first), findsOneWidget);
+    expect(find.text(heroScenarios(lookupAppLocalizations(const Locale('en'))).first), findsOneWidget);
     expect(find.text('+50'), findsOneWidget);
     expect(find.text('See a sample report'), findsOneWidget);
   });

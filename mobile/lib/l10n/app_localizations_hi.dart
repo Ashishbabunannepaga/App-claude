@@ -885,4 +885,153 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get addFamilyMembers => 'परिवार के सदस्य जोड़ें';
+
+  @override
+  String get statusCovered => 'कवर है';
+
+  @override
+  String get statusLimited => 'सीमा के साथ कवर';
+
+  @override
+  String get statusMissing => 'कवर नहीं';
+
+  @override
+  String get statusInfo => 'पॉलिसी की जानकारी';
+
+  @override
+  String get statusUnknown => 'आपके दस्तावेज़ में नहीं मिला';
+
+  @override
+  String get ratingStrong => 'मज़बूत';
+
+  @override
+  String get ratingFair => 'ठीक-ठाक';
+
+  @override
+  String get ratingWeak => 'कमज़ोर';
+
+  @override
+  String ratingLabel(String label) {
+    return 'रेटिंग: $label';
+  }
+
+  @override
+  String get sampleReport => 'सैंपल रिपोर्ट';
+
+  @override
+  String get reportNotAvailable => 'रिपोर्ट उपलब्ध नहीं';
+
+  @override
+  String get reportTypesNote => 'कवरेज रिपोर्ट हेल्थ, लाइफ़ और मोटर पॉलिसियों के लिए उपलब्ध है।';
+
+  @override
+  String get coverAtGlance => 'एक नज़र में आपका कवर';
+
+  @override
+  String addOnsCount(int count) {
+    return '$count ऐड-ऑन';
+  }
+
+  @override
+  String fromPolicyPage(int page) {
+    return 'आपकी पॉलिसी से · पेज $page';
+  }
+
+  @override
+  String get fromPolicyDetails => 'आपकी पॉलिसी की जानकारी से';
+
+  @override
+  String get fromPolicyWording => 'आपकी पॉलिसी के शब्दों से';
+
+  @override
+  String pageN(int page) {
+    return 'पेज $page';
+  }
+
+  @override
+  String get notMentioned => 'हमने जो दस्तावेज़ पढ़ा, उसमें इसका ज़िक्र नहीं है';
+
+  @override
+  String get whyItMatters => 'यह क्यों ज़रूरी है';
+
+  @override
+  String askAboutThisQ(String topic) {
+    return 'मेरी पॉलिसी $topic के बारे में क्या कहती है?';
+  }
+
+  @override
+  String get askAboutThis => 'इसके बारे में पूछें';
+
+  @override
+  String get seeForOwnPolicy => 'इसे अपनी पॉलिसी के लिए देखें';
+
+  @override
+  String get questionsAboutCover => 'अपने कवर के बारे में सवाल?';
+
+  @override
+  String get addPolicyShort => 'पॉलिसी जोड़ें';
+
+  @override
+  String get hero1 => 'डिलीवरी (मैटरनिटी) का बिल?';
+
+  @override
+  String get hero2 => 'घुटने की सर्जरी?';
+
+  @override
+  String get hero3 => 'बाढ़ में डूबा कार इंजन?';
+
+  @override
+  String get hero4 => '10 दिन ICU में भर्ती?';
+
+  @override
+  String get hero5 => 'आपके परिवार का भविष्य?';
+
+  @override
+  String get whichPolicy => 'कौन-सी पॉलिसी?';
+
+  @override
+  String get willPolicyCover => 'क्या आपकी पॉलिसी कवर करेगी';
+
+  @override
+  String get statHealth => 'हेल्थ';
+
+  @override
+  String get statLife => 'लाइफ़';
+
+  @override
+  String get perYear => 'हर साल';
+
+  @override
+  String get askAboutYourCover => 'अपने कवर के बारे में पूछें';
+
+  @override
+  String get askWhichPolicy => 'किस पॉलिसी के बारे में पूछना है?';
+
+  @override
+  String get addPolicyFirst => 'पहले एक पॉलिसी जोड़ें, फिर आप उसके बारे में सवाल पूछ सकते हैं।';
+
+  @override
+  String get askAnything => 'अपने कवर के बारे में कुछ भी पूछें';
+
+  @override
+  String get requestReview => 'पॉलिसी रिव्यू की माँग करें';
+
+  @override
+  String get expertWillCall =>
+      'एक बीमा विशेषज्ञ आपके रजिस्टर्ड नंबर पर कॉल करके आपकी पॉलिसियाँ समझाएँगे। हम आपको कुछ भी बेचने की कोशिश नहीं करेंगे।';
+
+  @override
+  String get helpWithOptional => 'आपको किस बारे में मदद चाहिए? (वैकल्पिक)';
+
+  @override
+  String get requestCall => 'कॉल की माँग करें';
+
+  @override
+  String get requestSent => 'माँग भेज दी गई। हमारी टीम आपके रजिस्टर्ड नंबर पर कॉल करेगी।';
+
+  @override
+  String get talkToExpert => 'विशेषज्ञ से बात करें';
+
+  @override
+  String get expertPitch => 'आपके कवर और आगे क्या करना है, इस पर 30 मिनट की बातचीत। कोई बिक्री नहीं।';
 }

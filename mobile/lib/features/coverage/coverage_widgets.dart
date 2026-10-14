@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../core/locale.dart';
 
 /// Colour, icon and words for each row status, shared by the report, the cards and the home hero.
 class StatusStyle {
@@ -14,17 +15,12 @@ class StatusStyle {
   final Color textColor;
   final String label;
 
-  static StatusStyle of(String status) => switch (status) {
-    'good' => const StatusStyle(Icons.check_circle_rounded, AppColors.accent, AppColors.successText, 'Covered'),
-    'limited' => const StatusStyle(
-      Icons.error_rounded,
-      AppColors.warning,
-      AppColors.warningText,
-      'Covered with limits',
-    ),
-    'missing' => const StatusStyle(Icons.cancel_rounded, AppColors.error, AppColors.errorText, 'Not covered'),
-    'info' => const StatusStyle(Icons.info_rounded, AppColors.secondary, AppColors.secondary, 'Policy detail'),
-    _ => const StatusStyle(Icons.help_rounded, Color(0xFF9AA3B2), AppColors.unknownText, 'Not found in your document'),
+  static StatusStyle of(String status, AppLocalizations t) => switch (status) {
+    'good' => StatusStyle(Icons.check_circle_rounded, AppColors.accent, AppColors.successText, t.statusCovered),
+    'limited' => StatusStyle(Icons.error_rounded, AppColors.warning, AppColors.warningText, t.statusLimited),
+    'missing' => StatusStyle(Icons.cancel_rounded, AppColors.error, AppColors.errorText, t.statusMissing),
+    'info' => StatusStyle(Icons.info_rounded, AppColors.secondary, AppColors.secondary, t.statusInfo),
+    _ => StatusStyle(Icons.help_rounded, const Color(0xFF9AA3B2), AppColors.unknownText, t.statusUnknown),
   };
 }
 
@@ -35,12 +31,12 @@ class RatingBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, label, icon) = switch (rating) {
-      'strong' => (AppColors.accent, 'Strong', Icons.speed_rounded),
-      'fair' => (AppColors.warning, 'Fair', Icons.speed_rounded),
-      _ => (const Color(0xFFFF7A7A), 'Weak', Icons.speed_rounded),
+      'strong' => (AppColors.accent, context.l10n.ratingStrong, Icons.speed_rounded),
+      'fair' => (AppColors.warning, context.l10n.ratingFair, Icons.speed_rounded),
+      _ => (const Color(0xFFFF7A7A), context.l10n.ratingWeak, Icons.speed_rounded),
     };
     return Semantics(
-      label: 'Rating: $label',
+      label: context.l10n.ratingLabel(label),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(color: AppColors.textPrimary, borderRadius: BorderRadius.circular(20)),

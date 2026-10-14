@@ -1723,6 +1723,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add family members'**
   String get addFamilyMembers;
+
+  /// No description provided for @statusCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Covered'**
+  String get statusCovered;
+
+  /// No description provided for @statusLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Covered with limits'**
+  String get statusLimited;
+
+  /// No description provided for @statusMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Not covered'**
+  String get statusMissing;
+
+  /// No description provided for @statusInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy detail'**
+  String get statusInfo;
+
+  /// No description provided for @statusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Not found in your document'**
+  String get statusUnknown;
+
+  /// No description provided for @ratingStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get ratingStrong;
+
+  /// No description provided for @ratingFair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get ratingFair;
+
+  /// No description provided for @ratingWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get ratingWeak;
+
+  /// No description provided for @ratingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating: {label}'**
+  String ratingLabel(String label);
+
+  /// No description provided for @sampleReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample report'**
+  String get sampleReport;
+
+  /// No description provided for @reportNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Report not available'**
+  String get reportNotAvailable;
+
+  /// No description provided for @reportTypesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage reports are available for health, life and motor policies.'**
+  String get reportTypesNote;
+
+  /// No description provided for @coverAtGlance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cover at a glance'**
+  String get coverAtGlance;
+
+  /// No description provided for @addOnsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 add-on} other{{count} add-ons}}'**
+  String addOnsCount(int count);
+
+  /// No description provided for @fromPolicyPage.
+  ///
+  /// In en, this message translates to:
+  /// **'From your policy · page {page}'**
+  String fromPolicyPage(int page);
+
+  /// No description provided for @fromPolicyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'From your policy details'**
+  String get fromPolicyDetails;
+
+  /// No description provided for @fromPolicyWording.
+  ///
+  /// In en, this message translates to:
+  /// **'From your policy wording'**
+  String get fromPolicyWording;
+
+  /// No description provided for @pageN.
+  ///
+  /// In en, this message translates to:
+  /// **'page {page}'**
+  String pageN(int page);
+
+  /// No description provided for @notMentioned.
+  ///
+  /// In en, this message translates to:
+  /// **'Not mentioned in the document we read'**
+  String get notMentioned;
+
+  /// No description provided for @whyItMatters.
+  ///
+  /// In en, this message translates to:
+  /// **'Why it matters'**
+  String get whyItMatters;
+
+  /// No description provided for @askAboutThisQ.
+  ///
+  /// In en, this message translates to:
+  /// **'What does my policy say about {topic}?'**
+  String askAboutThisQ(String topic);
+
+  /// No description provided for @askAboutThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about this'**
+  String get askAboutThis;
+
+  /// No description provided for @seeForOwnPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'See this for your own policy'**
+  String get seeForOwnPolicy;
+
+  /// No description provided for @questionsAboutCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions about your cover?'**
+  String get questionsAboutCover;
+
+  /// No description provided for @addPolicyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Add policy'**
+  String get addPolicyShort;
+
+  /// No description provided for @hero1.
+  ///
+  /// In en, this message translates to:
+  /// **'a maternity bill?'**
+  String get hero1;
+
+  /// No description provided for @hero2.
+  ///
+  /// In en, this message translates to:
+  /// **'a knee surgery?'**
+  String get hero2;
+
+  /// No description provided for @hero3.
+  ///
+  /// In en, this message translates to:
+  /// **'a flooded car engine?'**
+  String get hero3;
+
+  /// No description provided for @hero4.
+  ///
+  /// In en, this message translates to:
+  /// **'a 10-day ICU stay?'**
+  String get hero4;
+
+  /// No description provided for @hero5.
+  ///
+  /// In en, this message translates to:
+  /// **'your family\'s future?'**
+  String get hero5;
+
+  /// No description provided for @whichPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Which policy?'**
+  String get whichPolicy;
+
+  /// No description provided for @willPolicyCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Will your policy cover'**
+  String get willPolicyCover;
+
+  /// No description provided for @statHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get statHealth;
+
+  /// No description provided for @statLife.
+  ///
+  /// In en, this message translates to:
+  /// **'Life'**
+  String get statLife;
+
+  /// No description provided for @perYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Per year'**
+  String get perYear;
+
+  /// No description provided for @askAboutYourCover.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your cover'**
+  String get askAboutYourCover;
+
+  /// No description provided for @askWhichPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about which policy?'**
+  String get askWhichPolicy;
+
+  /// No description provided for @addPolicyFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a policy first, then you can ask questions about it.'**
+  String get addPolicyFirst;
+
+  /// No description provided for @askAnything.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything about your cover'**
+  String get askAnything;
+
+  /// No description provided for @requestReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a policy review'**
+  String get requestReview;
+
+  /// No description provided for @expertWillCall.
+  ///
+  /// In en, this message translates to:
+  /// **'An insurance expert will call you on your registered number to walk through your policies. We won\'t try to sell you anything.'**
+  String get expertWillCall;
+
+  /// No description provided for @helpWithOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like help with? (optional)'**
+  String get helpWithOptional;
+
+  /// No description provided for @requestCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Request call'**
+  String get requestCall;
+
+  /// No description provided for @requestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent. Our team will call you on your registered number.'**
+  String get requestSent;
+
+  /// No description provided for @talkToExpert.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to an expert'**
+  String get talkToExpert;
+
+  /// No description provided for @expertPitch.
+  ///
+  /// In en, this message translates to:
+  /// **'A 30-minute walk through your cover and what to do next. No selling.'**
+  String get expertPitch;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

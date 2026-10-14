@@ -17,22 +17,11 @@ import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
 
 /// Everyday situations the hero cycles through. Each one is answered by the coverage report.
-const heroScenarios = [
-  'a maternity bill?',
-  'a knee surgery?',
-  'a flooded car engine?',
-  'a 10-day ICU stay?',
-  'your family\'s future?',
-];
+List<String> heroScenarios(AppLocalizations t) => [t.hero1, t.hero2, t.hero3, t.hero4, t.hero5];
 
 /// Picks one of the user's policies (skipping the sheet when there is only one) and returns its id.
 /// [types] limits the choice, e.g. {'life'} for nominees.
-Future<String?> pickPolicy(
-  BuildContext context,
-  WidgetRef ref, {
-  Set<String>? types,
-  String title = 'Which policy?',
-}) async {
+Future<String?> pickPolicy(BuildContext context, WidgetRef ref, {Set<String>? types, String? title}) async {
   final all = (ref.read(policiesProvider).value ?? const <Policy>[])
       .where((p) => p.verified && p.policyType != 'other' && (types == null || types.contains(p.policyType)))
       .toList();
@@ -47,7 +36,7 @@ Future<String?> pickPolicy(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
-            child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+            child: Text(title ?? context.l10n.whichPolicy, style: Theme.of(context).textTheme.titleLarge),
           ),
           for (final p in all)
             ListTile(
@@ -85,7 +74,7 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
     _timer?.cancel();
     if (!(MediaQuery.maybeOf(context)?.disableAnimations ?? false)) {
       _timer = Timer.periodic(const Duration(milliseconds: 2800), (_) {
-        if (mounted) setState(() => _i = (_i + 1) % heroScenarios.length);
+        if (mounted) setState(() => _i = (_i + 1) % 5);
       });
     }
   }
@@ -124,11 +113,11 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 190,
                   child: Text(
-                    'Will your policy cover',
-                    style: TextStyle(
+                    context.l10n.willPolicyCover,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -152,7 +141,7 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(8)),
                     child: Text(
-                      heroScenarios[_i],
+                      heroScenarios(context.l10n)[_i],
                       style: const TextStyle(color: AppColors.ink, fontSize: 20, fontWeight: FontWeight.w800),
                     ),
                   ),
@@ -161,9 +150,9 @@ class _HomeHeroState extends ConsumerState<HomeHero> {
                 if (widget.hasPolicies && s != null) ...[
                   Row(
                     children: [
-                      _Stat('Health', formatInrCompact(s.healthCover)),
-                      _Stat('Life', formatInrCompact(s.lifeCover)),
-                      _Stat('Per year', formatInrCompact(s.totalAnnualPremium)),
+                      _Stat(context.l10n.statHealth, formatInrCompact(s.healthCover)),
+                      _Stat(context.l10n.statLife, formatInrCompact(s.lifeCover)),
+                      _Stat(context.l10n.perYear, formatInrCompact(s.totalAnnualPremium)),
                     ],
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -231,13 +220,12 @@ class AskBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Pressable(
-    semanticLabel: 'Ask about your cover',
+    semanticLabel: context.l10n.askAboutYourCover,
     onTap: () async {
-      final id = await pickPolicy(context, ref, title: 'Ask about which policy?');
+      final id = await pickPolicy(context, ref, title: context.l10n.askWhichPolicy);
       if (!context.mounted) return;
       if (id == null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Add a policy first, then you can ask questions about it.')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.addPolicyFirst)));
         return;
       }
       context.push('/policy/$id/ask');
@@ -250,19 +238,19 @@ class AskBar extends ConsumerWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: AppShadows.card,
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
-          SizedBox(width: AppSpacing.sm),
+          const Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
-              'Ask anything about your cover',
+              context.l10n.askAnything,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: AppColors.textSecondary),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
           ),
-          Icon(Icons.mic_none_rounded, color: AppColors.textSecondary),
+          const Icon(Icons.mic_none_rounded, color: AppColors.textSecondary),
         ],
       ),
     ),
@@ -324,26 +312,23 @@ class ExpertReviewCard extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Request a policy review'),
+        title: Text(context.l10n.requestReview),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'An insurance expert will call you on your registered number to walk through your policies. '
-              'We won\'t try to sell you anything.',
-            ),
+            Text(context.l10n.expertWillCall),
             const SizedBox(height: AppSpacing.md),
             TextField(
               controller: note,
               maxLines: 3,
-              decoration: const InputDecoration(hintText: 'What would you like help with? (optional)'),
+              decoration: InputDecoration(hintText: context.l10n.helpWithOptional),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Request call')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.cancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(context.l10n.requestCall)),
         ],
       ),
     );
@@ -355,9 +340,7 @@ class ExpertReviewCard extends ConsumerWidget {
           .read(accountRepositoryProvider)
           .contactSupport('expert_review', text.length >= 5 ? text : 'Please review my policies.');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Request sent. Our team will call you on your registered number.')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.requestSent)));
       }
     } on ApiException catch (e) {
       if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
@@ -373,28 +356,25 @@ class ExpertReviewCard extends ConsumerWidget {
         color: const Color(0xFFEDEAFB),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             radius: 28,
             backgroundColor: Colors.white,
             child: Icon(Icons.support_agent_rounded, color: AppColors.life, size: 30),
           ),
-          SizedBox(width: AppSpacing.md),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Talk to an expert', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-                SizedBox(height: 2),
-                Text(
-                  'A 30-minute walk through your cover and what to do next. No selling.',
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                ),
+                Text(context.l10n.talkToExpert, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                const SizedBox(height: 2),
+                Text(context.l10n.expertPitch, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_rounded),
+          const Icon(Icons.arrow_forward_rounded),
         ],
       ),
     ),

@@ -9,6 +9,7 @@ import '../../core/widgets/async_states.dart';
 import '../../core/utils/formatters.dart';
 import 'coverage_data.dart';
 import 'coverage_widgets.dart';
+import '../../core/locale.dart';
 
 /// Coverage report for one of the user's policies, or a sample report when [policyId] is null.
 class CoverageReportScreen extends ConsumerStatefulWidget {
@@ -38,7 +39,7 @@ class _CoverageReportScreenState extends ConsumerState<CoverageReportScreen> {
         ? ref.watch(demoReportProvider(_type))
         : ref.watch(coverageReportProvider(widget.policyId!));
     return Scaffold(
-      appBar: AppBar(title: Text(widget.demo ? 'Sample report' : 'Coverage report')),
+      appBar: AppBar(title: Text(widget.demo ? context.l10n.sampleReport : context.l10n.coverageReport)),
       bottomNavigationBar: _BottomBar(policyId: widget.policyId),
       body: Column(
         children: [
@@ -71,8 +72,8 @@ class _CoverageReportScreenState extends ConsumerState<CoverageReportScreen> {
                   ? _ReportBody(key: ValueKey(r.policyType), report: r, policyId: widget.policyId)
                   : EmptyView(
                       icon: Icons.fact_check_rounded,
-                      title: 'Report not available',
-                      message: r.note ?? 'Coverage reports are available for health, life and motor policies.',
+                      title: context.l10n.reportNotAvailable,
+                      message: r.note ?? context.l10n.reportTypesNote,
                     ),
             ),
           ),
@@ -286,7 +287,7 @@ class _ScenarioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = StatusStyle.of(scenario.status);
+    final style = StatusStyle.of(scenario.status, context.l10n);
     return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(20),
@@ -344,7 +345,7 @@ class _Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget stat(String status, String label) {
-      final s = StatusStyle.of(status);
+      final s = StatusStyle.of(status, context.l10n);
       return Expanded(
         child: Column(
           children: [
@@ -375,7 +376,7 @@ class _Summary extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    report.title ?? 'Your cover at a glance',
+                    report.title ?? context.l10n.coverAtGlance,
                     style: const TextStyle(fontWeight: FontWeight.w700),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -489,7 +490,7 @@ class _SectionView extends StatelessWidget {
               childrenPadding: EdgeInsets.zero,
               initiallyExpanded: true,
               title: Text(
-                '${section.items.length} add-ons',
+                context.l10n.addOnsCount(section.items.length),
                 style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textSecondary),
               ),
               children: [
@@ -521,7 +522,7 @@ class _RowTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = StatusStyle.of(row.status);
+    final style = StatusStyle.of(row.status, context.l10n);
     final valueColor = switch (row.status) {
       'missing' => AppColors.errorText,
       'unknown' => AppColors.unknownText,
@@ -575,11 +576,11 @@ class _RowSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = StatusStyle.of(row.status);
+    final style = StatusStyle.of(row.status, context.l10n);
     final source = switch (row.source) {
-      'document' => row.page != null ? 'From your policy · page ${row.page}' : 'From your policy details',
-      'clause' => 'From your policy wording${row.page != null ? ' · page ${row.page}' : ''}',
-      _ => 'Not mentioned in the document we read',
+      'document' => row.page != null ? context.l10n.fromPolicyPage(row.page!) : context.l10n.fromPolicyDetails,
+      'clause' => '${context.l10n.fromPolicyWording}${row.page != null ? ' · ${context.l10n.pageN(row.page!)}' : ''}',
+      _ => context.l10n.notMentioned,
     };
     return SafeArea(
       child: Padding(
@@ -603,7 +604,7 @@ class _RowSheet extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.md),
-            const Text('Why it matters', style: TextStyle(fontWeight: FontWeight.w700)),
+            Text(context.l10n.whyItMatters, style: const TextStyle(fontWeight: FontWeight.w700)),
             const SizedBox(height: 4),
             Text(row.why),
             if (row.detail != null && row.detail != row.value) ...[
@@ -626,11 +627,11 @@ class _RowSheet extends StatelessWidget {
               OutlinedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
-                  final q = Uri.encodeQueryComponent('What does my policy say about ${row.label.toLowerCase()}?');
+                  final q = Uri.encodeQueryComponent(context.l10n.askAboutThisQ(row.label.toLowerCase()));
                   context.push('/policy/$policyId/ask?q=$q');
                 },
                 icon: const Icon(Icons.auto_awesome_rounded),
-                label: const Text('Ask about this'),
+                label: Text(context.l10n.askAboutThis),
               ),
             ],
           ],
@@ -657,7 +658,7 @@ class _BottomBar extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              policyId == null ? 'See this for your own policy' : 'Questions about your cover?',
+              policyId == null ? context.l10n.seeForOwnPolicy : context.l10n.questionsAboutCover,
               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
             ),
           ),
@@ -669,7 +670,7 @@ class _BottomBar extends StatelessWidget {
                 minimumSize: const Size.fromHeight(46),
               ),
               onPressed: () => policyId == null ? context.push('/add') : context.push('/policy/$policyId/ask'),
-              child: Text(policyId == null ? 'Add policy' : 'Ask AI'),
+              child: Text(policyId == null ? context.l10n.addPolicyShort : context.l10n.askAi),
             ),
           ),
         ],

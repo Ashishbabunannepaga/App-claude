@@ -414,5 +414,86 @@
   "confirmAddPolicy": "Confirm & add policy",
   "select": "Select",
   "whoIsCoveredQ": "Who is covered?",
-  "addFamilyMembers": "Add family members"
+  "addFamilyMembers": "Add family members",
+  "statusCovered": "Covered",
+  "statusLimited": "Covered with limits",
+  "statusMissing": "Not covered",
+  "statusInfo": "Policy detail",
+  "statusUnknown": "Not found in your document",
+  "ratingStrong": "Strong",
+  "ratingFair": "Fair",
+  "ratingWeak": "Weak",
+  "ratingLabel": "Rating: {label}",
+  "@ratingLabel": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "sampleReport": "Sample report",
+  "reportNotAvailable": "Report not available",
+  "reportTypesNote": "Coverage reports are available for health, life and motor policies.",
+  "coverAtGlance": "Your cover at a glance",
+  "addOnsCount": "{count, plural, =1{1 add-on} other{{count} add-ons}}",
+  "@addOnsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fromPolicyPage": "From your policy · page {page}",
+  "@fromPolicyPage": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "fromPolicyDetails": "From your policy details",
+  "fromPolicyWording": "From your policy wording",
+  "pageN": "page {page}",
+  "@pageN": {
+    "placeholders": {
+      "page": {
+        "type": "int"
+      }
+    }
+  },
+  "notMentioned": "Not mentioned in the document we read",
+  "whyItMatters": "Why it matters",
+  "askAboutThisQ": "What does my policy say about {topic}?",
+  "@askAboutThisQ": {
+    "placeholders": {
+      "topic": {
+        "type": "String"
+      }
+    }
+  },
+  "askAboutThis": "Ask about this",
+  "seeForOwnPolicy": "See this for your own policy",
+  "questionsAboutCover": "Questions about your cover?",
+  "addPolicyShort": "Add policy",
+  "hero1": "a maternity bill?",
+  "hero2": "a knee surgery?",
+  "hero3": "a flooded car engine?",
+  "hero4": "a 10-day ICU stay?",
+  "hero5": "your family's future?",
+  "whichPolicy": "Which policy?",
+  "willPolicyCover": "Will your policy cover",
+  "statHealth": "Health",
+  "statLife": "Life",
+  "perYear": "Per year",
+  "askAboutYourCover": "Ask about your cover",
+  "askWhichPolicy": "Ask about which policy?",
+  "addPolicyFirst": "Add a policy first, then you can ask questions about it.",
+  "askAnything": "Ask anything about your cover",
+  "requestReview": "Request a policy review",
+  "expertWillCall": "An insurance expert will call you on your registered number to walk through your policies. We won't try to sell you anything.",
+  "helpWithOptional": "What would you like help with? (optional)",
+  "requestCall": "Request call",
+  "requestSent": "Request sent. Our team will call you on your registered number.",
+  "talkToExpert": "Talk to an expert",
+  "expertPitch": "A 30-minute walk through your cover and what to do next. No selling."
 }

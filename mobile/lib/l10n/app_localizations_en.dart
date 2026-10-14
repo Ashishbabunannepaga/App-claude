@@ -888,4 +888,154 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addFamilyMembers => 'Add family members';
+
+  @override
+  String get statusCovered => 'Covered';
+
+  @override
+  String get statusLimited => 'Covered with limits';
+
+  @override
+  String get statusMissing => 'Not covered';
+
+  @override
+  String get statusInfo => 'Policy detail';
+
+  @override
+  String get statusUnknown => 'Not found in your document';
+
+  @override
+  String get ratingStrong => 'Strong';
+
+  @override
+  String get ratingFair => 'Fair';
+
+  @override
+  String get ratingWeak => 'Weak';
+
+  @override
+  String ratingLabel(String label) {
+    return 'Rating: $label';
+  }
+
+  @override
+  String get sampleReport => 'Sample report';
+
+  @override
+  String get reportNotAvailable => 'Report not available';
+
+  @override
+  String get reportTypesNote => 'Coverage reports are available for health, life and motor policies.';
+
+  @override
+  String get coverAtGlance => 'Your cover at a glance';
+
+  @override
+  String addOnsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count add-ons', one: '1 add-on');
+    return '$_temp0';
+  }
+
+  @override
+  String fromPolicyPage(int page) {
+    return 'From your policy · page $page';
+  }
+
+  @override
+  String get fromPolicyDetails => 'From your policy details';
+
+  @override
+  String get fromPolicyWording => 'From your policy wording';
+
+  @override
+  String pageN(int page) {
+    return 'page $page';
+  }
+
+  @override
+  String get notMentioned => 'Not mentioned in the document we read';
+
+  @override
+  String get whyItMatters => 'Why it matters';
+
+  @override
+  String askAboutThisQ(String topic) {
+    return 'What does my policy say about $topic?';
+  }
+
+  @override
+  String get askAboutThis => 'Ask about this';
+
+  @override
+  String get seeForOwnPolicy => 'See this for your own policy';
+
+  @override
+  String get questionsAboutCover => 'Questions about your cover?';
+
+  @override
+  String get addPolicyShort => 'Add policy';
+
+  @override
+  String get hero1 => 'a maternity bill?';
+
+  @override
+  String get hero2 => 'a knee surgery?';
+
+  @override
+  String get hero3 => 'a flooded car engine?';
+
+  @override
+  String get hero4 => 'a 10-day ICU stay?';
+
+  @override
+  String get hero5 => 'your family\'s future?';
+
+  @override
+  String get whichPolicy => 'Which policy?';
+
+  @override
+  String get willPolicyCover => 'Will your policy cover';
+
+  @override
+  String get statHealth => 'Health';
+
+  @override
+  String get statLife => 'Life';
+
+  @override
+  String get perYear => 'Per year';
+
+  @override
+  String get askAboutYourCover => 'Ask about your cover';
+
+  @override
+  String get askWhichPolicy => 'Ask about which policy?';
+
+  @override
+  String get addPolicyFirst => 'Add a policy first, then you can ask questions about it.';
+
+  @override
+  String get askAnything => 'Ask anything about your cover';
+
+  @override
+  String get requestReview => 'Request a policy review';
+
+  @override
+  String get expertWillCall =>
+      'An insurance expert will call you on your registered number to walk through your policies. We won\'t try to sell you anything.';
+
+  @override
+  String get helpWithOptional => 'What would you like help with? (optional)';
+
+  @override
+  String get requestCall => 'Request call';
+
+  @override
+  String get requestSent => 'Request sent. Our team will call you on your registered number.';
+
+  @override
+  String get talkToExpert => 'Talk to an expert';
+
+  @override
+  String get expertPitch => 'A 30-minute walk through your cover and what to do next. No selling.';
 }
