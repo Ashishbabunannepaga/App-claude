@@ -20,7 +20,6 @@ class CrashReporter {
           dio ??
           Dio(
             BaseOptions(
-              baseUrl: Env.apiBaseUrl,
               connectTimeout: const Duration(seconds: 5),
               sendTimeout: const Duration(seconds: 5),
               receiveTimeout: const Duration(seconds: 5),
@@ -59,7 +58,7 @@ class CrashReporter {
     final body = buildReport(error, stack, fatal: fatal);
     if (body == null) return;
     try {
-      await _dio.post<void>('/client-errors', data: body);
+      await _dio.post<void>('${Env.apiBaseUrl}/client-errors', data: body); // read now: discovery may change it
     } catch (_) {
       // Reporting must never crash the app or loop on its own failure.
     }

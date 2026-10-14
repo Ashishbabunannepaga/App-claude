@@ -21,6 +21,7 @@ Future<void> main() async {
   // Indian formats everywhere (₹ lakh grouping, "4 Oct 2026"), independent of the device locale.
   Intl.defaultLocale = 'en_IN';
   await initializeDateFormatting('en_IN');
+  await Env.discoverDevBackend(); // development only: find the PC's backend without --dart-define
   final prefs = await SharedPreferences.getInstance();
   await PushService.init();
   runApp(ProviderScope(overrides: [sharedPrefsProvider.overrideWithValue(prefs)], child: const InsureApp()));
