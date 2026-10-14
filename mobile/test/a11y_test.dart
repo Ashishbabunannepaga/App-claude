@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:insureiq/core/strings.dart';
 import 'package:insureiq/l10n/app_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:insureiq/app/theme/app_theme.dart';
@@ -134,36 +135,43 @@ void main() {
   };
 
   for (final entry in screens.entries) {
-    testWidgets('${entry.key}: tap targets >= 48 dp and every tappable is labelled', (tester) async {
-      final handle = tester.ensureSemantics();
-      tester.view.physicalSize = const Size(360, 800);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            sharedPrefsProvider.overrideWithValue(prefs),
-            authControllerProvider.overrideWith(_SignedIn.new),
-            policiesProvider.overrideWith((ref) async => _policies),
-            portfolioProvider.overrideWith((ref) async => _portfolio()),
-            insightsProvider.overrideWith((ref) async => _insights()),
-            unreadCountProvider.overrideWith((ref) async => 3),
-            coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
-          ],
-          child: MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            theme: AppTheme.light(),
-            builder: (context, child) =>
-                MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
-            home: entry.value(),
+    for (final locale in const [Locale('en'), Locale('hi')]) {
+      testWidgets('${entry.key} [${locale.languageCode}]: tap targets >= 48 dp and every tappable is labelled', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        tester.view.physicalSize = const Size(360, 800);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              sharedPrefsProvider.overrideWithValue(prefs),
+              authControllerProvider.overrideWith(_SignedIn.new),
+              policiesProvider.overrideWith((ref) async => _policies),
+              portfolioProvider.overrideWith((ref) async => _portfolio()),
+              insightsProvider.overrideWith((ref) async => _insights()),
+              unreadCountProvider.overrideWith((ref) async => 3),
+              coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
+            ],
+            child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: locale,
+              theme: AppTheme.light(),
+              builder: (context, child) => AppStringsScope(
+                child: MediaQuery(data: MediaQuery.of(context).copyWith(disableAnimations: true), child: child!),
+              ),
+              home: entry.value(),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
-      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
-      handle.dispose();
-    });
+        );
+        await tester.pumpAndSettle();
+        await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+        await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+        handle.dispose();
+      });
+    }
   }
+  tearDown(() => strings = lookupAppLocalizations(const Locale('en')));
 }

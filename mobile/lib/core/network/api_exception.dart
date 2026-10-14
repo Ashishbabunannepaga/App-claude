@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../config/env.dart';
+import '../strings.dart';
 
 /// A user-presentable error. `code` mirrors the backend's stable error codes.
 class ApiException implements Exception {
@@ -18,20 +19,21 @@ class ApiException implements Exception {
       final err = data['error'] as Map;
       return ApiException(
         err['code']?.toString() ?? 'error',
-        err['message']?.toString() ?? 'Something went wrong',
+        err['message']?.toString() ?? strings.somethingWrong,
         statusCode: e.response?.statusCode,
         fields: (err['fields'] as Map?)?.map((k, v) => MapEntry(k.toString(), v.toString())) ?? const {},
       );
     }
     return switch (e.type) {
-      DioExceptionType.connectionTimeout || DioExceptionType.sendTimeout || DioExceptionType.receiveTimeout =>
-        ApiException('timeout', 'The connection timed out. Please try again.${kDebugMode ? _devHint : ''}'),
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout => ApiException('timeout', '${strings.timedOut}${kDebugMode ? _devHint : ''}'),
       DioExceptionType.connectionError => ApiException(
         'offline',
         // Debug builds also show the address being tried, which makes "wrong server address" obvious.
-        'Can\'t reach the server. Check your internet connection.${kDebugMode ? _devHint : ''}',
+        '${strings.cantReachServer}${kDebugMode ? _devHint : ''}',
       ),
-      _ => ApiException('error', 'Something went wrong. Please try again.', statusCode: e.response?.statusCode),
+      _ => ApiException('error', strings.somethingWrongRetry, statusCode: e.response?.statusCode),
     };
   }
 
@@ -39,7 +41,7 @@ class ApiException implements Exception {
   String toString() => message;
 }
 
-String errorMessage(Object error) => error is ApiException ? error.message : 'Something went wrong. Please try again.';
+String errorMessage(Object error) => error is ApiException ? error.message : strings.somethingWrongRetry;
 
 /// Debug builds only: which address failed and the usual fix for a phone.
 String get _devHint =>

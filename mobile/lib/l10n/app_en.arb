@@ -634,5 +634,184 @@
   "notLinked": "Not linked to any policy",
   "addFamilyMember": "Add family member",
   "editFamilyMember": "Edit family member",
-  "removeMember": "Remove member"
+  "removeMember": "Remove member",
+  "policyTypeName": "{type, select, health{Health} life{Life} motor{Motor} other{Other}}",
+  "@policyTypeName": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "enumLabel": "{value, select, self{Self} spouse{Spouse} child{Child} parent{Parent} sibling{Sibling} otherValue{Other} annual{Annual} half_yearly{Half-yearly} quarterly{Quarterly} monthly{Monthly} single{Single} other{}}",
+  "@enumLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "clauseType": "{type, select, benefit{Benefit} exclusion{Exclusion} waiting_period{Waiting period} limit{Limit} condition{Condition} definition{Definition} other{Clause}}",
+  "@clauseType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "untitledPolicy": "Untitled policy",
+  "errPdfPassword": "This PDF is password-protected. Please upload an unlocked copy.",
+  "errPdfTooManyPages": "This document has too many pages. Please upload only the policy schedule and wording.",
+  "errPdfUnreadable": "We couldn't open this file. It may be damaged.",
+  "errNoText": "We couldn't read any text. Try a clearer photo or the original PDF.",
+  "errOcrUnavailable": "Scanned documents can't be read right now. Please upload a digital PDF or enter details manually.",
+  "errAiUnavailable": "Our reading service is busy. Please retry in a minute.",
+  "errProcessing": "We couldn't process this document.",
+  "yourPolicies": "Your policies",
+  "coinsOpenRewards": "Coins: {count}. Open rewards",
+  "@coinsOpenRewards": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "policiesNeedCheck": "{count, plural, =1{1 policy needs a quick check from you} other{{count} policies need a quick check from you}}",
+  "@policiesNeedCheck": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysLeftEnds": "days left · ends {date}",
+  "@daysLeftEnds": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "earnCoinsOrganised": "Earn coins for staying organised",
+  "addPoliciesNominees": "Add policies, nominees and family members.",
+  "worthALook": "Worth a look",
+  "allCount": "All {count}",
+  "@allCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "details": "Details",
+  "myInsurance": "My insurance",
+  "nothingHereYet": "Nothing here yet",
+  "addPoliciesHere": "Add your health, life and motor policies and they will all live here.",
+  "allWithCount": "All ({count})",
+  "@allWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noPoliciesOfType": "No policies of this type.",
+  "takingLonger": "This is taking longer than usual. We'll keep working on it — check back shortly.",
+  "readingYourPolicy": "Reading your policy",
+  "underAMinute": "This usually takes under a minute.",
+  "noClausesYet": "No clauses yet",
+  "clausesNote": "Clauses are read from your uploaded policy document. Manually added policies have none.",
+  "searchWording": "Search the policy wording",
+  "nothingMatches": "Nothing matches.",
+  "notEnoughDetails": "Not enough details yet",
+  "healthCounts": "{strong} strong · {attention} need attention · {missing} not covered",
+  "@healthCounts": {
+    "placeholders": {
+      "strong": {
+        "type": "int"
+      },
+      "attention": {
+        "type": "int"
+      },
+      "missing": {
+        "type": "int"
+      }
+    }
+  },
+  "needsAttention": "Needs attention",
+  "notMentionedInDoc": "Not mentioned in your document",
+  "markAllRead": "Mark all read",
+  "allCaughtUp": "You're all caught up",
+  "notificationsAppearHere": "Renewal reminders and policy updates will appear here.",
+  "profile": "Profile",
+  "account": "Account",
+  "helpLegal": "Help & legal",
+  "termsConditions": "Terms & conditions",
+  "logOut": "Log out",
+  "comparePolicies": "Compare policies",
+  "compareN": "Compare {count} policies",
+  "@compareN": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "choose2or3": "Choose 2 or 3 policies",
+  "compareIntro": "Compare policies you already have — for example two health policies — to see differences in cover and features.",
+  "typeCover": "{type} · {amount} cover",
+  "@typeCover": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "sideBySide": "Side by side",
+  "reviewNeeded": "Review needed",
+  "statusActive": "Active",
+  "endsInDays": "{days, plural, =1{Ends in 1 day} other{Ends in {days} days}}",
+  "@endsInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "statusExpired": "Expired",
+  "datesMissing": "Dates missing",
+  "daysLeft": "{days, plural, =1{1 day left} other{{days} days left}}",
+  "@daysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "checkupTitle": "Your insurance check-up",
+  "lookingGood": "Looking good",
+  "noGapsFound": "We found no gaps in the policies you have added.",
+  "demoMode": "Demo mode · offline AI",
+  "confirmAppLock": "Confirm to turn on app lock",
+  "unlockApp": "Unlock {app}",
+  "@unlockApp": {
+    "placeholders": {
+      "app": {
+        "type": "String"
+      }
+    }
+  },
+  "unlock": "Unlock",
+  "loading": "Loading",
+  "neverMissRenewal": "Never miss a renewal",
+  "pushPromptBody": "Turn on notifications for renewal reminders, processing updates and important policy alerts. Only things that matter — no marketing.",
+  "notNow": "Not now",
+  "allow": "Allow",
+  "somethingWrong": "Something went wrong",
+  "timedOut": "The connection timed out. Please try again.",
+  "cantReachServer": "Can't reach the server. Check your internet connection.",
+  "somethingWrongRetry": "Something went wrong. Please try again."
 }

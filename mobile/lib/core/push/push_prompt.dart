@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/account/data/account_repository.dart';
 import '../security/app_lock.dart';
 import 'push_service.dart';
+import '../strings.dart';
 
 /// Explains why notifications help before the OS permission dialog appears, once per install.
 /// Users who tap "Not now" are not asked again here; they can turn reminders on in settings.
@@ -34,17 +35,14 @@ class _PushPromptState extends ConsumerState<PushPrompt> {
     final allow = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Never miss a renewal'),
-        content: const Text(
-          'Turn on notifications for renewal reminders, processing updates and important policy alerts. '
-          'Only things that matter — no marketing.',
-        ),
+        title: Text(strings.neverMissRenewal),
+        content: Text(strings.pushPromptBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Not now')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(strings.notNow)),
           FilledButton(
             style: FilledButton.styleFrom(minimumSize: const Size(96, 44)),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Allow'),
+            child: Text(strings.allow),
           ),
         ],
       ),

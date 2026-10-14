@@ -1274,4 +1274,289 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get removeMember => 'Remove member';
+
+  @override
+  String policyTypeName(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'health': 'Health',
+      'life': 'Life',
+      'motor': 'Motor',
+      'other': 'Other',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String enumLabel(String value) {
+    String _temp0 = intl.Intl.selectLogic(value, {
+      'self': 'Self',
+      'spouse': 'Spouse',
+      'child': 'Child',
+      'parent': 'Parent',
+      'sibling': 'Sibling',
+      'otherValue': 'Other',
+      'annual': 'Annual',
+      'half_yearly': 'Half-yearly',
+      'quarterly': 'Quarterly',
+      'monthly': 'Monthly',
+      'single': 'Single',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String clauseType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'benefit': 'Benefit',
+      'exclusion': 'Exclusion',
+      'waiting_period': 'Waiting period',
+      'limit': 'Limit',
+      'condition': 'Condition',
+      'definition': 'Definition',
+      'other': 'Clause',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get untitledPolicy => 'Untitled policy';
+
+  @override
+  String get errPdfPassword => 'This PDF is password-protected. Please upload an unlocked copy.';
+
+  @override
+  String get errPdfTooManyPages =>
+      'This document has too many pages. Please upload only the policy schedule and wording.';
+
+  @override
+  String get errPdfUnreadable => 'We couldn\'t open this file. It may be damaged.';
+
+  @override
+  String get errNoText => 'We couldn\'t read any text. Try a clearer photo or the original PDF.';
+
+  @override
+  String get errOcrUnavailable =>
+      'Scanned documents can\'t be read right now. Please upload a digital PDF or enter details manually.';
+
+  @override
+  String get errAiUnavailable => 'Our reading service is busy. Please retry in a minute.';
+
+  @override
+  String get errProcessing => 'We couldn\'t process this document.';
+
+  @override
+  String get yourPolicies => 'Your policies';
+
+  @override
+  String coinsOpenRewards(int count) {
+    return 'Coins: $count. Open rewards';
+  }
+
+  @override
+  String policiesNeedCheck(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count policies need a quick check from you',
+      one: '1 policy needs a quick check from you',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String daysLeftEnds(String date) {
+    return 'days left · ends $date';
+  }
+
+  @override
+  String get earnCoinsOrganised => 'Earn coins for staying organised';
+
+  @override
+  String get addPoliciesNominees => 'Add policies, nominees and family members.';
+
+  @override
+  String get worthALook => 'Worth a look';
+
+  @override
+  String allCount(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get myInsurance => 'My insurance';
+
+  @override
+  String get nothingHereYet => 'Nothing here yet';
+
+  @override
+  String get addPoliciesHere => 'Add your health, life and motor policies and they will all live here.';
+
+  @override
+  String allWithCount(int count) {
+    return 'All ($count)';
+  }
+
+  @override
+  String get noPoliciesOfType => 'No policies of this type.';
+
+  @override
+  String get takingLonger => 'This is taking longer than usual. We\'ll keep working on it — check back shortly.';
+
+  @override
+  String get readingYourPolicy => 'Reading your policy';
+
+  @override
+  String get underAMinute => 'This usually takes under a minute.';
+
+  @override
+  String get noClausesYet => 'No clauses yet';
+
+  @override
+  String get clausesNote => 'Clauses are read from your uploaded policy document. Manually added policies have none.';
+
+  @override
+  String get searchWording => 'Search the policy wording';
+
+  @override
+  String get nothingMatches => 'Nothing matches.';
+
+  @override
+  String get notEnoughDetails => 'Not enough details yet';
+
+  @override
+  String healthCounts(int strong, int attention, int missing) {
+    return '$strong strong · $attention need attention · $missing not covered';
+  }
+
+  @override
+  String get needsAttention => 'Needs attention';
+
+  @override
+  String get notMentionedInDoc => 'Not mentioned in your document';
+
+  @override
+  String get markAllRead => 'Mark all read';
+
+  @override
+  String get allCaughtUp => 'You\'re all caught up';
+
+  @override
+  String get notificationsAppearHere => 'Renewal reminders and policy updates will appear here.';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get helpLegal => 'Help & legal';
+
+  @override
+  String get termsConditions => 'Terms & conditions';
+
+  @override
+  String get logOut => 'Log out';
+
+  @override
+  String get comparePolicies => 'Compare policies';
+
+  @override
+  String compareN(int count) {
+    return 'Compare $count policies';
+  }
+
+  @override
+  String get choose2or3 => 'Choose 2 or 3 policies';
+
+  @override
+  String get compareIntro =>
+      'Compare policies you already have — for example two health policies — to see differences in cover and features.';
+
+  @override
+  String typeCover(String type, String amount) {
+    return '$type · $amount cover';
+  }
+
+  @override
+  String get sideBySide => 'Side by side';
+
+  @override
+  String get reviewNeeded => 'Review needed';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String endsInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(days, locale: localeName, other: 'Ends in $days days', one: 'Ends in 1 day');
+    return '$_temp0';
+  }
+
+  @override
+  String get statusExpired => 'Expired';
+
+  @override
+  String get datesMissing => 'Dates missing';
+
+  @override
+  String daysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(days, locale: localeName, other: '$days days left', one: '1 day left');
+    return '$_temp0';
+  }
+
+  @override
+  String get checkupTitle => 'Your insurance check-up';
+
+  @override
+  String get lookingGood => 'Looking good';
+
+  @override
+  String get noGapsFound => 'We found no gaps in the policies you have added.';
+
+  @override
+  String get demoMode => 'Demo mode · offline AI';
+
+  @override
+  String get confirmAppLock => 'Confirm to turn on app lock';
+
+  @override
+  String unlockApp(String app) {
+    return 'Unlock $app';
+  }
+
+  @override
+  String get unlock => 'Unlock';
+
+  @override
+  String get loading => 'Loading';
+
+  @override
+  String get neverMissRenewal => 'Never miss a renewal';
+
+  @override
+  String get pushPromptBody =>
+      'Turn on notifications for renewal reminders, processing updates and important policy alerts. Only things that matter — no marketing.';
+
+  @override
+  String get notNow => 'Not now';
+
+  @override
+  String get allow => 'Allow';
+
+  @override
+  String get somethingWrong => 'Something went wrong';
+
+  @override
+  String get timedOut => 'The connection timed out. Please try again.';
+
+  @override
+  String get cantReachServer => 'Can\'t reach the server. Check your internet connection.';
+
+  @override
+  String get somethingWrongRetry => 'Something went wrong. Please try again.';
 }

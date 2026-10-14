@@ -6,6 +6,7 @@ import '../../app/theme/app_colors.dart';
 import '../../core/widgets/async_states.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
+import '../../core/locale.dart';
 
 (IconData, Color) insightStyle(Insight i) => switch (i.severity) {
   'high' => (Icons.priority_high_rounded, AppColors.error),
@@ -70,15 +71,15 @@ class InsightsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final insights = ref.watch(insightsProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Your insurance check-up')),
+      appBar: AppBar(title: Text(context.l10n.checkupTitle)),
       body: AsyncValueView(
         value: insights,
         onRetry: () => ref.invalidate(insightsProvider),
         data: (data) => data.items.isEmpty
-            ? const EmptyView(
+            ? EmptyView(
                 icon: Icons.verified_rounded,
-                title: 'Looking good',
-                message: 'We found no gaps in the policies you have added.',
+                title: context.l10n.lookingGood,
+                message: context.l10n.noGapsFound,
               )
             : RefreshIndicator(
                 onRefresh: () async => ref.invalidate(insightsProvider),

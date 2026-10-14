@@ -4,6 +4,7 @@ import '../../app/theme/app_colors.dart';
 import '../../features/policy/data/models.dart';
 import '../ui/pressable.dart';
 import '../utils/formatters.dart';
+import '../../core/locale.dart';
 
 IconData policyIcon(String type) => switch (type) {
   'health' => Icons.favorite_rounded,
@@ -19,12 +20,16 @@ class StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, text, tint) = !policy.verified
-        ? ('Review needed', AppColors.warningText, AppColors.warningTint)
+        ? (context.l10n.reviewNeeded, AppColors.warningText, AppColors.warningTint)
         : switch (policy.status) {
-            'active' => ('Active', AppColors.successText, AppColors.successTint),
-            'expiring_soon' => ('Ends in ${policy.daysToExpiry} days', AppColors.warningText, AppColors.warningTint),
-            'expired' => ('Expired', AppColors.errorText, AppColors.errorTint),
-            _ => ('Dates missing', AppColors.unknownText, AppColors.surfaceTint),
+            'active' => (context.l10n.statusActive, AppColors.successText, AppColors.successTint),
+            'expiring_soon' => (
+              context.l10n.endsInDays(policy.daysToExpiry ?? 0),
+              AppColors.warningText,
+              AppColors.warningTint,
+            ),
+            'expired' => (context.l10n.statusExpired, AppColors.errorText, AppColors.errorTint),
+            _ => (context.l10n.datesMissing, AppColors.unknownText, AppColors.surfaceTint),
           };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -90,7 +95,7 @@ class PolicyCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${policyTypeLabel(policy.policyType)} · ${formatInrCompact(policy.sumInsured)} cover',
+                    context.l10n.typeCover(policyTypeLabel(policy.policyType), formatInrCompact(policy.sumInsured)),
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -121,7 +126,7 @@ class _ValidityRing extends StatelessWidget {
     final color = urgent ? AppColors.warning : AppColors.primary;
     final d = days ?? 0;
     return Semantics(
-      label: d > 0 ? '$d days left' : 'Expired',
+      label: d > 0 ? context.l10n.daysLeft(d) : context.l10n.statusExpired,
       child: SizedBox(
         width: 60,
         height: 60,

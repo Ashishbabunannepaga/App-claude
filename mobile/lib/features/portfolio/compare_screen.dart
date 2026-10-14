@@ -8,6 +8,7 @@ import '../../core/widgets/async_states.dart';
 import '../../core/widgets/policy_card.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
+import '../../core/locale.dart';
 
 /// Pick 2–3 of your own policies of the same type.
 class CompareSelectScreen extends ConsumerStatefulWidget {
@@ -24,13 +25,13 @@ class _CompareSelectScreenState extends ConsumerState<CompareSelectScreen> {
   Widget build(BuildContext context) {
     final policies = ref.watch(policiesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Compare policies')),
+      appBar: AppBar(title: Text(context.l10n.comparePolicies)),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: FilledButton(
             onPressed: _selected.length >= 2 ? () => context.push('/compare/view?ids=${_selected.join(',')}') : null,
-            child: Text(_selected.length >= 2 ? 'Compare ${_selected.length} policies' : 'Choose 2 or 3 policies'),
+            child: Text(_selected.length >= 2 ? context.l10n.compareN(_selected.length) : context.l10n.choose2or3),
           ),
         ),
       ),
@@ -43,11 +44,7 @@ class _CompareSelectScreenState extends ConsumerState<CompareSelectScreen> {
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.md),
             children: [
-              const Text(
-                'Compare policies you already have — for example two health policies — to see differences in cover '
-                'and features.',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
+              Text(context.l10n.compareIntro, style: const TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: AppSpacing.md),
               for (final p in verified)
                 Padding(
@@ -60,7 +57,9 @@ class _CompareSelectScreenState extends ConsumerState<CompareSelectScreen> {
                       onChanged: (on) => setState(() => on == true ? _selected.add(p.id) : _selected.remove(p.id)),
                       secondary: Icon(policyIcon(p.policyType), color: AppColors.forPolicyType(p.policyType)),
                       title: Text(p.displayName, style: const TextStyle(fontWeight: FontWeight.w600)),
-                      subtitle: Text('${policyTypeLabel(p.policyType)} · ${formatInrCompact(p.sumInsured)} cover'),
+                      subtitle: Text(
+                        context.l10n.typeCover(policyTypeLabel(p.policyType), formatInrCompact(p.sumInsured)),
+                      ),
                     ),
                   ),
                 ),
@@ -84,7 +83,7 @@ class CompareScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final comparison = ref.watch(_comparisonProvider(ids));
     return Scaffold(
-      appBar: AppBar(title: const Text('Side by side')),
+      appBar: AppBar(title: Text(context.l10n.sideBySide)),
       body: AsyncValueView(
         value: comparison,
         onRetry: () => ref.invalidate(_comparisonProvider(ids)),

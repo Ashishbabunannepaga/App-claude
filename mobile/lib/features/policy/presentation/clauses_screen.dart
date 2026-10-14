@@ -5,18 +5,12 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/async_states.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
+import '../../../core/strings.dart';
+import '../../../core/locale.dart';
 
 const clauseTypes = ['benefit', 'exclusion', 'waiting_period', 'limit', 'condition', 'definition'];
 
-String clauseLabel(String type) => switch (type) {
-  'benefit' => 'Benefit',
-  'exclusion' => 'Exclusion',
-  'waiting_period' => 'Waiting period',
-  'limit' => 'Limit',
-  'condition' => 'Condition',
-  'definition' => 'Definition',
-  _ => 'Clause',
-};
+String clauseLabel(String type) => strings.clauseType(type);
 
 Color clauseColor(String type) => switch (type) {
   'benefit' => AppColors.accent,
@@ -59,16 +53,16 @@ class _ClausesScreenState extends ConsumerState<ClausesScreen> {
   Widget build(BuildContext context) {
     final clauses = ref.watch(clausesProvider(widget.policyId));
     return Scaffold(
-      appBar: AppBar(title: const Text('Policy clauses')),
+      appBar: AppBar(title: Text(context.l10n.policyClauses)),
       body: AsyncValueView(
         value: clauses,
         onRetry: () => ref.invalidate(clausesProvider(widget.policyId)),
         data: (all) {
           if (all.isEmpty) {
-            return const EmptyView(
+            return EmptyView(
               icon: Icons.article_outlined,
-              title: 'No clauses yet',
-              message: 'Clauses are read from your uploaded policy document. Manually added policies have none.',
+              title: context.l10n.noClausesYet,
+              message: context.l10n.clausesNote,
             );
           }
           final q = _query.toLowerCase();
@@ -81,9 +75,9 @@ class _ClausesScreenState extends ConsumerState<ClausesScreen> {
             children: [
               TextField(
                 onChanged: (v) => setState(() => _query = v),
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search_rounded),
-                  hintText: 'Search the policy wording',
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(Icons.search_rounded),
+                  hintText: context.l10n.searchWording,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -97,7 +91,7 @@ class _ClausesScreenState extends ConsumerState<ClausesScreen> {
                         child: ChoiceChip(
                           label: Text(
                             t == null
-                                ? 'All (${all.length})'
+                                ? context.l10n.allWithCount(all.length)
                                 : '${clauseLabel(t)} (${all.where((c) => c.tags.contains(t) || c.type == t).length})',
                           ),
                           selected: _type == t,
@@ -109,9 +103,9 @@ class _ClausesScreenState extends ConsumerState<ClausesScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               if (shown.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(AppSpacing.lg),
-                  child: Text('Nothing matches.', textAlign: TextAlign.center),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: Text(context.l10n.nothingMatches, textAlign: TextAlign.center),
                 ),
               for (final c in shown) _ClauseCard(c),
             ],
@@ -141,7 +135,7 @@ class _ClauseCard extends StatelessWidget {
                 const Spacer(),
                 Text(
                   [
-                    if (clause.page != null) 'Page ${clause.page}',
+                    if (clause.page != null) context.l10n.pageLabel('${clause.page}'),
                     if (clause.section != null) clause.section,
                   ].join(' · '),
                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),

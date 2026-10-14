@@ -222,6 +222,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
         ),
         SectionHeader(context.l10n.contactUs),
         DropdownButtonFormField<String>(
+          isExpanded: true,
           initialValue: _category,
           decoration: InputDecoration(labelText: context.l10n.topic),
           items: [

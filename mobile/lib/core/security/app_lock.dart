@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../app/theme/app_colors.dart';
 import '../brand.dart';
+import '../strings.dart';
 
 /// Initialised in main() so preferences are available synchronously.
 final sharedPrefsProvider = Provider<SharedPreferences>((ref) => throw UnimplementedError());
@@ -35,7 +36,7 @@ class AppLockController extends Notifier<AppLockState> {
   Future<bool> setEnabled(bool enabled) async {
     if (enabled) {
       if (!await _auth.isDeviceSupported()) return false;
-      if (!await _authenticate('Confirm to turn on app lock')) return true;
+      if (!await _authenticate(strings.confirmAppLock)) return true;
     }
     await _prefs.setBool(_key, enabled);
     state = AppLockState(enabled: enabled, locked: false);
@@ -51,7 +52,7 @@ class AppLockController extends Notifier<AppLockState> {
   }
 
   Future<void> unlock() async {
-    if (await _authenticate('Unlock ${Brand.name}')) state = AppLockState(enabled: state.enabled, locked: false);
+    if (await _authenticate(strings.unlockApp(Brand.name))) state = AppLockState(enabled: state.enabled, locked: false);
   }
 
   void onLifecycle(AppLifecycleState s) {
@@ -124,7 +125,7 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
                     const SizedBox(height: AppSpacing.lg),
                     FilledButton.tonal(
                       onPressed: () => ref.read(appLockProvider.notifier).unlock(),
-                      child: const Padding(padding: EdgeInsets.symmetric(horizontal: 24), child: Text('Unlock')),
+                      child: Padding(padding: const EdgeInsets.symmetric(horizontal: 24), child: Text(strings.unlock)),
                     ),
                   ],
                 ),

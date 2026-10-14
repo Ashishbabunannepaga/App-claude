@@ -7,6 +7,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../policy/data/models.dart';
 import '../data/account_repository.dart';
+import '../../../core/locale.dart';
 
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
@@ -32,7 +33,7 @@ class NotificationsScreen extends ConsumerWidget {
     final items = ref.watch(notificationsProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: Text(context.l10n.notifications),
         actions: [
           TextButton(
             onPressed: () async {
@@ -40,7 +41,7 @@ class NotificationsScreen extends ConsumerWidget {
               ref.invalidate(notificationsProvider);
               ref.invalidate(unreadCountProvider);
             },
-            child: const Text('Mark all read'),
+            child: Text(context.l10n.markAllRead),
           ),
         ],
       ),
@@ -48,10 +49,10 @@ class NotificationsScreen extends ConsumerWidget {
         value: items,
         onRetry: () => ref.invalidate(notificationsProvider),
         data: (list) => list.isEmpty
-            ? const EmptyView(
+            ? EmptyView(
                 icon: Icons.notifications_none_rounded,
-                title: 'You\'re all caught up',
-                message: 'Renewal reminders and policy updates will appear here.',
+                title: context.l10n.allCaughtUp,
+                message: context.l10n.notificationsAppearHere,
               )
             : RefreshIndicator(
                 onRefresh: () async => ref.invalidate(notificationsProvider),

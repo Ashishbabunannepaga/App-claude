@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 
+import '../strings.dart';
+
 final _inr = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 final _date = DateFormat('d MMM yyyy', 'en_IN');
 final _short = DateFormat('d MMM', 'en_IN');
@@ -23,14 +25,14 @@ String formatShortDate(DateTime? d) => d == null ? '—' : _short.format(d);
 
 String formatDate(DateTime? d) => d == null ? '—' : _date.format(d);
 
-String policyTypeLabel(String type) => switch (type) {
-  'health' => 'Health',
-  'life' => 'Life',
-  'motor' => 'Motor',
-  _ => 'Other',
-};
+/// "Health", "Life", "Motor" or "Other", in the app's language.
+String policyTypeLabel(String type) => strings.policyTypeName(type);
 
+/// A readable label for an API value such as `half_yearly` or `spouse`: the translated name when the app knows
+/// it, otherwise the value with its first letter capitalised.
 String humanise(String key) {
+  final known = strings.enumLabel(key == 'other' ? 'otherValue' : key);
+  if (known.isNotEmpty) return known;
   final words = key.replaceAll('_', ' ');
   return words.isEmpty ? words : words[0].toUpperCase() + words.substring(1);
 }

@@ -6,6 +6,7 @@ import '../core/brand.dart';
 import '../core/locale.dart';
 import '../core/push/push_service.dart';
 import '../core/security/app_lock.dart';
+import '../core/strings.dart';
 import '../features/account/data/account_repository.dart';
 import '../features/auth/data/auth_controller.dart';
 import 'router.dart';
@@ -35,7 +36,7 @@ class InsureApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: router,
-      builder: (context, child) => AppLockGate(child: child ?? const SizedBox.shrink()),
+      builder: (context, child) => AppStringsScope(child: AppLockGate(child: child ?? const SizedBox.shrink())),
     );
   }
 }

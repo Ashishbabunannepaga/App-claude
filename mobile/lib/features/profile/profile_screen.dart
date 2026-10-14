@@ -9,6 +9,7 @@ import '../../core/config/env.dart';
 import '../../core/widgets/policy_card.dart';
 import '../account/presentation/settings_screens.dart';
 import '../auth/data/auth_controller.dart';
+import '../../core/locale.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -25,7 +26,7 @@ class ProfileScreen extends ConsumerWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(context.l10n.profile)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 128),
         children: [
@@ -46,7 +47,7 @@ class ProfileScreen extends ConsumerWidget {
               onTap: () => context.push('/settings/profile'),
             ),
           ),
-          const SectionHeader('Account'),
+          SectionHeader(context.l10n.account),
           Card(
             child: Column(
               children: [
@@ -59,12 +60,16 @@ class ProfileScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SectionHeader('Help & legal'),
+          SectionHeader(context.l10n.helpLegal),
           Card(
             child: Column(
               children: [
                 tile(Icons.help_outline_rounded, 'Help & support', () => context.push('/support')),
-                tile(Icons.description_outlined, 'Terms & conditions', () => launchUrl(Uri.parse(Env.termsUrl))),
+                tile(
+                  Icons.description_outlined,
+                  context.l10n.termsConditions,
+                  () => launchUrl(Uri.parse(Env.termsUrl)),
+                ),
               ],
             ),
           ),
@@ -72,7 +77,7 @@ class ProfileScreen extends ConsumerWidget {
           Card(
             child: ListTile(
               leading: const Icon(Icons.logout_rounded, color: AppColors.error),
-              title: const Text('Log out', style: TextStyle(color: AppColors.error)),
+              title: Text(context.l10n.logOut, style: const TextStyle(color: AppColors.error)),
               onTap: () => ref.read(authControllerProvider.notifier).logout(),
             ),
           ),

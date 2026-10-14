@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../../core/locale.dart';
 
 /// Shown when content came from the offline MOCK AI provider (development/demo backends),
 /// so nobody mistakes heuristic output for real AI analysis.
@@ -15,9 +16,9 @@ class DemoAiBadge extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(6)),
-      child: const Text(
-        'Demo mode · offline AI',
-        style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+      child: Text(
+        context.l10n.demoMode,
+        style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
       ),
     );
   }

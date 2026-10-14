@@ -173,6 +173,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
               ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _type,
               decoration: InputDecoration(labelText: context.l10n.insuranceType),
               items: const [
@@ -246,6 +247,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
             ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String?>(
+              isExpanded: true,
               initialValue: _frequency,
               decoration: InputDecoration(labelText: context.l10n.premiumFrequency),
               items: const [null, 'annual', 'half_yearly', 'quarterly', 'monthly', 'single']

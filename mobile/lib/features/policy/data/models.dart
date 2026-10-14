@@ -1,3 +1,5 @@
+import '../../../core/strings.dart';
+
 double? _num(Object? v) => v == null ? null : double.tryParse(v.toString());
 DateTime? _date(Object? v) => v == null ? null : DateTime.parse(v as String);
 
@@ -52,7 +54,7 @@ class Policy {
   final List<FamilyMember> members;
   final List<Nominee> nominees;
 
-  String get displayName => insurer ?? 'Untitled policy';
+  String get displayName => insurer ?? strings.untitledPolicy;
 
   factory Policy.fromJson(Map<String, dynamic> j) => Policy(
     id: j['id'] as String,
@@ -190,14 +192,13 @@ class PolicyDocument {
   );
 
   String get errorText => switch (errorCode) {
-    'pdf_password_protected' => 'This PDF is password-protected. Please upload an unlocked copy.',
-    'pdf_too_many_pages' => 'This document has too many pages. Please upload only the policy schedule and wording.',
-    'pdf_unreadable' => 'We couldn\'t open this file. It may be damaged.',
-    'no_text_found' => 'We couldn\'t read any text. Try a clearer photo or the original PDF.',
-    'ocr_unavailable' =>
-      'Scanned documents can\'t be read right now. Please upload a digital PDF or enter details manually.',
-    'ai_unavailable' => 'Our reading service is busy. Please retry in a minute.',
-    _ => 'We couldn\'t process this document.',
+    'pdf_password_protected' => strings.errPdfPassword,
+    'pdf_too_many_pages' => strings.errPdfTooManyPages,
+    'pdf_unreadable' => strings.errPdfUnreadable,
+    'no_text_found' => strings.errNoText,
+    'ocr_unavailable' => strings.errOcrUnavailable,
+    'ai_unavailable' => strings.errAiUnavailable,
+    _ => strings.errProcessing,
   };
 }
 
@@ -210,7 +211,7 @@ class Citation {
   factory Citation.fromJson(Map<String, dynamic> j) =>
       Citation(page: j['page'] as int?, section: j['section'] as String?, excerpt: j['excerpt'] as String);
 
-  String get label => [if (page != null) 'Page $page', if (section != null) section].join(' · ');
+  String get label => [if (page != null) strings.pageLabel('$page'), if (section != null) section].join(' · ');
 }
 
 class Answer {

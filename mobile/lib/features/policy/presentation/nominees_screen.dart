@@ -315,6 +315,7 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
             ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _relation,
               decoration: InputDecoration(labelText: context.l10n.relationship),
               items: [for (final r in nomineeRelations) DropdownMenuItem(value: r, child: Text(humanise(r)))],

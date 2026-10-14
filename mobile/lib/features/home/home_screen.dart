@@ -73,7 +73,7 @@ class HomeScreen extends ConsumerWidget {
                   const _TopInsights(),
                   if (s.totalPolicies > 0) ...[
                     SectionHeader(
-                      'Your policies',
+                      context.l10n.yourPolicies,
                       action: TextButton(onPressed: () => context.go('/portfolio'), child: Text(context.l10n.seeAll)),
                     ),
                     ...?policies.value
@@ -140,7 +140,7 @@ class _Header extends ConsumerWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Pressable(
-              semanticLabel: 'Coins: ${balance ?? 0}. Open rewards',
+              semanticLabel: context.l10n.coinsOpenRewards(balance ?? 0),
               onTap: () async {
                 await context.push('/rewards');
                 ref.invalidate(rewardsProvider);
@@ -169,7 +169,7 @@ class _Header extends ConsumerWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
             Pressable(
-              semanticLabel: 'Notifications',
+              semanticLabel: context.l10n.notifications,
               onTap: () async {
                 await context.push('/notifications');
                 ref.invalidate(unreadCountProvider);
@@ -224,7 +224,7 @@ class _ReviewBanner extends StatelessWidget {
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
-              '$count ${count == 1 ? 'policy needs' : 'policies need'} a quick check from you',
+              context.l10n.policiesNeedCheck(count),
               style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.warningText),
             ),
           ),
@@ -377,7 +377,9 @@ class _RenewalCard extends StatelessWidget {
               ),
             ),
             Text(
-              'days left · ends ${formatShortDate(item.endDate)}',
+              context.l10n.daysLeftEnds(formatShortDate(item.endDate)),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
           ],
@@ -399,26 +401,23 @@ class _EarnStrip extends StatelessWidget {
         gradient: const LinearGradient(colors: [Color(0xFFFFE9B0), AppColors.goldTint]),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          CoinIcon(size: 44),
-          SizedBox(width: AppSpacing.md),
+          const CoinIcon(size: 44),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Earn coins for staying organised',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink),
+                  context.l10n.earnCoinsOrganised,
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink),
                 ),
-                Text(
-                  'Add policies, nominees and family members.',
-                  style: TextStyle(color: AppColors.goldText, fontSize: 13),
-                ),
+                Text(context.l10n.addPoliciesNominees, style: const TextStyle(color: AppColors.goldText, fontSize: 13)),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_rounded, color: AppColors.goldText),
+          const Icon(Icons.arrow_forward_rounded, color: AppColors.goldText),
         ],
       ),
     ),
@@ -437,10 +436,10 @@ class _TopInsights extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SectionHeader(
-          'Worth a look',
+          context.l10n.worthALook,
           action: TextButton(
             onPressed: () => context.push('/insights'),
-            child: Text(items.length > 3 ? 'All ${items.length}' : 'Details'),
+            child: Text(items.length > 3 ? context.l10n.allCount(items.length) : context.l10n.details),
           ),
         ),
         for (final i in items.take(3)) InsightTile(i),

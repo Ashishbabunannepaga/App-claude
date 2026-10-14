@@ -1273,4 +1273,277 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get removeMember => 'सदस्य हटाएँ';
+
+  @override
+  String policyTypeName(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {'health': 'हेल्थ', 'life': 'लाइफ़', 'motor': 'मोटर', 'other': 'अन्य'});
+    return '$_temp0';
+  }
+
+  @override
+  String enumLabel(String value) {
+    String _temp0 = intl.Intl.selectLogic(value, {
+      'self': 'स्वयं',
+      'spouse': 'पति/पत्नी',
+      'child': 'बच्चा',
+      'parent': 'माता/पिता',
+      'sibling': 'भाई/बहन',
+      'otherValue': 'अन्य',
+      'annual': 'सालाना',
+      'half_yearly': 'छमाही',
+      'quarterly': 'तिमाही',
+      'monthly': 'मासिक',
+      'single': 'एकमुश्त',
+      'other': '',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String clauseType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'benefit': 'लाभ',
+      'exclusion': 'बहिष्करण',
+      'waiting_period': 'वेटिंग पीरियड',
+      'limit': 'सीमा',
+      'condition': 'शर्त',
+      'definition': 'परिभाषा',
+      'other': 'क्लॉज़',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get untitledPolicy => 'बिना नाम की पॉलिसी';
+
+  @override
+  String get errPdfPassword => 'यह PDF पासवर्ड से सुरक्षित है। कृपया बिना पासवर्ड वाली कॉपी अपलोड करें।';
+
+  @override
+  String get errPdfTooManyPages =>
+      'इस दस्तावेज़ में बहुत ज़्यादा पेज हैं। कृपया सिर्फ़ पॉलिसी शेड्यूल और वर्डिंग अपलोड करें।';
+
+  @override
+  String get errPdfUnreadable => 'हम यह फ़ाइल नहीं खोल सके। शायद यह खराब है।';
+
+  @override
+  String get errNoText => 'हम कोई टेक्स्ट नहीं पढ़ सके। साफ़ फ़ोटो या असली PDF आज़माएँ।';
+
+  @override
+  String get errOcrUnavailable =>
+      'स्कैन किए दस्तावेज़ अभी नहीं पढ़े जा सकते। कृपया डिजिटल PDF अपलोड करें या जानकारी खुद भरें।';
+
+  @override
+  String get errAiUnavailable => 'हमारी रीडिंग सेवा अभी व्यस्त है। कृपया एक मिनट बाद फिर कोशिश करें।';
+
+  @override
+  String get errProcessing => 'हम इस दस्तावेज़ को प्रोसेस नहीं कर सके।';
+
+  @override
+  String get yourPolicies => 'आपकी पॉलिसियाँ';
+
+  @override
+  String coinsOpenRewards(int count) {
+    return 'कॉइन: $count। रिवॉर्ड खोलें';
+  }
+
+  @override
+  String policiesNeedCheck(int count) {
+    return '$count पॉलिसी को आपकी एक छोटी-सी जाँच चाहिए';
+  }
+
+  @override
+  String daysLeftEnds(String date) {
+    return 'दिन बाकी · $date को खत्म';
+  }
+
+  @override
+  String get earnCoinsOrganised => 'व्यवस्थित रहने पर कॉइन कमाएँ';
+
+  @override
+  String get addPoliciesNominees => 'पॉलिसियाँ, नॉमिनी और परिवार के सदस्य जोड़ें।';
+
+  @override
+  String get worthALook => 'एक नज़र डालें';
+
+  @override
+  String allCount(int count) {
+    return 'सभी $count';
+  }
+
+  @override
+  String get details => 'विवरण';
+
+  @override
+  String get myInsurance => 'मेरा बीमा';
+
+  @override
+  String get nothingHereYet => 'अभी यहाँ कुछ नहीं है';
+
+  @override
+  String get addPoliciesHere => 'अपनी हेल्थ, लाइफ़ और मोटर पॉलिसियाँ जोड़ें, सब यहीं रहेंगी।';
+
+  @override
+  String allWithCount(int count) {
+    return 'सभी ($count)';
+  }
+
+  @override
+  String get noPoliciesOfType => 'इस प्रकार की कोई पॉलिसी नहीं।';
+
+  @override
+  String get takingLonger => 'इसमें सामान्य से ज़्यादा समय लग रहा है। हम काम जारी रखेंगे — थोड़ी देर में फिर देखें।';
+
+  @override
+  String get readingYourPolicy => 'आपकी पॉलिसी पढ़ी जा रही है';
+
+  @override
+  String get underAMinute => 'इसमें आम तौर पर एक मिनट से कम लगता है।';
+
+  @override
+  String get noClausesYet => 'अभी कोई शर्त नहीं';
+
+  @override
+  String get clausesNote =>
+      'शर्तें आपके अपलोड किए पॉलिसी दस्तावेज़ से पढ़ी जाती हैं। खुद जोड़ी गई पॉलिसियों में ये नहीं होतीं।';
+
+  @override
+  String get searchWording => 'पॉलिसी के शब्दों में खोजें';
+
+  @override
+  String get nothingMatches => 'कुछ नहीं मिला।';
+
+  @override
+  String get notEnoughDetails => 'अभी पर्याप्त जानकारी नहीं';
+
+  @override
+  String healthCounts(int strong, int attention, int missing) {
+    return '$strong मज़बूत · $attention पर ध्यान ज़रूरी · $missing कवर नहीं';
+  }
+
+  @override
+  String get needsAttention => 'ध्यान ज़रूरी';
+
+  @override
+  String get notMentionedInDoc => 'आपके दस्तावेज़ में इसका ज़िक्र नहीं';
+
+  @override
+  String get markAllRead => 'सभी को पढ़ा हुआ मानें';
+
+  @override
+  String get allCaughtUp => 'सब देख लिया';
+
+  @override
+  String get notificationsAppearHere => 'रिन्यूअल रिमाइंडर और पॉलिसी अपडेट यहाँ दिखेंगे।';
+
+  @override
+  String get profile => 'प्रोफ़ाइल';
+
+  @override
+  String get account => 'अकाउंट';
+
+  @override
+  String get helpLegal => 'मदद और कानूनी जानकारी';
+
+  @override
+  String get termsConditions => 'नियम और शर्तें';
+
+  @override
+  String get logOut => 'लॉग आउट';
+
+  @override
+  String get comparePolicies => 'पॉलिसियों की तुलना करें';
+
+  @override
+  String compareN(int count) {
+    return '$count पॉलिसियों की तुलना करें';
+  }
+
+  @override
+  String get choose2or3 => '2 या 3 पॉलिसियाँ चुनें';
+
+  @override
+  String get compareIntro =>
+      'अपनी मौजूदा पॉलिसियों की तुलना करें — जैसे दो हेल्थ पॉलिसियाँ — ताकि कवर और सुविधाओं में फ़र्क दिखे।';
+
+  @override
+  String typeCover(String type, String amount) {
+    return '$type · $amount कवर';
+  }
+
+  @override
+  String get sideBySide => 'साथ-साथ तुलना';
+
+  @override
+  String get reviewNeeded => 'जाँच ज़रूरी';
+
+  @override
+  String get statusActive => 'चालू';
+
+  @override
+  String endsInDays(int days) {
+    return '$days दिन में खत्म';
+  }
+
+  @override
+  String get statusExpired => 'खत्म हो गई';
+
+  @override
+  String get datesMissing => 'तारीखें नहीं हैं';
+
+  @override
+  String daysLeft(int days) {
+    return '$days दिन बाकी';
+  }
+
+  @override
+  String get checkupTitle => 'आपके बीमा की जाँच';
+
+  @override
+  String get lookingGood => 'सब ठीक है';
+
+  @override
+  String get noGapsFound => 'आपकी जोड़ी गई पॉलिसियों में हमें कोई कमी नहीं मिली।';
+
+  @override
+  String get demoMode => 'डेमो मोड · ऑफ़लाइन AI';
+
+  @override
+  String get confirmAppLock => 'ऐप लॉक चालू करने के लिए पुष्टि करें';
+
+  @override
+  String unlockApp(String app) {
+    return '$app अनलॉक करें';
+  }
+
+  @override
+  String get unlock => 'अनलॉक करें';
+
+  @override
+  String get loading => 'लोड हो रहा है';
+
+  @override
+  String get neverMissRenewal => 'कोई रिन्यूअल न छूटे';
+
+  @override
+  String get pushPromptBody =>
+      'रिन्यूअल रिमाइंडर, प्रोसेसिंग अपडेट और ज़रूरी पॉलिसी अलर्ट के लिए सूचनाएँ चालू करें। सिर्फ़ काम की बातें — कोई मार्केटिंग नहीं।';
+
+  @override
+  String get notNow => 'अभी नहीं';
+
+  @override
+  String get allow => 'अनुमति दें';
+
+  @override
+  String get somethingWrong => 'कुछ गड़बड़ हो गई';
+
+  @override
+  String get timedOut => 'कनेक्शन का समय खत्म हो गया। कृपया फिर कोशिश करें।';
+
+  @override
+  String get cantReachServer => 'सर्वर तक नहीं पहुँच पा रहे। अपना इंटरनेट कनेक्शन जाँचें।';
+
+  @override
+  String get somethingWrongRetry => 'कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।';
 }

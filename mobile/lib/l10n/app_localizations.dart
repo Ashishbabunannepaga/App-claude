@@ -2419,6 +2419,438 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove member'**
   String get removeMember;
+
+  /// No description provided for @policyTypeName.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, health{Health} life{Life} motor{Motor} other{Other}}'**
+  String policyTypeName(String type);
+
+  /// No description provided for @enumLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{value, select, self{Self} spouse{Spouse} child{Child} parent{Parent} sibling{Sibling} otherValue{Other} annual{Annual} half_yearly{Half-yearly} quarterly{Quarterly} monthly{Monthly} single{Single} other{}}'**
+  String enumLabel(String value);
+
+  /// No description provided for @clauseType.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, benefit{Benefit} exclusion{Exclusion} waiting_period{Waiting period} limit{Limit} condition{Condition} definition{Definition} other{Clause}}'**
+  String clauseType(String type);
+
+  /// No description provided for @untitledPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled policy'**
+  String get untitledPolicy;
+
+  /// No description provided for @errPdfPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'This PDF is password-protected. Please upload an unlocked copy.'**
+  String get errPdfPassword;
+
+  /// No description provided for @errPdfTooManyPages.
+  ///
+  /// In en, this message translates to:
+  /// **'This document has too many pages. Please upload only the policy schedule and wording.'**
+  String get errPdfTooManyPages;
+
+  /// No description provided for @errPdfUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open this file. It may be damaged.'**
+  String get errPdfUnreadable;
+
+  /// No description provided for @errNoText.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t read any text. Try a clearer photo or the original PDF.'**
+  String get errNoText;
+
+  /// No description provided for @errOcrUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanned documents can\'t be read right now. Please upload a digital PDF or enter details manually.'**
+  String get errOcrUnavailable;
+
+  /// No description provided for @errAiUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Our reading service is busy. Please retry in a minute.'**
+  String get errAiUnavailable;
+
+  /// No description provided for @errProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t process this document.'**
+  String get errProcessing;
+
+  /// No description provided for @yourPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'Your policies'**
+  String get yourPolicies;
+
+  /// No description provided for @coinsOpenRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins: {count}. Open rewards'**
+  String coinsOpenRewards(int count);
+
+  /// No description provided for @policiesNeedCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 policy needs a quick check from you} other{{count} policies need a quick check from you}}'**
+  String policiesNeedCheck(int count);
+
+  /// No description provided for @daysLeftEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'days left · ends {date}'**
+  String daysLeftEnds(String date);
+
+  /// No description provided for @earnCoinsOrganised.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn coins for staying organised'**
+  String get earnCoinsOrganised;
+
+  /// No description provided for @addPoliciesNominees.
+  ///
+  /// In en, this message translates to:
+  /// **'Add policies, nominees and family members.'**
+  String get addPoliciesNominees;
+
+  /// No description provided for @worthALook.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look'**
+  String get worthALook;
+
+  /// No description provided for @allCount.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count}'**
+  String allCount(int count);
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @myInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'My insurance'**
+  String get myInsurance;
+
+  /// No description provided for @nothingHereYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet'**
+  String get nothingHereYet;
+
+  /// No description provided for @addPoliciesHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your health, life and motor policies and they will all live here.'**
+  String get addPoliciesHere;
+
+  /// No description provided for @allWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'All ({count})'**
+  String allWithCount(int count);
+
+  /// No description provided for @noPoliciesOfType.
+  ///
+  /// In en, this message translates to:
+  /// **'No policies of this type.'**
+  String get noPoliciesOfType;
+
+  /// No description provided for @takingLonger.
+  ///
+  /// In en, this message translates to:
+  /// **'This is taking longer than usual. We\'ll keep working on it — check back shortly.'**
+  String get takingLonger;
+
+  /// No description provided for @readingYourPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading your policy'**
+  String get readingYourPolicy;
+
+  /// No description provided for @underAMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'This usually takes under a minute.'**
+  String get underAMinute;
+
+  /// No description provided for @noClausesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No clauses yet'**
+  String get noClausesYet;
+
+  /// No description provided for @clausesNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Clauses are read from your uploaded policy document. Manually added policies have none.'**
+  String get clausesNote;
+
+  /// No description provided for @searchWording.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the policy wording'**
+  String get searchWording;
+
+  /// No description provided for @nothingMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing matches.'**
+  String get nothingMatches;
+
+  /// No description provided for @notEnoughDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough details yet'**
+  String get notEnoughDetails;
+
+  /// No description provided for @healthCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'{strong} strong · {attention} need attention · {missing} not covered'**
+  String healthCounts(int strong, int attention, int missing);
+
+  /// No description provided for @needsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get needsAttention;
+
+  /// No description provided for @notMentionedInDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Not mentioned in your document'**
+  String get notMentionedInDoc;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get markAllRead;
+
+  /// No description provided for @allCaughtUp.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up'**
+  String get allCaughtUp;
+
+  /// No description provided for @notificationsAppearHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal reminders and policy updates will appear here.'**
+  String get notificationsAppearHere;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @helpLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & legal'**
+  String get helpLegal;
+
+  /// No description provided for @termsConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & conditions'**
+  String get termsConditions;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logOut;
+
+  /// No description provided for @comparePolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare policies'**
+  String get comparePolicies;
+
+  /// No description provided for @compareN.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare {count} policies'**
+  String compareN(int count);
+
+  /// No description provided for @choose2or3.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose 2 or 3 policies'**
+  String get choose2or3;
+
+  /// No description provided for @compareIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare policies you already have — for example two health policies — to see differences in cover and features.'**
+  String get compareIntro;
+
+  /// No description provided for @typeCover.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} · {amount} cover'**
+  String typeCover(String type, String amount);
+
+  /// No description provided for @sideBySide.
+  ///
+  /// In en, this message translates to:
+  /// **'Side by side'**
+  String get sideBySide;
+
+  /// No description provided for @reviewNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Review needed'**
+  String get reviewNeeded;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// No description provided for @endsInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Ends in 1 day} other{Ends in {days} days}}'**
+  String endsInDays(int days);
+
+  /// No description provided for @statusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get statusExpired;
+
+  /// No description provided for @datesMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates missing'**
+  String get datesMissing;
+
+  /// No description provided for @daysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day left} other{{days} days left}}'**
+  String daysLeft(int days);
+
+  /// No description provided for @checkupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your insurance check-up'**
+  String get checkupTitle;
+
+  /// No description provided for @lookingGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking good'**
+  String get lookingGood;
+
+  /// No description provided for @noGapsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We found no gaps in the policies you have added.'**
+  String get noGapsFound;
+
+  /// No description provided for @demoMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo mode · offline AI'**
+  String get demoMode;
+
+  /// No description provided for @confirmAppLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm to turn on app lock'**
+  String get confirmAppLock;
+
+  /// No description provided for @unlockApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock {app}'**
+  String unlockApp(String app);
+
+  /// No description provided for @unlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlock;
+
+  /// No description provided for @loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading'**
+  String get loading;
+
+  /// No description provided for @neverMissRenewal.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss a renewal'**
+  String get neverMissRenewal;
+
+  /// No description provided for @pushPromptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on notifications for renewal reminders, processing updates and important policy alerts. Only things that matter — no marketing.'**
+  String get pushPromptBody;
+
+  /// No description provided for @notNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNow;
+
+  /// No description provided for @allow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get allow;
+
+  /// No description provided for @somethingWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWrong;
+
+  /// No description provided for @timedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection timed out. Please try again.'**
+  String get timedOut;
+
+  /// No description provided for @cantReachServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach the server. Check your internet connection.'**
+  String get cantReachServer;
+
+  /// No description provided for @somethingWrongRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get somethingWrongRetry;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

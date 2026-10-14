@@ -15,6 +15,11 @@ import 'package:insureiq/features/policy/data/models.dart';
 import 'package:insureiq/features/policy/data/policy_repository.dart';
 import 'package:insureiq/features/portfolio/portfolio_screen.dart';
 import 'package:insureiq/features/profile/profile_screen.dart';
+import 'package:insureiq/core/strings.dart';
+import 'package:insureiq/features/account/presentation/settings_screens.dart';
+import 'package:insureiq/features/policy/presentation/add_policy_screen.dart';
+import 'package:insureiq/features/policy/presentation/nominees_screen.dart';
+import 'package:insureiq/features/policy/presentation/policy_detail_screen.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,6 +58,35 @@ Policy _p(String id, String type, String insurer, String plan, int days, {bool v
   'start_date': _d(days - 365),
   'end_date': _d(days),
   'days_to_expiry': days,
+});
+
+/// A health policy with family members and nominees, for the detail and nominee screens.
+final _detailed = Policy.fromJson({
+  'id': 'd1',
+  'policy_type': 'health',
+  'insurer': 'Niva Bupa Health Insurance Company Limited',
+  'plan_name': 'ReAssure 2.0 Platinum Plus Family Floater',
+  'policy_number': 'POL/2025/00012345678901234',
+  'verified': true,
+  'source': 'upload',
+  'status': 'expiring_soon',
+  'field_confidence': <String, dynamic>{},
+  'details': <String, dynamic>{'room_rent_limit': 'Single private AC room', 'co_payment': '20% above age 60'},
+  'sum_insured': 25000000,
+  'premium': 148750,
+  'payment_frequency': 'half_yearly',
+  'start_date': _d(-356),
+  'end_date': _d(9),
+  'days_to_expiry': 9,
+  'document_id': 'doc1',
+  'members': [
+    {'id': 'm1', 'relation': 'spouse', 'full_name': 'Lakshmi Venkata Durga Prasanna'},
+    {'id': 'm2', 'relation': 'child', 'full_name': 'Aarav'},
+  ],
+  'nominees': [
+    {'id': 'n1', 'full_name': 'Lakshmi Venkata Durga Prasanna', 'relation': 'spouse', 'share_percent': 60},
+    {'id': 'n2', 'full_name': 'Aarav', 'relation': 'child', 'share_percent': 40, 'appointee_name': 'Lakshmi'},
+  ],
 });
 
 final _policies = [
@@ -121,51 +155,68 @@ void main() {
     'portfolio': () => const PortfolioScreen(),
     'emergency': () => const EmergencyScreen(),
     'profile': () => const ProfileScreen(),
+    'policy detail': () => const PolicyDetailScreen(policyId: 'd1'),
+    'nominees': () => const NomineesScreen(policyId: 'd1'),
+    'add policy': () => const AddPolicyScreen(),
+    'support': () => const SupportScreen(),
+    'privacy': () => const PrivacyScreen(),
+    'notification settings': () => const NotificationSettingsScreen(),
   };
 
   for (final entry in screens.entries) {
-    for (final w in [320.0, 360.0, 412.0]) {
-      for (final scale in [1.0, 1.3, 1.6]) {
-        testWidgets('${entry.key} with data @ ${w.toInt()}px, text x$scale', (tester) async {
-          tester.view.physicalSize = Size(w, 2600);
-          tester.view.devicePixelRatio = 1;
-          addTearDown(tester.view.reset);
-          await tester.pumpWidget(
-            ProviderScope(
-              overrides: [
-                sharedPrefsProvider.overrideWithValue(prefs),
-                authControllerProvider.overrideWith(_SignedIn.new),
-                policiesProvider.overrideWith((ref) async => _policies),
-                portfolioProvider.overrideWith((ref) async => _portfolio()),
-                insightsProvider.overrideWith((ref) async => _insights()),
-                unreadCountProvider.overrideWith((ref) async => 3),
-                coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
-              ],
-              child: MaterialApp(
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
-                theme: AppTheme.light(),
-                builder: (context, child) => MediaQuery(
-                  data: MediaQuery.of(context).copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
-                  child: child!,
+    for (final locale in const [Locale('en'), Locale('hi')]) {
+      for (final w in [320.0, 360.0, 412.0]) {
+        for (final scale in [1.0, 1.3, 1.6]) {
+          testWidgets('${entry.key} [${locale.languageCode}] with data @ ${w.toInt()}px, text x$scale', (tester) async {
+            tester.view.physicalSize = Size(w, 2600);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            await tester.pumpWidget(
+              ProviderScope(
+                overrides: [
+                  sharedPrefsProvider.overrideWithValue(prefs),
+                  authControllerProvider.overrideWith(_SignedIn.new),
+                  policiesProvider.overrideWith((ref) async => _policies),
+                  portfolioProvider.overrideWith((ref) async => _portfolio()),
+                  insightsProvider.overrideWith((ref) async => _insights()),
+                  unreadCountProvider.overrideWith((ref) async => 3),
+                  coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
+                  policyProvider.overrideWith((ref, id) async => _detailed),
+                  summaryProvider.overrideWith((ref, id) => Future<PolicySummary>.error(StateError('offline'))),
+                  healthProvider.overrideWith((ref, id) => Future<HealthCheck>.error(StateError('offline'))),
+                  familyProvider.overrideWith((ref) async => const <FamilyMember>[]),
+                ],
+                child: MaterialApp(
+                  localizationsDelegates: AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  locale: locale,
+                  theme: AppTheme.light(),
+                  builder: (context, child) => AppStringsScope(
+                    child: MediaQuery(
+                      data: MediaQuery.of(context)
+                          .copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
+                      child: child!,
+                    ),
+                  ),
+                  home: entry.value(),
                 ),
-                home: entry.value(),
               ),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
-          // Scroll to the bottom as well, so lower sections are laid out and checked.
-          final scrollable = find.byType(Scrollable);
-          if (scrollable.evaluate().isNotEmpty) {
-            await tester.drag(scrollable.first, const Offset(0, -3000));
+            );
             await tester.pumpAndSettle();
             expect(tester.takeException(), isNull);
-          }
-        });
+            // Scroll to the bottom as well, so lower sections are laid out and checked.
+            final scrollable = find.byType(Scrollable);
+            if (scrollable.evaluate().isNotEmpty) {
+              await tester.drag(scrollable.first, const Offset(0, -3000));
+              await tester.pumpAndSettle();
+              expect(tester.takeException(), isNull);
+            }
+          });
+        }
       }
     }
   }
+  tearDown(() => strings = lookupAppLocalizations(const Locale('en')));
 
   testWidgets('home tiles add no blank gap on a phone with system insets', (tester) async {
     tester.view.physicalSize = const Size(360, 2400); // tall, so the lazy list builds the tiles

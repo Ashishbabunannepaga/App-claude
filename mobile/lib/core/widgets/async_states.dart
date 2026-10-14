@@ -5,6 +5,7 @@ import '../../app/theme/app_colors.dart';
 import '../network/api_exception.dart';
 import '../ui/art.dart';
 import '../ui/skeleton.dart';
+import '../../core/locale.dart';
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key, this.message});
@@ -44,7 +45,7 @@ class ErrorView extends StatelessWidget {
           Semantics(liveRegion: true, child: Text(errorMessage(error), textAlign: TextAlign.center)),
           if (onRetry != null) ...[
             const SizedBox(height: AppSpacing.md),
-            OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
+            OutlinedButton(onPressed: onRetry, child: Text(context.l10n.tryAgain)),
           ],
         ],
       ),

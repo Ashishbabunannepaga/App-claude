@@ -8,6 +8,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
+import '../../../core/locale.dart';
 
 /// Polls document status until extraction finishes or fails.
 class ProcessingScreen extends ConsumerStatefulWidget {
@@ -56,7 +57,7 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
         }
       } else if (DateTime.now().difference(_startedAt) > _timeout) {
         _timer?.cancel();
-        setState(() => _error = 'This is taking longer than usual. We\'ll keep working on it — check back shortly.');
+        setState(() => _error = context.l10n.takingLonger);
       }
     } on ApiException catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -83,7 +84,7 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
   Widget build(BuildContext context) {
     final failed = _doc?.status == 'failed';
     return Scaffold(
-      appBar: AppBar(title: const Text('Reading your policy')),
+      appBar: AppBar(title: Text(context.l10n.readingYourPolicy)),
       body: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
@@ -95,11 +96,11 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
               const SizedBox(height: AppSpacing.md),
               Text(_doc!.errorText, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: AppSpacing.lg),
-              FilledButton(onPressed: _retry, child: const Text('Try again')),
+              FilledButton(onPressed: _retry, child: Text(context.l10n.tryAgain)),
               const SizedBox(height: AppSpacing.sm),
               OutlinedButton(
                 onPressed: () => context.pushReplacement('/add/manual'),
-                child: const Text('Enter details manually'),
+                child: Text(context.l10n.enterManually),
               ),
             ] else ...[
               const Center(child: CircularProgressIndicator()),
@@ -110,10 +111,10 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'This usually takes under a minute.',
+              Text(
+                context.l10n.underAMinute,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary),
+                style: const TextStyle(color: AppColors.textSecondary),
               ),
             ],
             if (_error != null) ...[

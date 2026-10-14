@@ -7,6 +7,7 @@ import '../../core/utils/formatters.dart';
 import '../../core/widgets/async_states.dart';
 import '../../core/widgets/policy_card.dart';
 import '../policy/data/policy_repository.dart';
+import '../../core/locale.dart';
 
 class PortfolioScreen extends ConsumerStatefulWidget {
   const PortfolioScreen({super.key});
@@ -23,12 +24,12 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     final policies = ref.watch(policiesProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My insurance'),
+        title: Text(context.l10n.myInsurance),
         actions: [
           TextButton.icon(
             onPressed: () => context.push('/compare'),
             icon: const Icon(Icons.compare_arrows_rounded),
-            label: const Text('Compare'),
+            label: Text(context.l10n.compare),
           ),
         ],
       ),
@@ -39,12 +40,12 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
           if (all.isEmpty) {
             return EmptyView(
               icon: Icons.folder_open_rounded,
-              title: 'Nothing here yet',
-              message: 'Add your health, life and motor policies and they will all live here.',
+              title: context.l10n.nothingHereYet,
+              message: context.l10n.addPoliciesHere,
               action: FilledButton.icon(
                 onPressed: () => context.push('/add'),
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Add a policy'),
+                label: Text(context.l10n.addAPolicyTitle),
               ),
             );
           }
@@ -64,7 +65,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                           child: ChoiceChip(
                             label: Text(
                               t == null
-                                  ? 'All (${all.length})'
+                                  ? context.l10n.allWithCount(all.length)
                                   : '${policyTypeLabel(t)} (${all.where((p) => p.policyType == t).length})',
                             ),
                             selected: _filter == t,
@@ -76,12 +77,12 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 if (shown.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.all(AppSpacing.lg),
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     child: Text(
-                      'No policies of this type.',
+                      context.l10n.noPoliciesOfType,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.textSecondary),
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
                 for (final p in shown)

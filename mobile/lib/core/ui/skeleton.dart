@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_colors.dart';
+import '../strings.dart';
 
 /// Shimmering placeholder block. Static when the system asks for reduced motion.
 class SkeletonBox extends StatefulWidget {
@@ -54,7 +55,7 @@ class PageSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: 'Loading',
+    label: strings.loading,
     child: ListView(
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AppSpacing.md),

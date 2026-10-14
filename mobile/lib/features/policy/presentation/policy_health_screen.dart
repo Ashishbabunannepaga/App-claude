@@ -6,6 +6,7 @@ import '../../../core/widgets/async_states.dart';
 import '../../../core/widgets/policy_card.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
+import '../../../core/locale.dart';
 
 Color scoreColor(int score) => score >= 75
     ? AppColors.accent
@@ -22,12 +23,16 @@ class PolicyHealthScreen extends ConsumerWidget {
     final health = ref.watch(healthProvider(policyId));
     final policy = ref.watch(policyProvider(policyId)).value;
     return Scaffold(
-      appBar: AppBar(title: const Text('Policy health')),
+      appBar: AppBar(title: Text(context.l10n.policyHealth)),
       body: AsyncValueView(
         value: health,
         onRetry: () => ref.invalidate(healthProvider(policyId)),
         data: (h) => !h.available
-            ? EmptyView(icon: Icons.health_and_safety_outlined, title: 'Not enough details yet', message: h.disclaimer)
+            ? EmptyView(
+                icon: Icons.health_and_safety_outlined,
+                title: context.l10n.notEnoughDetails,
+                message: h.disclaimer,
+              )
             : ListView(
                 padding: const EdgeInsets.all(AppSpacing.md),
                 children: [
@@ -45,8 +50,7 @@ class PolicyHealthScreen extends ConsumerWidget {
                                 Text(policy?.displayName ?? '', style: Theme.of(context).textTheme.titleMedium),
                                 const SizedBox(height: AppSpacing.xs),
                                 Text(
-                                  '${h.strong.length} strong · ${h.attention.length} need attention · '
-                                  '${h.notCovered.length} not covered',
+                                  context.l10n.healthCounts(h.strong.length, h.attention.length, h.notCovered.length),
                                 ),
                               ],
                             ),
@@ -55,13 +59,14 @@ class PolicyHealthScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  if (h.strong.isNotEmpty) _Section('Strong', Icons.check_circle_rounded, AppColors.accent, h.strong),
+                  if (h.strong.isNotEmpty)
+                    _Section(context.l10n.ratingStrong, Icons.check_circle_rounded, AppColors.accent, h.strong),
                   if (h.attention.isNotEmpty)
-                    _Section('Needs attention', Icons.warning_amber_rounded, AppColors.warning, h.attention),
+                    _Section(context.l10n.needsAttention, Icons.warning_amber_rounded, AppColors.warning, h.attention),
                   if (h.notCovered.isNotEmpty)
-                    _Section('Not covered', Icons.cancel_rounded, AppColors.error, h.notCovered),
+                    _Section(context.l10n.statusMissing, Icons.cancel_rounded, AppColors.error, h.notCovered),
                   if (h.notMentioned.isNotEmpty) ...[
-                    const SectionHeader('Not mentioned in your document'),
+                    SectionHeader(context.l10n.notMentionedInDoc),
                     Wrap(
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
