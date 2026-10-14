@@ -1,6 +1,11 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import OperationalError
+
+log = logging.getLogger(__name__)
 
 
 class AppError(Exception):
@@ -49,6 +54,19 @@ def install_error_handlers(app: FastAPI) -> None:
                     "code": "validation_error",
                     "message": "Please check the highlighted fields",
                     "fields": fields,
+                }
+            },
+        )
+
+    @app.exception_handler(OperationalError)
+    async def _database_down(_: Request, exc: OperationalError) -> JSONResponse:
+        log.error("Database unreachable (is Postgres running? docker compose up -d): %s", type(exc.orig).__name__)
+        return JSONResponse(
+            status_code=503,
+            content={
+                "error": {
+                    "code": "database_unavailable",
+                    "message": "The service is temporarily unavailable. Please try again in a minute.",
                 }
             },
         )

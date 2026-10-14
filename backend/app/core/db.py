@@ -10,7 +10,15 @@ class Base(DeclarativeBase):
     pass
 
 
-engine = create_engine(get_settings().database_url, pool_pre_ping=True)
+_url = get_settings().database_url
+# Fail in seconds, not minutes, when Postgres is down (e.g. Docker not started): without a connect timeout a
+# request can hang past the app's 60 s limit and the user only sees "the connection timed out".
+engine = create_engine(
+    _url,
+    pool_pre_ping=True,
+    pool_timeout=10,
+    connect_args={"connect_timeout": 5} if _url.startswith("postgresql") else {},
+)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 

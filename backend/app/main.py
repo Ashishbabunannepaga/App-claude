@@ -3,7 +3,8 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from sqlalchemy import text
 
 from app.api.v1 import (
     admin,
@@ -20,6 +21,7 @@ from app.api.v1 import (
     support,
 )
 from app.core.config import get_settings
+from app.core.db import engine
 from app.core.errors import install_error_handlers
 from app.core.observability import init_error_tracking
 
@@ -81,6 +83,18 @@ def create_app() -> FastAPI:
     @app.get("/health", tags=["ops"])
     def health() -> dict:
         return {"status": "ok"}
+
+    @app.get("/health/ready", tags=["ops"])
+    def ready() -> JSONResponse:
+        """Liveness plus dependencies: what an uptime check or a confused developer should look at."""
+        checks = {"database": "ok"}
+        try:
+            with engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+        except Exception as exc:  # report, never crash the health check
+            checks["database"] = f"unreachable ({type(exc).__name__})"
+        ok = all(v == "ok" for v in checks.values())
+        return JSONResponse({"status": "ok" if ok else "degraded", **checks}, status_code=200 if ok else 503)
 
     return app
 
