@@ -63,7 +63,7 @@ class NotificationsScreen extends ConsumerWidget {
                   itemBuilder: (_, i) {
                     final n = list[i];
                     return Card(
-                      color: n.isRead ? AppColors.surface : const Color(0xFFF0F5FF),
+                      color: n.isRead ? AppColors.surface : AppColors.infoTint,
                       child: ListTile(
                         contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
                         leading: Icon(
@@ -76,7 +76,7 @@ class NotificationsScreen extends ConsumerWidget {
                         ),
                         subtitle: Text('${n.body}\n${DateFormat('d MMM, h:mm a').format(n.createdAt)}'),
                         isThreeLine: true,
-                        trailing: n.isRead ? null : const CircleAvatar(radius: 5, backgroundColor: AppColors.secondary),
+                        trailing: n.isRead ? null : CircleAvatar(radius: 5, backgroundColor: AppColors.secondary),
                         onTap: () => _open(context, ref, n),
                       ),
                     );

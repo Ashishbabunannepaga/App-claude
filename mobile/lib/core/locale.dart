@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../l10n/app_localizations.dart';
 import 'security/app_lock.dart';
+import '../core/locale.dart';
 
 export '../l10n/app_localizations.dart';
 

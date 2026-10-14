@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/appearance.dart';
 import '../../../core/locale.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/brand.dart';
@@ -152,7 +153,7 @@ class NotificationSettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(context.l10n.notificationsPromise, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(context.l10n.notificationsPromise, style: TextStyle(color: AppColors.textSecondary)),
         ],
       ),
     );
@@ -337,8 +338,8 @@ class PrivacyScreen extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         Card(
           child: ListTile(
-            leading: const Icon(Icons.delete_forever_outlined, color: AppColors.error),
-            title: Text(context.l10n.deleteAccount, style: const TextStyle(color: AppColors.error)),
+            leading: Icon(Icons.delete_forever_outlined, color: AppColors.error),
+            title: Text(context.l10n.deleteAccount, style: TextStyle(color: AppColors.error)),
             subtitle: Text(context.l10n.deleteAccountHelp),
             onTap: () => _delete(context, ref),
           ),
@@ -357,7 +358,7 @@ class AppLockTile extends ConsumerWidget {
     if (kIsWeb) return const SizedBox.shrink();
     final lock = ref.watch(appLockProvider);
     return SwitchListTile(
-      secondary: const Icon(Icons.lock_outline_rounded, color: AppColors.textSecondary),
+      secondary: Icon(Icons.lock_outline_rounded, color: AppColors.textSecondary),
       title: Text(context.l10n.appLock),
       subtitle: Text(context.l10n.appLockHelp),
       value: lock.enabled,
@@ -389,7 +390,7 @@ class LanguageTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final current = ref.watch(authControllerProvider).user?.preferredLanguage ?? 'en';
     return ListTile(
-      leading: const Icon(Icons.translate_rounded, color: AppColors.textSecondary),
+      leading: Icon(Icons.translate_rounded, color: AppColors.textSecondary),
       title: Text(context.l10n.aiAnswerLanguage),
       subtitle: Text(answerLanguages[current] ?? 'English'),
       trailing: const Icon(Icons.chevron_right_rounded),
@@ -403,15 +404,12 @@ class LanguageTile extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
-                  child: Text(
-                    context.l10n.aiAnswerLanguageHelp,
-                    style: const TextStyle(color: AppColors.textSecondary),
-                  ),
+                  child: Text(context.l10n.aiAnswerLanguageHelp, style: TextStyle(color: AppColors.textSecondary)),
                 ),
                 for (final e in answerLanguages.entries)
                   ListTile(
                     title: Text(e.value),
-                    trailing: e.key == current ? const Icon(Icons.check_rounded, color: AppColors.accent) : null,
+                    trailing: e.key == current ? Icon(Icons.check_rounded, color: AppColors.accent) : null,
                     onTap: () => Navigator.pop(c, e.key),
                   ),
               ],
@@ -439,7 +437,7 @@ class AppLanguageTile extends ConsumerWidget {
     final t = context.l10n;
     final current = ref.watch(appLocaleProvider);
     return ListTile(
-      leading: const Icon(Icons.language_rounded, color: AppColors.textSecondary),
+      leading: Icon(Icons.language_rounded, color: AppColors.textSecondary),
       title: Text(t.appLanguage),
       subtitle: Text(t.languageName),
       trailing: const Icon(Icons.chevron_right_rounded),
@@ -453,12 +451,12 @@ class AppLanguageTile extends ConsumerWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
-                  child: Text(t.appLanguageHelp, style: const TextStyle(color: AppColors.textSecondary)),
+                  child: Text(t.appLanguageHelp, style: TextStyle(color: AppColors.textSecondary)),
                 ),
                 for (final l in AppLocaleController.supported)
                   ListTile(
                     title: Text(lookupAppLocalizations(l).languageName),
-                    trailing: l == current ? const Icon(Icons.check_rounded, color: AppColors.accent) : null,
+                    trailing: l == current ? Icon(Icons.check_rounded, color: AppColors.accent) : null,
                     onTap: () => Navigator.pop(c, l),
                   ),
               ],
@@ -466,6 +464,48 @@ class AppLanguageTile extends ConsumerWidget {
           ),
         );
         if (picked != null) await ref.read(appLocaleProvider.notifier).set(picked);
+      },
+    );
+  }
+}
+
+/// Light, dark or follow the phone (stored on the phone).
+class AppearanceTile extends ConsumerWidget {
+  const AppearanceTile({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = context.l10n;
+    final current = ref.watch(themeModeProvider);
+    String label(ThemeMode m) => switch (m) {
+      ThemeMode.light => t.themeLight,
+      ThemeMode.dark => t.themeDark,
+      ThemeMode.system => t.themeSystem,
+    };
+    return ListTile(
+      leading: Icon(Icons.dark_mode_outlined, color: AppColors.textSecondary),
+      title: Text(t.appearance),
+      subtitle: Text(label(current)),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () async {
+        final picked = await showModalBottomSheet<ThemeMode>(
+          context: context,
+          showDragHandle: true,
+          builder: (c) => SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final m in const [ThemeMode.system, ThemeMode.light, ThemeMode.dark])
+                  ListTile(
+                    title: Text(label(m)),
+                    trailing: m == current ? Icon(Icons.check_rounded, color: AppColors.accent) : null,
+                    onTap: () => Navigator.pop(c, m),
+                  ),
+              ],
+            ),
+          ),
+        );
+        if (picked != null) await ref.read(themeModeProvider.notifier).set(picked);
       },
     );
   }

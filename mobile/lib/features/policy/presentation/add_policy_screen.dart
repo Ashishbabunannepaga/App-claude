@@ -74,7 +74,7 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
-          Text(context.l10n.uploadIntro, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(context.l10n.uploadIntro, style: TextStyle(color: AppColors.textSecondary)),
           const SizedBox(height: AppSpacing.lg),
           if (uploading) ...[
             Text(context.l10n.uploadingPercent((_progress! * 100).round())),
@@ -115,18 +115,15 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
           ],
           if (_error != null) ...[
             const SizedBox(height: AppSpacing.md),
-            Text(_error!, style: const TextStyle(color: AppColors.error)),
+            Text(_error!, style: TextStyle(color: AppColors.error)),
           ],
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              const Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.textSecondary),
+              Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.textSecondary),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
-                child: Text(
-                  context.l10n.docsEncrypted,
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                ),
+                child: Text(context.l10n.docsEncrypted, style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
               ),
             ],
           ),

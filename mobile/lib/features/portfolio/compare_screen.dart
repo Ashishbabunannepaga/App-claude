@@ -44,7 +44,7 @@ class _CompareSelectScreenState extends ConsumerState<CompareSelectScreen> {
           return ListView(
             padding: const EdgeInsets.all(AppSpacing.md),
             children: [
-              Text(context.l10n.compareIntro, style: const TextStyle(color: AppColors.textSecondary)),
+              Text(context.l10n.compareIntro, style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: AppSpacing.md),
               for (final p in verified)
                 Padding(
@@ -110,7 +110,7 @@ class CompareScreen extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: AppSpacing.md),
-              Text(c.disclaimer, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              Text(c.disclaimer, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             ],
           );
         },
@@ -130,7 +130,7 @@ class _HeaderRow extends StatelessWidget {
         Expanded(
           child: Card(
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            color: AppColors.primary,
+            color: AppColors.primaryFill,
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.sm),
               child: Text(
@@ -157,7 +157,7 @@ class _Row extends StatelessWidget {
       children: [
         Text(
           row.label,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSpacing.xs),
         Row(

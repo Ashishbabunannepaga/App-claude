@@ -111,7 +111,7 @@ class _AppLockGateState extends ConsumerState<AppLockGate> with WidgetsBindingOb
         if (locked)
           Positioned.fill(
             child: Material(
-              color: AppColors.primary,
+              color: AppColors.primaryFill,
               child: SafeArea(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

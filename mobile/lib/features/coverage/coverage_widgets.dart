@@ -172,7 +172,7 @@ class CoinChip extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.fromLTRB(4, 3, 10, 3),
     decoration: BoxDecoration(
-      color: dark ? Colors.white.withValues(alpha: 0.18) : const Color(0xFFFFF4D6),
+      color: dark ? Colors.white.withValues(alpha: 0.18) : AppColors.goldTint,
       borderRadius: BorderRadius.circular(20),
     ),
     child: Row(
@@ -182,11 +182,7 @@ class CoinChip extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           text,
-          style: TextStyle(
-            fontWeight: FontWeight.w800,
-            fontSize: 13,
-            color: dark ? Colors.white : const Color(0xFF7A4E00),
-          ),
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: dark ? Colors.white : AppColors.goldText),
         ),
       ],
     ),

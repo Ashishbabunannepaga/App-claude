@@ -92,7 +92,7 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (failed) ...[
-              const Icon(Icons.error_outline_rounded, size: 56, color: AppColors.error),
+              Icon(Icons.error_outline_rounded, size: 56, color: AppColors.error),
               const SizedBox(height: AppSpacing.md),
               Text(_doc!.errorText, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: AppSpacing.lg),
@@ -114,7 +114,7 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
               Text(
                 context.l10n.underAMinute,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
             ],
             if (_error != null) ...[
@@ -122,7 +122,7 @@ class _ProcessingScreenState extends ConsumerState<ProcessingScreen> {
               Text(
                 _error!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
             ],
           ],

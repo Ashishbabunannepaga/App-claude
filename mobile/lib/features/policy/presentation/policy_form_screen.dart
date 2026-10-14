@@ -168,7 +168,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
                 color: AppColors.warningTint,
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Text(context.l10n.weReadDetails, style: TextStyle(color: Colors.brown.shade700)),
+                  child: Text(context.l10n.weReadDetails, style: TextStyle(color: AppColors.warningText)),
                 ),
               ),
             const SizedBox(height: AppSpacing.md),
@@ -258,7 +258,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
             if (_type != 'motor') _MembersPicker(selected: _members, onChanged: () => setState(() {})),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.md),
-              Text(_error!, style: const TextStyle(color: AppColors.error)),
+              Text(_error!, style: TextStyle(color: AppColors.error)),
             ],
             const SizedBox(height: AppSpacing.lg),
             FilledButton(

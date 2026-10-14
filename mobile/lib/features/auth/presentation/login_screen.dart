@@ -62,7 +62,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             const SizedBox(height: AppSpacing.lg),
             Text(context.l10n.loginHeadline, style: theme.textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),
-            Text(context.l10n.loginSubhead, style: const TextStyle(color: AppColors.textSecondary, fontSize: 16)),
+            Text(context.l10n.loginSubhead, style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
             const SizedBox(height: AppSpacing.xl),
             TextField(
               controller: _phone,
@@ -89,7 +89,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       padding: const EdgeInsets.only(top: 12),
                       child: Text.rich(
                         TextSpan(
-                          style: const TextStyle(color: AppColors.textSecondary),
+                          style: TextStyle(color: AppColors.textSecondary),
                           children: [
                             TextSpan(text: context.l10n.consentStart),
                             _link(context.l10n.privacyPolicy, Env.privacyPolicyUrl),
@@ -119,7 +119,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   TextSpan _link(String text, String url) => TextSpan(
     text: text,
-    style: const TextStyle(color: AppColors.secondary, fontWeight: FontWeight.w600),
+    style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.w600),
     recognizer: TapGestureRecognizer()..onTap = () => launchUrl(Uri.parse(url)),
   );
 }

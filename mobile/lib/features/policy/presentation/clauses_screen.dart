@@ -138,7 +138,7 @@ class _ClauseCard extends StatelessWidget {
                     if (clause.page != null) context.l10n.pageLabel('${clause.page}'),
                     if (clause.section != null) clause.section,
                   ].join(' · '),
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
               ],
             ),

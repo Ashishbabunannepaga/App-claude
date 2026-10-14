@@ -240,17 +240,17 @@ class AskBar extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
+          Icon(Icons.auto_awesome_rounded, color: AppColors.primary),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               context.l10n.askAnything,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
           ),
-          const Icon(Icons.mic_none_rounded, color: AppColors.textSecondary),
+          Icon(Icons.mic_none_rounded, color: AppColors.textSecondary),
         ],
       ),
     ),
@@ -353,14 +353,14 @@ class ExpertReviewCard extends ConsumerWidget {
     child: Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFEDEAFB),
+        color: AppColors.lavenderTint,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 28,
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.surface,
             child: Icon(Icons.support_agent_rounded, color: AppColors.life, size: 30),
           ),
           const SizedBox(width: AppSpacing.md),
@@ -370,7 +370,7 @@ class ExpertReviewCard extends ConsumerWidget {
               children: [
                 Text(context.l10n.talkToExpert, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
                 const SizedBox(height: 2),
-                Text(context.l10n.expertPitch, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                Text(context.l10n.expertPitch, style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
               ],
             ),
           ),

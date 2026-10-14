@@ -107,7 +107,7 @@ class NomineesScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              Text(context.l10n.nomineeLegalNote, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              Text(context.l10n.nomineeLegalNote, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               if (p.nominees.isNotEmpty) SectionHeader(context.l10n.nominees),
               for (final n in p.nominees)
                 Padding(
@@ -119,7 +119,7 @@ class NomineesScreen extends ConsumerWidget {
                         backgroundColor: AppColors.surfaceTint,
                         child: Text(
                           '${n.sharePercent}%',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.secondary),
                         ),
                       ),
                       title: Text(n.fullName, style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -164,7 +164,7 @@ class NomineesScreen extends ConsumerWidget {
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
                             children: [
-                              const Icon(Icons.check_rounded, size: 16, color: AppColors.accent),
+                              Icon(Icons.check_rounded, size: 16, color: AppColors.accent),
                               const SizedBox(width: AppSpacing.sm),
                               Expanded(child: Text(d)),
                             ],
@@ -287,7 +287,7 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
             ),
             if (widget.nominee == null && family.any((m) => m.relation != 'self')) ...[
               const SizedBox(height: AppSpacing.sm),
-              Text(context.l10n.pickFromFamily, style: const TextStyle(color: AppColors.textSecondary)),
+              Text(context.l10n.pickFromFamily, style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: AppSpacing.xs),
               Wrap(
                 spacing: AppSpacing.sm,
@@ -360,7 +360,7 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
             ),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.sm),
-              Text(_error!, style: const TextStyle(color: AppColors.error)),
+              Text(_error!, style: TextStyle(color: AppColors.error)),
             ],
             const SizedBox(height: AppSpacing.lg),
             FilledButton(

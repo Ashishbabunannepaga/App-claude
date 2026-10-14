@@ -157,7 +157,7 @@ class _Header extends ConsumerWidget {
                       children: [
                         Text(
                           '${balance ?? 0}',
-                          style: const TextStyle(fontWeight: FontWeight.w800, color: AppColors.goldText),
+                          style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.goldText),
                         ),
                         const SizedBox(width: 6),
                         const CoinIcon(size: 24),
@@ -202,7 +202,7 @@ class _Header extends ConsumerWidget {
           name.isEmpty ? context.l10n.helloThere : context.l10n.hiName(name),
           style: Theme.of(context).textTheme.headlineMedium,
         ),
-        Text(context.l10n.homeSubtitle, style: const TextStyle(color: AppColors.textSecondary)),
+        Text(context.l10n.homeSubtitle, style: TextStyle(color: AppColors.textSecondary)),
       ],
     );
   }
@@ -225,10 +225,10 @@ class _ReviewBanner extends StatelessWidget {
           Expanded(
             child: Text(
               context.l10n.policiesNeedCheck(count),
-              style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.warningText),
+              style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.warningText),
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: AppColors.warningText),
+          Icon(Icons.chevron_right_rounded, color: AppColors.warningText),
         ],
       ),
     ),
@@ -380,7 +380,7 @@ class _RenewalCard extends StatelessWidget {
               context.l10n.daysLeftEnds(formatShortDate(item.endDate)),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
           ],
         ),
@@ -398,7 +398,7 @@ class _EarnStrip extends StatelessWidget {
     child: Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFFFFE9B0), AppColors.goldTint]),
+        gradient: LinearGradient(colors: [AppColors.goldGlow, AppColors.goldTint]),
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
       ),
       child: Row(
@@ -411,13 +411,13 @@ class _EarnStrip extends StatelessWidget {
               children: [
                 Text(
                   context.l10n.earnCoinsOrganised,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.ink),
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.textPrimary),
                 ),
-                Text(context.l10n.addPoliciesNominees, style: const TextStyle(color: AppColors.goldText, fontSize: 13)),
+                Text(context.l10n.addPoliciesNominees, style: TextStyle(color: AppColors.goldText, fontSize: 13)),
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_rounded, color: AppColors.goldText),
+          Icon(Icons.arrow_forward_rounded, color: AppColors.goldText),
         ],
       ),
     ),

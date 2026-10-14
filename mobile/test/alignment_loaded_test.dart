@@ -16,6 +16,8 @@ import 'package:insureiq/features/policy/data/policy_repository.dart';
 import 'package:insureiq/features/portfolio/portfolio_screen.dart';
 import 'package:insureiq/features/profile/profile_screen.dart';
 import 'package:insureiq/core/strings.dart';
+import 'package:insureiq/core/appearance.dart';
+import 'package:insureiq/app/theme/app_colors.dart';
 import 'package:insureiq/features/account/presentation/settings_screens.dart';
 import 'package:insureiq/features/policy/presentation/add_policy_screen.dart';
 import 'package:insureiq/features/policy/presentation/nominees_screen.dart';
@@ -164,59 +166,107 @@ void main() {
   };
 
   for (final entry in screens.entries) {
-    for (final locale in const [Locale('en'), Locale('hi')]) {
+    for (final (locale, dark) in const [(Locale('en'), false), (Locale('hi'), false), (Locale('en'), true)]) {
       for (final w in [320.0, 360.0, 412.0]) {
         for (final scale in [1.0, 1.3, 1.6]) {
-          testWidgets('${entry.key} [${locale.languageCode}] with data @ ${w.toInt()}px, text x$scale', (tester) async {
-            tester.view.physicalSize = Size(w, 2600);
-            tester.view.devicePixelRatio = 1;
-            addTearDown(tester.view.reset);
-            await tester.pumpWidget(
-              ProviderScope(
-                overrides: [
-                  sharedPrefsProvider.overrideWithValue(prefs),
-                  authControllerProvider.overrideWith(_SignedIn.new),
-                  policiesProvider.overrideWith((ref) async => _policies),
-                  portfolioProvider.overrideWith((ref) async => _portfolio()),
-                  insightsProvider.overrideWith((ref) async => _insights()),
-                  unreadCountProvider.overrideWith((ref) async => 3),
-                  coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
-                  policyProvider.overrideWith((ref, id) async => _detailed),
-                  summaryProvider.overrideWith((ref, id) => Future<PolicySummary>.error(StateError('offline'))),
-                  healthProvider.overrideWith((ref, id) => Future<HealthCheck>.error(StateError('offline'))),
-                  familyProvider.overrideWith((ref) async => const <FamilyMember>[]),
-                ],
-                child: MaterialApp(
-                  localizationsDelegates: AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  locale: locale,
-                  theme: AppTheme.light(),
-                  builder: (context, child) => AppStringsScope(
-                    child: MediaQuery(
-                      data: MediaQuery.of(context)
-                          .copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
-                      child: child!,
+          testWidgets(
+            '${entry.key} [${locale.languageCode}${dark ? ', dark' : ''}] with data @ ${w.toInt()}px, text x$scale',
+            (tester) async {
+              tester.view.physicalSize = Size(w, 2600);
+              tester.view.devicePixelRatio = 1;
+              addTearDown(tester.view.reset);
+              await tester.pumpWidget(
+                ProviderScope(
+                  overrides: [
+                    sharedPrefsProvider.overrideWithValue(prefs),
+                    authControllerProvider.overrideWith(_SignedIn.new),
+                    policiesProvider.overrideWith((ref) async => _policies),
+                    portfolioProvider.overrideWith((ref) async => _portfolio()),
+                    insightsProvider.overrideWith((ref) async => _insights()),
+                    unreadCountProvider.overrideWith((ref) async => 3),
+                    coverageRepositoryProvider.overrideWithValue(FakeCoverageRepo()),
+                    policyProvider.overrideWith((ref, id) async => _detailed),
+                    summaryProvider.overrideWith((ref, id) => Future<PolicySummary>.error(StateError('offline'))),
+                    healthProvider.overrideWith((ref, id) => Future<HealthCheck>.error(StateError('offline'))),
+                    familyProvider.overrideWith((ref) async => const <FamilyMember>[]),
+                  ],
+                  child: MaterialApp(
+                    localizationsDelegates: AppLocalizations.localizationsDelegates,
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    locale: locale,
+                    theme: AppTheme.light(),
+                    darkTheme: AppTheme.dark(),
+                    themeMode: dark ? ThemeMode.dark : ThemeMode.light,
+                    builder: (context, child) => AppThemeScope(
+                      child: AppStringsScope(
+                        child: MediaQuery(
+                          data: MediaQuery.of(context)
+                              .copyWith(disableAnimations: true, textScaler: TextScaler.linear(scale)),
+                          child: child!,
+                        ),
+                      ),
                     ),
+                    home: entry.value(),
                   ),
-                  home: entry.value(),
                 ),
-              ),
-            );
-            await tester.pumpAndSettle();
-            expect(tester.takeException(), isNull);
-            // Scroll to the bottom as well, so lower sections are laid out and checked.
-            final scrollable = find.byType(Scrollable);
-            if (scrollable.evaluate().isNotEmpty) {
-              await tester.drag(scrollable.first, const Offset(0, -3000));
+              );
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
-            }
-          });
+              // Scroll to the bottom as well, so lower sections are laid out and checked.
+              final scrollable = find.byType(Scrollable);
+              if (scrollable.evaluate().isNotEmpty) {
+                await tester.drag(scrollable.first, const Offset(0, -3000));
+                await tester.pumpAndSettle();
+                expect(tester.takeException(), isNull);
+              }
+            },
+          );
         }
       }
     }
   }
-  tearDown(() => strings = lookupAppLocalizations(const Locale('en')));
+  tearDown(() {
+    strings = lookupAppLocalizations(const Locale('en'));
+    AppColors.dark = false;
+  });
+
+  testWidgets('switching to dark repaints screens that read AppColors directly, keeping their state', (tester) async {
+    final mode = ValueNotifier(ThemeMode.light);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sharedPrefsProvider.overrideWithValue(prefs),
+          authControllerProvider.overrideWith(_SignedIn.new),
+          policyProvider.overrideWith((ref, id) async => _detailed),
+          summaryProvider.overrideWith((ref, id) => Future<PolicySummary>.error(StateError('offline'))),
+          healthProvider.overrideWith((ref, id) => Future<HealthCheck>.error(StateError('offline'))),
+          familyProvider.overrideWith((ref) async => const <FamilyMember>[]),
+        ],
+        child: ValueListenableBuilder(
+          valueListenable: mode,
+          builder: (context, m, _) => MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: AppTheme.light(),
+            darkTheme: AppTheme.dark(),
+            themeMode: m,
+            builder: (context, child) => AppThemeScope(child: child!),
+            home: const NomineesScreen(policyId: 'd1'),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    // The legal note is styled with AppColors.textSecondary directly, not through the Theme.
+    final note = lookupAppLocalizations(const Locale('en')).nomineeLegalNote;
+    Color textColour() => tester.widget<Text>(find.text(note)).style!.color!;
+    final lightColour = textColour();
+    mode.value = ThemeMode.dark;
+    await tester.pumpAndSettle();
+    expect(AppColors.dark, isTrue);
+    expect(textColour(), isNot(lightColour));
+    expect(find.text('Lakshmi Venkata Durga Prasanna'), findsWidgets); // same screen, not reset
+  });
 
   testWidgets('home tiles add no blank gap on a phone with system insets', (tester) async {
     tester.view.physicalSize = const Size(360, 2400); // tall, so the lazy list builds the tiles

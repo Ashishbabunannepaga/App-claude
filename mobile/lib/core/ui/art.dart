@@ -161,7 +161,8 @@ class _ScenePainter extends CustomPainter {
     );
   }
 
-  void _check(Canvas c, Offset o, double r, {Color bg = AppColors.primary}) {
+  void _check(Canvas c, Offset o, double r, {Color? bg}) {
+    bg ??= AppColors.primary;
     c.drawCircle(o, r, _p(bg));
     final p = Path()
       ..moveTo(o.dx - r * 0.42, o.dy + r * 0.02)

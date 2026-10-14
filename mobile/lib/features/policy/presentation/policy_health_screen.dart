@@ -74,7 +74,7 @@ class PolicyHealthScreen extends ConsumerWidget {
                     ),
                   ],
                   const SizedBox(height: AppSpacing.lg),
-                  Text(h.disclaimer, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                  Text(h.disclaimer, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                   const SizedBox(height: AppSpacing.lg),
                 ],
               ),

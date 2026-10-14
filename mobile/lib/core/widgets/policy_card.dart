@@ -96,7 +96,7 @@ class PolicyCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     context.l10n.typeCover(policyTypeLabel(policy.policyType), formatInrCompact(policy.sumInsured)),
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   StatusChip(policy: policy),
@@ -106,7 +106,7 @@ class PolicyCard extends StatelessWidget {
             if (remaining != null && policy.verified)
               _ValidityRing(fraction: remaining, days: policy.daysToExpiry, urgent: urgent)
             else
-              const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+              Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
           ],
         ),
       ),
@@ -153,7 +153,7 @@ class _ValidityRing extends StatelessWidget {
                       color: urgent ? AppColors.warningText : AppColors.textPrimary,
                     ),
                   ),
-                  const Text('days', style: TextStyle(fontSize: 9, height: 1.1, color: AppColors.textSecondary)),
+                  Text('days', style: TextStyle(fontSize: 9, height: 1.1, color: AppColors.textSecondary)),
                 ],
               ),
             ),

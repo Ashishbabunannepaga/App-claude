@@ -18,7 +18,7 @@ class DemoAiBadge extends StatelessWidget {
       decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(6)),
       child: Text(
         context.l10n.demoMode,
-        style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+        style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w600),
       ),
     );
   }

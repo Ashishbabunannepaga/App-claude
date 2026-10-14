@@ -41,7 +41,7 @@ class _SkeletonBoxState extends State<SkeletonBox> with SingleTickerProviderStat
           gradient: LinearGradient(
             begin: Alignment(-1.5 + 3 * _c.value, 0),
             end: Alignment(-0.5 + 3 * _c.value, 0),
-            colors: const [Color(0xFFE6ECEA), Color(0xFFF4F7F6), Color(0xFFE6ECEA)],
+            colors: [AppColors.skeletonBase, AppColors.skeletonHighlight, AppColors.skeletonBase],
           ),
         ),
       ),

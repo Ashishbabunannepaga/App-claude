@@ -76,7 +76,7 @@ class _SoonTile extends StatelessWidget {
             Icon(icon, color: AppColors.textSecondary),
             const SizedBox(height: AppSpacing.sm),
             Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-            Text(context.l10n.comingSoon, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text(context.l10n.comingSoon, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ],
         ),
       ),

@@ -1546,4 +1546,16 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get somethingWrongRetry => 'कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।';
+
+  @override
+  String get appearance => 'रंग-रूप';
+
+  @override
+  String get themeSystem => 'फ़ोन के अनुसार';
+
+  @override
+  String get themeLight => 'लाइट';
+
+  @override
+  String get themeDark => 'डार्क';
 }

@@ -35,7 +35,7 @@ class ProfileScreen extends ConsumerWidget {
               contentPadding: const EdgeInsets.all(AppSpacing.md),
               leading: CircleAvatar(
                 radius: 28,
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primaryFill,
                 child: Text(
                   (user?.fullName?.isNotEmpty ?? false) ? user!.fullName!.characters.first.toUpperCase() : '?',
                   style: const TextStyle(fontSize: 22, color: Colors.white),
@@ -55,6 +55,7 @@ class ProfileScreen extends ConsumerWidget {
                 tile(Icons.notifications_none_rounded, 'Notifications', () => context.push('/settings/notifications')),
                 const AppLockTile(),
                 const AppLanguageTile(),
+                const AppearanceTile(),
                 const LanguageTile(),
                 tile(Icons.shield_outlined, 'Privacy & data', () => context.push('/privacy')),
               ],
@@ -76,13 +77,13 @@ class ProfileScreen extends ConsumerWidget {
           const SizedBox(height: AppSpacing.md),
           Card(
             child: ListTile(
-              leading: const Icon(Icons.logout_rounded, color: AppColors.error),
-              title: Text(context.l10n.logOut, style: const TextStyle(color: AppColors.error)),
+              leading: Icon(Icons.logout_rounded, color: AppColors.error),
+              title: Text(context.l10n.logOut, style: TextStyle(color: AppColors.error)),
               onTap: () => ref.read(authControllerProvider.notifier).logout(),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          const Center(
+          Center(
             child: Text('${Brand.name} · v0.4.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ),
         ],

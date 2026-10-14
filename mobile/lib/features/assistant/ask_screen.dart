@@ -86,7 +86,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
           children: [
             Text(context.l10n.askAboutYourPolicy),
             if (policy.value != null)
-              Text(policy.value!.displayName, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+              Text(policy.value!.displayName, style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
           ],
         ),
       ),
@@ -123,7 +123,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
                           children: [
                             const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
                             const SizedBox(width: AppSpacing.sm),
-                            Text(context.l10n.checkingDocument, style: const TextStyle(color: AppColors.textSecondary)),
+                            Text(context.l10n.checkingDocument, style: TextStyle(color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
@@ -131,7 +131,7 @@ class _AskScreenState extends ConsumerState<AskScreen> {
                     if (_error != null)
                       Padding(
                         padding: const EdgeInsets.all(AppSpacing.sm),
-                        child: Text(_error!, style: const TextStyle(color: AppColors.error)),
+                        child: Text(_error!, style: TextStyle(color: AppColors.error)),
                       ),
                   ],
                 );
@@ -179,11 +179,11 @@ class _Suggestions extends StatelessWidget {
   Widget build(BuildContext context) => ListView(
     padding: const EdgeInsets.all(AppSpacing.lg),
     children: [
-      const Icon(Icons.auto_awesome_rounded, size: 40, color: AppColors.secondary),
+      Icon(Icons.auto_awesome_rounded, size: 40, color: AppColors.secondary),
       const SizedBox(height: AppSpacing.md),
       Text(context.l10n.askAnythingPolicy, style: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: AppSpacing.sm),
-      Text(context.l10n.answersFromDocument, style: const TextStyle(color: AppColors.textSecondary)),
+      Text(context.l10n.answersFromDocument, style: TextStyle(color: AppColors.textSecondary)),
       const SizedBox(height: AppSpacing.lg),
       Wrap(
         spacing: AppSpacing.sm,
@@ -204,7 +204,7 @@ class _QuestionBubble extends StatelessWidget {
     child: Container(
       margin: const EdgeInsets.only(top: AppSpacing.md, left: 48),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(color: AppColors.primaryFill, borderRadius: BorderRadius.circular(16)),
       child: Text(text, style: const TextStyle(color: Colors.white)),
     ),
   );
@@ -266,7 +266,7 @@ class _AnswerBubble extends StatelessWidget {
                         if (c.page != null)
                           Text(
                             context.l10n.pageLabel('${c.page}'),
-                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                            style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
                           ),
                       ],
                     ),
@@ -284,10 +284,10 @@ class _AnswerBubble extends StatelessWidget {
                 child: ExpansionTile(
                   tilePadding: EdgeInsets.zero,
                   dense: true,
-                  leading: const Icon(Icons.bookmark_outline_rounded, size: 18, color: AppColors.secondary),
+                  leading: Icon(Icons.bookmark_outline_rounded, size: 18, color: AppColors.secondary),
                   title: Text(
                     context.l10n.sourceLabel(c.label.isEmpty ? context.l10n.policyDocument : c.label),
-                    style: const TextStyle(color: AppColors.secondary, fontSize: 13),
+                    style: TextStyle(color: AppColors.secondary, fontSize: 13),
                   ),
                   children: [Text('“${c.excerpt}”', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13))],
                 ),
@@ -295,11 +295,11 @@ class _AnswerBubble extends StatelessWidget {
             if (answer.confidence != 'high')
               Text(
                 context.l10n.confidenceLabel(answer.confidence),
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
           ],
           const SizedBox(height: 6),
-          Text(answer.disclaimer, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+          Text(answer.disclaimer, style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
         ],
       ),
     ),

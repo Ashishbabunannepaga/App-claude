@@ -41,8 +41,8 @@ class EmergencyScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8E1B1F), AppColors.errorText],
+                  gradient: LinearGradient(
+                    colors: [const Color(0xFF8E1B1F), AppColors.errorText],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -86,7 +86,7 @@ class EmergencyScreen extends ConsumerWidget {
               if (live.isEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                  child: Text(context.l10n.addPolicyNumberHint, style: const TextStyle(color: AppColors.textSecondary)),
+                  child: Text(context.l10n.addPolicyNumberHint, style: TextStyle(color: AppColors.textSecondary)),
                 ),
               for (final p in live)
                 Padding(
@@ -122,11 +122,11 @@ class _CallButton extends StatelessWidget {
         children: [
           Text(
             number,
-            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.errorText),
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: AppColors.errorText),
           ),
           Text(
             label,
-            style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+            style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.textPrimary),
           ),
         ],
       ),
@@ -171,7 +171,7 @@ class _PolicyNumber extends StatelessWidget {
                 ),
                 Text(
                   context.l10n.validTill(policyTypeLabel(policy.policyType), formatDate(policy.endDate)),
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
                 ),
               ],
             ),

@@ -99,7 +99,7 @@ class _Wordmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final main = onDark ? Colors.white : AppColors.ink;
+    final main = onDark || AppColors.dark ? Colors.white : AppColors.ink;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -107,8 +107,8 @@ class _Wordmark extends StatelessWidget {
           width: height,
           height: height,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryDark],
+            gradient: LinearGradient(
+              colors: [AppColors.primaryFill, AppColors.primaryDark],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

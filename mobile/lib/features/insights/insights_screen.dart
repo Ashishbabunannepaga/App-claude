@@ -44,12 +44,12 @@ class InsightTile extends StatelessWidget {
                     children: [
                       Text(insight.title, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 2),
-                      Text(insight.detail, style: const TextStyle(color: AppColors.textSecondary)),
+                      Text(insight.detail, style: TextStyle(color: AppColors.textSecondary)),
                       if (insight.actionLabel != null) ...[
                         const SizedBox(height: AppSpacing.xs),
                         Text(
                           '${insight.actionLabel} →',
-                          style: const TextStyle(color: AppColors.secondary, fontWeight: FontWeight.w600),
+                          style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.w600),
                         ),
                       ],
                     ],
@@ -88,7 +88,7 @@ class InsightsScreen extends ConsumerWidget {
                   children: [
                     for (final i in data.items) InsightTile(i),
                     const SizedBox(height: AppSpacing.sm),
-                    Text(data.disclaimer, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    Text(data.disclaimer, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                   ],
                 ),
               ),

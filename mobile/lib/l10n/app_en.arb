@@ -813,5 +813,9 @@
   "somethingWrong": "Something went wrong",
   "timedOut": "The connection timed out. Please try again.",
   "cantReachServer": "Can't reach the server. Check your internet connection.",
-  "somethingWrongRetry": "Something went wrong. Please try again."
+  "somethingWrongRetry": "Something went wrong. Please try again.",
+  "appearance": "Appearance",
+  "themeSystem": "Same as phone",
+  "themeLight": "Light",
+  "themeDark": "Dark"
 }

@@ -82,7 +82,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                     child: Text(
                       context.l10n.noPoliciesOfType,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
                 for (final p in shown)

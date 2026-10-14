@@ -19,7 +19,7 @@ class LoadingView extends StatelessWidget {
         const CircularProgressIndicator(),
         if (message != null) ...[
           const SizedBox(height: AppSpacing.md),
-          Text(message!, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(message!, style: TextStyle(color: AppColors.textSecondary)),
         ],
       ],
     ),
@@ -39,7 +39,7 @@ class ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.cloud_off_rounded, size: 48, color: AppColors.textSecondary),
+          Icon(Icons.cloud_off_rounded, size: 48, color: AppColors.textSecondary),
           const SizedBox(height: AppSpacing.md),
           // Announced by screen readers when the error replaces the loading skeleton.
           Semantics(liveRegion: true, child: Text(errorMessage(error), textAlign: TextAlign.center)),
@@ -75,7 +75,7 @@ class EmptyView extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.textSecondary),
+            style: TextStyle(color: AppColors.textSecondary),
           ),
           if (action != null) ...[const SizedBox(height: AppSpacing.lg), action!],
         ],

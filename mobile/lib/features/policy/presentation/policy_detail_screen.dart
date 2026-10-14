@@ -56,7 +56,7 @@ class PolicyDetailScreen extends ConsumerWidget {
                 Card(
                   color: AppColors.surfaceTint,
                   child: ListTile(
-                    leading: const Icon(Icons.fact_check_rounded, color: AppColors.secondary),
+                    leading: Icon(Icons.fact_check_rounded, color: AppColors.secondary),
                     title: Text(context.l10n.coverageReport, style: const TextStyle(fontWeight: FontWeight.w600)),
                     subtitle: Text(context.l10n.coverageReportHelp),
                     trailing: const Icon(Icons.chevron_right_rounded),
@@ -70,7 +70,7 @@ class PolicyDetailScreen extends ConsumerWidget {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.groups_rounded, color: AppColors.secondary),
+                      leading: Icon(Icons.groups_rounded, color: AppColors.secondary),
                       title: Text(context.l10n.nominees, style: const TextStyle(fontWeight: FontWeight.w600)),
                       subtitle: Text(
                         p.nominees.isEmpty
@@ -86,7 +86,7 @@ class PolicyDetailScreen extends ConsumerWidget {
                     if (p.documentId != null) ...[
                       const Divider(height: 1),
                       ListTile(
-                        leading: const Icon(Icons.article_outlined, color: AppColors.secondary),
+                        leading: Icon(Icons.article_outlined, color: AppColors.secondary),
                         title: Text(context.l10n.policyClauses, style: const TextStyle(fontWeight: FontWeight.w600)),
                         subtitle: Text(context.l10n.policyClausesHelp),
                         trailing: const Icon(Icons.chevron_right_rounded),
@@ -154,7 +154,7 @@ class _Header extends StatelessWidget {
                       Text(policy.displayName, style: Theme.of(context).textTheme.titleLarge),
                       Text(
                         '${context.l10n.typeInsurance(policyTypeLabel(policy.policyType))}${policy.planName != null ? ' · ${policy.planName}' : ''}',
-                        style: const TextStyle(color: AppColors.textSecondary),
+                        style: TextStyle(color: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -165,7 +165,7 @@ class _Header extends StatelessWidget {
             Text(formatInr(policy.sumInsured), style: Theme.of(context).textTheme.headlineMedium),
             Text(
               policy.policyType == 'motor' ? context.l10n.idv : context.l10n.cover,
-              style: const TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.md),
             StatusChip(policy: policy),
@@ -251,14 +251,11 @@ class _Actions extends StatelessWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 dense: true,
-                leading: const Icon(Icons.check_circle_outline_rounded, color: AppColors.accent),
+                leading: Icon(Icons.check_circle_outline_rounded, color: AppColors.accent),
                 title: Text(d),
               ),
             const SizedBox(height: AppSpacing.md),
-            Text(
-              context.l10n.followInsurerProcess,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-            ),
+            Text(context.l10n.followInsurerProcess, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ],
         ),
       ),
@@ -295,7 +292,7 @@ class _SummaryCard extends ConsumerWidget {
                 for (final w in s.watchOuts) _Bullet(w, Icons.warning_amber_rounded, AppColors.warning),
               ],
               const SizedBox(height: AppSpacing.sm),
-              Text(s.disclaimer, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              Text(s.disclaimer, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             ],
           ),
         ),
@@ -345,7 +342,7 @@ class _KeyDetails extends StatelessWidget {
           for (final (label, value) in rows)
             ListTile(
               dense: true,
-              title: Text(label, style: const TextStyle(color: AppColors.textSecondary)),
+              title: Text(label, style: TextStyle(color: AppColors.textSecondary)),
               trailing: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 200),
                 child: Text(
@@ -523,7 +520,7 @@ class _RenewalSheet extends ConsumerWidget {
                   Expanded(
                     child: Text(
                       remindersOn ? context.l10n.remindSchedule : context.l10n.remindersOff,
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
                 ],
@@ -531,7 +528,7 @@ class _RenewalSheet extends ConsumerWidget {
             else
               Text(
                 p.renewalStatus == 'renewed' ? context.l10n.markedAsRenewed : context.l10n.markedNotRenewing,
-                style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.w600),
+                style: TextStyle(color: AppColors.accent, fontWeight: FontWeight.w600),
               ),
             const SizedBox(height: AppSpacing.lg),
             if (p.renewalStatus == 'pending') ...[

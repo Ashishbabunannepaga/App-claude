@@ -40,11 +40,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
   int _page = 0;
 
-  static const _scenes = [
+  static List<(Scene, Color)> get _scenes => [
     (Scene.organise, AppColors.surfaceTint),
-    (Scene.ask, Color(0xFFFFF3D6)),
-    (Scene.remind, Color(0xFFEDEAFB)),
-    (Scene.family, Color(0xFFFDECEC)),
+    (Scene.ask, AppColors.goldTint),
+    (Scene.remind, AppColors.lavenderTint),
+    (Scene.family, AppColors.errorTint),
   ];
 
   List<_Page> _pagesFor(AppLocalizations t) {
@@ -141,7 +141,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 Text(
                                   p.body,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 16, height: 1.45),
+                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 16, height: 1.45),
                                 ),
                               ],
                             ),

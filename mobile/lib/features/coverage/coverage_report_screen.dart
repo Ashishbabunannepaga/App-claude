@@ -110,7 +110,7 @@ class _TypePill extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? Colors.white : AppColors.textPrimary,
+              color: selected ? AppColors.surface : AppColors.textPrimary,
               fontWeight: FontWeight.w700,
               fontSize: 13,
             ),
@@ -185,7 +185,7 @@ class _ReportBodyState extends State<_ReportBody> {
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Text(
             [if (r.note != null) r.note!, r.disclaimer].join('\n\n'),
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontStyle: FontStyle.italic),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontStyle: FontStyle.italic),
           ),
         ),
       ],
@@ -258,7 +258,7 @@ class _ScenarioCarouselState extends State<_ScenarioCarousel> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(color: const Color(0xFFB8C0CE), borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: AppColors.ink, borderRadius: BorderRadius.circular(10)),
                 child: Text(
                   '${_page + 1}/$n',
                   style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
@@ -360,7 +360,7 @@ class _Summary extends StatelessWidget {
                 ),
               ],
             ),
-            Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+            Text(label, style: TextStyle(fontSize: 11, color: AppColors.textSecondary)),
           ],
         ),
       );
@@ -409,7 +409,7 @@ class _SectionTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    decoration: const BoxDecoration(
+    decoration: BoxDecoration(
       border: Border(bottom: BorderSide(color: AppColors.border)),
     ),
     child: SingleChildScrollView(
@@ -480,7 +480,7 @@ class _SectionView extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 2),
-        Text(section.subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        Text(section.subtitle, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
         const SizedBox(height: AppSpacing.sm),
         if (section.key == 'add_ons')
           Theme(
@@ -491,7 +491,7 @@ class _SectionView extends StatelessWidget {
               initiallyExpanded: true,
               title: Text(
                 context.l10n.addOnsCount(section.items.length),
-                style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.textSecondary),
               ),
               children: [
                 for (final row in section.items)
@@ -536,7 +536,7 @@ class _RowTile extends StatelessWidget {
         color: AppColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: AppColors.border),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
@@ -615,13 +615,13 @@ class _RowSheet extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.background,
                   borderRadius: BorderRadius.circular(12),
-                  border: const Border(left: BorderSide(color: AppColors.secondary, width: 3)),
+                  border: Border(left: BorderSide(color: AppColors.secondary, width: 3)),
                 ),
                 child: Text('"${row.detail}"', style: const TextStyle(fontStyle: FontStyle.italic)),
               ),
             ],
             const SizedBox(height: AppSpacing.sm),
-            Text(source, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text(source, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             if (policyId != null) ...[
               const SizedBox(height: AppSpacing.md),
               OutlinedButton.icon(
@@ -648,9 +648,9 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.sm),
-    decoration: const BoxDecoration(
+    decoration: BoxDecoration(
       color: AppColors.surface,
-      boxShadow: [BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, -2))],
+      boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 12, offset: Offset(0, -2))],
     ),
     child: SafeArea(
       top: false,

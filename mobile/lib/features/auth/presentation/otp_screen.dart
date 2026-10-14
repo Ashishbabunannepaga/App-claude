@@ -83,10 +83,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           children: [
             Text(context.l10n.otpTitle, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              context.l10n.otpSentTo(widget.args.identifier),
-              style: const TextStyle(color: AppColors.textSecondary),
-            ),
+            Text(context.l10n.otpSentTo(widget.args.identifier), style: TextStyle(color: AppColors.textSecondary)),
             const SizedBox(height: AppSpacing.lg),
             TextField(
               controller: _code,

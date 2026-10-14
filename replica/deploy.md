@@ -9,7 +9,7 @@ Status key: ✅ done and checked here · 🟡 done in code, you must finish an a
 | Check | Result |
 |---|---|
 | Backend tests | ✅ 65 passed (`pytest`), lint and format clean (`ruff`) |
-| App tests | ✅ 499 passed (`flutter test`), `flutter analyze` clean. Includes layout sweeps at 320–412 px and 1.0–1.6× text in English and Hindi, and accessibility checks |
+| App tests | ✅ 599 passed (`flutter test`), `flutter analyze` clean. Includes layout sweeps at 320–412 px and 1.0–1.6× text in English, Hindi and dark mode, and accessibility checks (tap targets, labels, text contrast) in both themes |
 | Real-device test | 🟡 first phone run done on the Vivo I2221 (10 Oct); the fixes from it are in. One more full pass after these changes |
 | Open S1/S2 bugs | ✅ none known. Fixed from the phone test: blank gap under Home tiles, "LIC" as insurer on non-LIC policies, missing start date, ₹1 sum insured accepted without a warning |
 | Parity | ✅ 100/100, must-haves 7 of 7 (self-assessed against our own feature list) |
@@ -77,4 +77,4 @@ Upload `build\app\outputs\bundle\release\app-release.aab` to Play Console > Inte
 ## Not done yet (next)
 - Store screenshots from the real phone (list in `replica/launch/store-notes.md`)
 - Hindi UI: every screen done (460 strings; switch on the first screen and in Profile > App language). Layout and accessibility checks run in Hindi too. Wording is a DRAFT: a native speaker must review `mobile/lib/l10n/app_hi.arb` before launch. Policy data, AI answers and server error messages follow their own language setting
-- Dark mode
+- Dark mode: done (Profile > Appearance: same as phone, light or dark). Every colour contrast-checked (WCAG AA) by the accessibility tests. Illustrations keep their light pastel art in dark mode

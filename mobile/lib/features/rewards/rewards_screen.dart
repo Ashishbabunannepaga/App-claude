@@ -23,8 +23,8 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   Widget build(BuildContext context) {
     final rewards = ref.watch(rewardsProvider);
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFBF0),
-      appBar: AppBar(backgroundColor: const Color(0xFFFFF3D1), title: Text(context.l10n.rewards)),
+      backgroundColor: AppColors.goldWash,
+      appBar: AppBar(backgroundColor: AppColors.goldWashStrong, title: Text(context.l10n.rewards)),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(rewardsProvider),
         child: AsyncValueView(
@@ -73,7 +73,7 @@ class _Toggle extends StatelessWidget {
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 18),
               decoration: BoxDecoration(
-                color: earn == value ? Colors.white : Colors.transparent,
+                color: earn == value ? AppColors.surface : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -92,7 +92,7 @@ class _Toggle extends StatelessWidget {
     );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(24)),
+      decoration: BoxDecoration(color: AppColors.primaryFill, borderRadius: BorderRadius.circular(24)),
       child: Row(
         children: [
           Expanded(child: seg(context.l10n.earnCoins, true)),
@@ -111,9 +111,9 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: double.infinity,
     padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.lg, AppSpacing.md, AppSpacing.lg),
-    decoration: const BoxDecoration(
+    decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [Color(0xFFFFF3D1), Color(0xFFFFFBF0)],
+        colors: [AppColors.goldWashStrong, AppColors.goldWash],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ),
@@ -137,16 +137,16 @@ class _Header extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        Text(context.l10n.yourCoins, style: const TextStyle(color: AppColors.textSecondary)),
+        Text(context.l10n.yourCoins, style: TextStyle(color: AppColors.textSecondary)),
         Semantics(
           label: context.l10n.coinsCount(balance),
           excludeSemantics: true,
           child: Text(
             formatIndianNumber(balance),
-            style: const TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: AppColors.primary),
+            style: TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: AppColors.primary),
           ),
         ),
-        Text(context.l10n.earnedForOrganising, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+        Text(context.l10n.earnedForOrganising, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
       ],
     ),
   );
@@ -168,8 +168,8 @@ class _EarnTab extends StatelessWidget {
           child: Card(
             child: ListTile(
               leading: t.done
-                  ? const Icon(Icons.check_circle_rounded, color: AppColors.accent)
-                  : const Icon(Icons.radio_button_unchecked_rounded, color: AppColors.textSecondary),
+                  ? Icon(Icons.check_circle_rounded, color: AppColors.accent)
+                  : Icon(Icons.radio_button_unchecked_rounded, color: AppColors.textSecondary),
               title: Text(t.title, style: const TextStyle(fontWeight: FontWeight.w600)),
               subtitle: t.progress != null ? Text(context.l10n.progressDone('${t.progress}')) : null,
               trailing: CoinChip('+${t.coins}'),
@@ -191,7 +191,7 @@ class _EarnTab extends StatelessWidget {
                   subtitle: Text(formatDate(h.createdAt)),
                   trailing: Text(
                     '+${h.coins}',
-                    style: const TextStyle(color: AppColors.successText, fontWeight: FontWeight.w800),
+                    style: TextStyle(color: AppColors.successText, fontWeight: FontWeight.w800),
                   ),
                 ),
             ],
@@ -199,7 +199,7 @@ class _EarnTab extends StatelessWidget {
         ),
       ],
       const SizedBox(height: AppSpacing.md),
-      Text(rewards.note, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+      Text(rewards.note, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
     ],
   );
 }
@@ -227,11 +227,11 @@ class _UseTab extends StatelessWidget {
       const SizedBox(height: AppSpacing.md),
       Container(
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(color: const Color(0xFFFFE6E6), borderRadius: BorderRadius.circular(12)),
+        decoration: BoxDecoration(color: AppColors.errorTint, borderRadius: BorderRadius.circular(12)),
         child: Text(
           context.l10n.perksOnTheWay,
           textAlign: TextAlign.center,
-          style: const TextStyle(color: Color(0xFF9B1C1C)),
+          style: TextStyle(color: AppColors.errorText),
         ),
       ),
       const SizedBox(height: AppSpacing.md),
@@ -241,7 +241,7 @@ class _UseTab extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(AppSpacing.md),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFFF2FBF6), Color(0xFFF2F6FF)]),
+              gradient: LinearGradient(colors: [AppColors.successTint, AppColors.infoTint]),
               borderRadius: BorderRadius.circular(AppSpacing.radius),
               border: Border.all(color: AppColors.border),
             ),
@@ -251,7 +251,7 @@ class _UseTab extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 24,
-                      backgroundColor: Colors.white,
+                      backgroundColor: AppColors.surface,
                       child: Icon(_perkIcon(p.icon), color: AppColors.secondary),
                     ),
                     const SizedBox(width: AppSpacing.md),

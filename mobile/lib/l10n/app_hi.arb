@@ -460,5 +460,9 @@
   "somethingWrong": "कुछ गड़बड़ हो गई",
   "timedOut": "कनेक्शन का समय खत्म हो गया। कृपया फिर कोशिश करें।",
   "cantReachServer": "सर्वर तक नहीं पहुँच पा रहे। अपना इंटरनेट कनेक्शन जाँचें।",
-  "somethingWrongRetry": "कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।"
+  "somethingWrongRetry": "कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।",
+  "appearance": "रंग-रूप",
+  "themeSystem": "फ़ोन के अनुसार",
+  "themeLight": "लाइट",
+  "themeDark": "डार्क"
 }

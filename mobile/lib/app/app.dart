@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/appearance.dart';
 import '../core/brand.dart';
 import '../core/locale.dart';
 import '../core/push/push_service.dart';
@@ -27,6 +28,8 @@ class InsureApp extends ConsumerWidget {
       title: Brand.name,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ref.watch(themeModeProvider),
       locale: ref.watch(appLocaleProvider),
       supportedLocales: AppLocaleController.supported,
       localizationsDelegates: const [
@@ -36,7 +39,9 @@ class InsureApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       routerConfig: router,
-      builder: (context, child) => AppStringsScope(child: AppLockGate(child: child ?? const SizedBox.shrink())),
+      builder: (context, child) => AppThemeScope(
+        child: AppStringsScope(child: AppLockGate(child: child ?? const SizedBox.shrink())),
+      ),
     );
   }
 }

@@ -96,14 +96,14 @@ class AppShell extends StatelessWidget {
                     child: Container(
                       width: 56,
                       height: 56,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.primaryDark],
+                          colors: [AppColors.primaryFill, AppColors.primaryDark],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                        boxShadow: [BoxShadow(color: Color(0x550B7A75), blurRadius: 14, offset: Offset(0, 6))],
+                        boxShadow: const [BoxShadow(color: Color(0x550B7A75), blurRadius: 14, offset: Offset(0, 6))],
                       ),
                       child: const Icon(Icons.add_rounded, color: Colors.white, size: 30),
                     ),
