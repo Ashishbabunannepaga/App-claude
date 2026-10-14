@@ -14,6 +14,7 @@ import '../data/models.dart';
 import '../data/policy_repository.dart';
 import 'claim_guide.dart';
 import 'policy_health_screen.dart';
+import '../../../core/locale.dart';
 
 class PolicyDetailScreen extends ConsumerWidget {
   const PolicyDetailScreen({super.key, required this.policyId});
@@ -24,7 +25,7 @@ class PolicyDetailScreen extends ConsumerWidget {
     final policy = ref.watch(policyProvider(policyId));
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Policy'),
+        title: Text(context.l10n.policy),
         actions: [if (policy.value != null) _Menu(policy: policy.value!)],
       ),
       body: AsyncValueView(
@@ -42,7 +43,7 @@ class PolicyDetailScreen extends ConsumerWidget {
                   color: AppColors.warningTint,
                   child: ListTile(
                     leading: const Icon(Icons.fact_check_rounded, color: AppColors.warning),
-                    title: const Text('Please review the extracted details'),
+                    title: Text(context.l10n.reviewExtracted),
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () => context.push('/policy/${p.id}/verify'),
                   ),
@@ -56,8 +57,8 @@ class PolicyDetailScreen extends ConsumerWidget {
                   color: AppColors.surfaceTint,
                   child: ListTile(
                     leading: const Icon(Icons.fact_check_rounded, color: AppColors.secondary),
-                    title: const Text('Coverage report', style: TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: const Text('What is covered, what has limits and what is not — item by item'),
+                    title: Text(context.l10n.coverageReport, style: const TextStyle(fontWeight: FontWeight.w600)),
+                    subtitle: Text(context.l10n.coverageReportHelp),
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () => context.push('/policy/${p.id}/report'),
                   ),
@@ -70,10 +71,10 @@ class PolicyDetailScreen extends ConsumerWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.groups_rounded, color: AppColors.secondary),
-                      title: const Text('Nominees', style: TextStyle(fontWeight: FontWeight.w600)),
+                      title: Text(context.l10n.nominees, style: const TextStyle(fontWeight: FontWeight.w600)),
                       subtitle: Text(
                         p.nominees.isEmpty
-                            ? (p.policyType == 'life' ? 'No nominee recorded — add one' : 'Not recorded')
+                            ? (p.policyType == 'life' ? context.l10n.noNomineeAddOne : context.l10n.notRecorded)
                             : p.nominees.map((n) => '${n.fullName} ${n.sharePercent}%').join(', '),
                         style: TextStyle(
                           color: p.nominees.isEmpty && p.policyType == 'life' ? AppColors.warning : null,
@@ -86,8 +87,8 @@ class PolicyDetailScreen extends ConsumerWidget {
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.article_outlined, color: AppColors.secondary),
-                        title: const Text('Policy clauses', style: TextStyle(fontWeight: FontWeight.w600)),
-                        subtitle: const Text('Benefits, exclusions, waiting periods and limits — word for word'),
+                        title: Text(context.l10n.policyClauses, style: const TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: Text(context.l10n.policyClausesHelp),
                         trailing: const Icon(Icons.chevron_right_rounded),
                         onTap: () => context.push('/policy/${p.id}/clauses'),
                       ),
@@ -96,7 +97,7 @@ class PolicyDetailScreen extends ConsumerWidget {
                 ),
               ),
               if (p.members.isNotEmpty) ...[
-                const SectionHeader('Who is covered'),
+                SectionHeader(context.l10n.whoIsCovered),
                 Wrap(
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.sm,
@@ -109,12 +110,12 @@ class PolicyDetailScreen extends ConsumerWidget {
                   ],
                 ),
               ],
-              const SectionHeader('Understand your policy'),
+              SectionHeader(context.l10n.understandPolicy),
               _SummaryCard(policyId: p.id),
-              const SectionHeader('Key details'),
+              SectionHeader(context.l10n.keyDetails),
               _KeyDetails(policy: p),
               if (p.details.isNotEmpty) ...[
-                const SectionHeader('Coverage details'),
+                SectionHeader(context.l10n.coverageDetails),
                 _CoverageDetails(details: p.details),
               ],
               const SizedBox(height: AppSpacing.xl),
@@ -152,7 +153,7 @@ class _Header extends StatelessWidget {
                     children: [
                       Text(policy.displayName, style: Theme.of(context).textTheme.titleLarge),
                       Text(
-                        '${policyTypeLabel(policy.policyType)} insurance${policy.planName != null ? ' · ${policy.planName}' : ''}',
+                        '${context.l10n.typeInsurance(policyTypeLabel(policy.policyType))}${policy.planName != null ? ' · ${policy.planName}' : ''}',
                         style: const TextStyle(color: AppColors.textSecondary),
                       ),
                     ],
@@ -163,15 +164,15 @@ class _Header extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(formatInr(policy.sumInsured), style: Theme.of(context).textTheme.headlineMedium),
             Text(
-              policy.policyType == 'motor' ? 'Insured declared value' : 'Cover',
+              policy.policyType == 'motor' ? context.l10n.idv : context.l10n.cover,
               style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.md),
             StatusChip(policy: policy),
             const SizedBox(height: AppSpacing.sm),
-            Text('Valid ${formatDate(policy.startDate)} – ${formatDate(policy.endDate)}'),
+            Text(context.l10n.validRange(formatDate(policy.startDate), formatDate(policy.endDate))),
             Text(
-              'Premium ${formatInr(policy.premium)}${policy.paymentFrequency != null ? ' (${humanise(policy.paymentFrequency!)})' : ''}',
+              '${context.l10n.premiumValue(formatInr(policy.premium))}${policy.paymentFrequency != null ? ' (${humanise(policy.paymentFrequency!)})' : ''}',
             ),
           ],
         ),
@@ -206,11 +207,11 @@ class _Actions extends StatelessWidget {
     );
     return Row(
       children: [
-        action(Icons.chat_bubble_rounded, 'Ask AI', () => context.push('/policy/${policy.id}/ask')),
+        action(Icons.chat_bubble_rounded, context.l10n.askAi, () => context.push('/policy/${policy.id}/ask')),
         const SizedBox(width: AppSpacing.sm),
-        action(Icons.event_repeat_rounded, 'Renewal', () => _showRenewal(context, policy)),
+        action(Icons.event_repeat_rounded, context.l10n.renewal, () => _showRenewal(context, policy)),
         const SizedBox(width: AppSpacing.sm),
-        action(Icons.support_agent_rounded, 'Claim help', () => _showClaimGuide(context, policy.policyType)),
+        action(Icons.support_agent_rounded, context.l10n.claimHelp, () => _showClaimGuide(context, policy.policyType)),
       ],
     );
   }
@@ -224,7 +225,8 @@ class _Actions extends StatelessWidget {
   }
 
   void _showClaimGuide(BuildContext context, String type) {
-    final guide = claimGuides[type] ?? claimGuides['other']!;
+    final guides = claimGuidesFor(context.l10n);
+    final guide = guides[type] ?? guides['other']!;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -244,7 +246,7 @@ class _Actions extends StatelessWidget {
                 leading: CircleAvatar(radius: 14, child: Text('${i + 1}', style: const TextStyle(fontSize: 12))),
                 title: Text(step),
               ),
-            const SectionHeader('Documents usually required'),
+            SectionHeader(context.l10n.documentsRequired),
             for (final d in guide.documents)
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -253,9 +255,9 @@ class _Actions extends StatelessWidget {
                 title: Text(d),
               ),
             const SizedBox(height: AppSpacing.md),
-            const Text(
-              'Always follow the claim process stated in your policy and by your insurer.',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            Text(
+              context.l10n.followInsurerProcess,
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
           ],
         ),
@@ -275,9 +277,9 @@ class _SummaryCard extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: summary.when(
-          loading: () => const Padding(
-            padding: EdgeInsets.all(AppSpacing.md),
-            child: LoadingView(message: 'Reading your policy…'),
+          loading: () => Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: LoadingView(message: context.l10n.readingPolicy),
           ),
           error: (e, _) => ErrorView(error: e, onRetry: () => ref.invalidate(summaryProvider(policyId))),
           data: (s) => Column(
@@ -289,7 +291,7 @@ class _SummaryCard extends ConsumerWidget {
               for (final point in s.keyPoints) _Bullet(point, Icons.check_circle_rounded, AppColors.accent),
               if (s.watchOuts.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.sm),
-                const Text('Watch out for', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(context.l10n.watchOutFor, style: const TextStyle(fontWeight: FontWeight.w600)),
                 for (final w in s.watchOuts) _Bullet(w, Icons.warning_amber_rounded, AppColors.warning),
               ],
               const SizedBox(height: AppSpacing.sm),
@@ -329,13 +331,13 @@ class _KeyDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rows = <(String, String)>[
-      ('Policy number', policy.policyNumber ?? '—'),
-      ('Insurer', policy.insurer ?? '—'),
-      ('Plan', policy.planName ?? '—'),
-      ('Start date', formatDate(policy.startDate)),
-      ('End date', formatDate(policy.endDate)),
-      ('Premium', formatInr(policy.premium)),
-      ('Cover', formatInr(policy.sumInsured)),
+      (context.l10n.policyNumber, policy.policyNumber ?? '—'),
+      (context.l10n.insurer, policy.insurer ?? '—'),
+      (context.l10n.plan, policy.planName ?? '—'),
+      (context.l10n.startDate, formatDate(policy.startDate)),
+      (context.l10n.endDate, formatDate(policy.endDate)),
+      (context.l10n.premium, formatInr(policy.premium)),
+      (context.l10n.cover, formatInr(policy.sumInsured)),
     ];
     return Card(
       child: Column(
@@ -394,14 +396,14 @@ class _Menu extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete this policy?'),
-        content: const Text('The policy, its document and your questions about it will be permanently deleted.'),
+        title: Text(context.l10n.deletePolicyQ),
+        content: Text(context.l10n.deletePolicyBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.cancel)),
           TextButton(
             onPressed: () => Navigator.pop(c, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Delete'),
+            child: Text(context.l10n.delete),
           ),
         ],
       ),
@@ -425,9 +427,9 @@ class _Menu extends ConsumerWidget {
       _ => null,
     },
     itemBuilder: (_) => [
-      const PopupMenuItem(value: 'edit', child: Text('Edit details')),
-      if (policy.documentId != null) const PopupMenuItem(value: 'doc', child: Text('View document')),
-      const PopupMenuItem(value: 'delete', child: Text('Delete policy')),
+      PopupMenuItem(value: 'edit', child: Text(context.l10n.editDetails)),
+      if (policy.documentId != null) PopupMenuItem(value: 'doc', child: Text(context.l10n.viewDocument)),
+      PopupMenuItem(value: 'delete', child: Text(context.l10n.deletePolicy)),
     ],
   );
 }
@@ -446,11 +448,11 @@ class _HealthCard extends ConsumerWidget {
         child: ListTile(
           contentPadding: const EdgeInsets.all(AppSpacing.md),
           leading: ScoreRing(score: health.score!, size: 52),
-          title: const Text('Policy health', style: TextStyle(fontWeight: FontWeight.w600)),
+          title: Text(context.l10n.policyHealth, style: const TextStyle(fontWeight: FontWeight.w600)),
           subtitle: Text(
             health.attention.isEmpty && health.notCovered.isEmpty
-                ? 'No issues found in the details we read'
-                : '${health.attention.length + health.notCovered.length} things to know about',
+                ? context.l10n.noIssuesFound
+                : context.l10n.thingsToKnow(health.attention.length + health.notCovered.length),
           ),
           trailing: const Icon(Icons.chevron_right_rounded),
           onTap: () => context.push('/policy/$policyId/health'),
@@ -473,8 +475,8 @@ class _RenewalSheet extends ConsumerWidget {
       if (status == 'renewed') {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Marked as renewed. Add your new policy document to keep things up to date.'),
-            action: SnackBarAction(label: 'Add', onPressed: () => context.push('/add')),
+            content: Text(context.l10n.markedRenewed),
+            action: SnackBarAction(label: context.l10n.add, onPressed: () => context.push('/add')),
           ),
         );
       }
@@ -496,18 +498,18 @@ class _RenewalSheet extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Renewal', style: Theme.of(context).textTheme.titleLarge),
+            Text(context.l10n.renewal, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppSpacing.md),
             Text(
               days == null
-                  ? 'Add the policy end date to track renewal.'
+                  ? context.l10n.addEndDate
                   : days < 0
-                  ? 'This policy expired on ${formatDate(p.endDate)}.'
-                  : 'Renews on ${formatDate(p.endDate)} — $days days left.',
+                  ? context.l10n.expiredOn(formatDate(p.endDate))
+                  : context.l10n.renewsOn(formatDate(p.endDate), days),
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: AppSpacing.xs),
-            Text('Last premium: ${formatInr(p.premium)}'),
+            Text(context.l10n.lastPremium(formatInr(p.premium))),
             const SizedBox(height: AppSpacing.md),
             if (p.renewalStatus == 'pending')
               Row(
@@ -520,9 +522,7 @@ class _RenewalSheet extends ConsumerWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
-                      remindersOn
-                          ? 'We\'ll remind you 90, 60, 30, 15, 7 and 1 day before expiry.'
-                          : 'Renewal reminders are turned off in settings.',
+                      remindersOn ? context.l10n.remindSchedule : context.l10n.remindersOff,
                       style: const TextStyle(color: AppColors.textSecondary),
                     ),
                   ),
@@ -530,22 +530,19 @@ class _RenewalSheet extends ConsumerWidget {
               )
             else
               Text(
-                p.renewalStatus == 'renewed' ? '✓ Marked as renewed' : 'Marked as not renewing',
+                p.renewalStatus == 'renewed' ? context.l10n.markedAsRenewed : context.l10n.markedNotRenewing,
                 style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.w600),
               ),
             const SizedBox(height: AppSpacing.lg),
             if (p.renewalStatus == 'pending') ...[
-              FilledButton(
-                onPressed: () => _set(context, ref, 'renewed'),
-                child: const Text('I\'ve renewed this policy'),
-              ),
+              FilledButton(onPressed: () => _set(context, ref, 'renewed'), child: Text(context.l10n.iRenewed)),
               const SizedBox(height: AppSpacing.sm),
               OutlinedButton(
                 onPressed: () => _set(context, ref, 'not_renewing'),
-                child: const Text('I\'m not renewing'),
+                child: Text(context.l10n.notRenewing),
               ),
             ] else
-              OutlinedButton(onPressed: () => _set(context, ref, 'pending'), child: const Text('Undo')),
+              OutlinedButton(onPressed: () => _set(context, ref, 'pending'), child: Text(context.l10n.undo)),
           ],
         ),
       ),

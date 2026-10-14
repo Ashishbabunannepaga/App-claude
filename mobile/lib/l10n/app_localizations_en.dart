@@ -347,4 +347,545 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiAnswerLanguageHelp =>
       'Summaries and answers about your policies will be written in this language. You can ask questions in it too.';
+
+  @override
+  String get policy => 'Policy';
+
+  @override
+  String get reviewExtracted => 'Please review the extracted details';
+
+  @override
+  String get coverageReportHelp => 'What is covered, what has limits and what is not — item by item';
+
+  @override
+  String get noNomineeAddOne => 'No nominee recorded — add one';
+
+  @override
+  String get notRecorded => 'Not recorded';
+
+  @override
+  String get policyClauses => 'Policy clauses';
+
+  @override
+  String get policyClausesHelp => 'Benefits, exclusions, waiting periods and limits — word for word';
+
+  @override
+  String get whoIsCovered => 'Who is covered';
+
+  @override
+  String get understandPolicy => 'Understand your policy';
+
+  @override
+  String get keyDetails => 'Key details';
+
+  @override
+  String get coverageDetails => 'Coverage details';
+
+  @override
+  String typeInsurance(String type) {
+    return '$type insurance';
+  }
+
+  @override
+  String get idv => 'Insured declared value';
+
+  @override
+  String get cover => 'Cover';
+
+  @override
+  String validRange(String start, String end) {
+    return 'Valid $start – $end';
+  }
+
+  @override
+  String premiumValue(String amount) {
+    return 'Premium $amount';
+  }
+
+  @override
+  String get askAiShort => 'Ask AI';
+
+  @override
+  String get renewal => 'Renewal';
+
+  @override
+  String get claimHelpAction => 'Claim help';
+
+  @override
+  String get documentsRequired => 'Documents usually required';
+
+  @override
+  String get followInsurerProcess => 'Always follow the claim process stated in your policy and by your insurer.';
+
+  @override
+  String get readingPolicy => 'Reading your policy…';
+
+  @override
+  String get watchOutFor => 'Watch out for';
+
+  @override
+  String get policyNumber => 'Policy number';
+
+  @override
+  String get insurer => 'Insurer';
+
+  @override
+  String get plan => 'Plan';
+
+  @override
+  String get startDate => 'Start date';
+
+  @override
+  String get endDate => 'End date';
+
+  @override
+  String get premium => 'Premium';
+
+  @override
+  String get coverRow => 'Cover';
+
+  @override
+  String get deletePolicyQ => 'Delete this policy?';
+
+  @override
+  String get deletePolicyBody => 'The policy, its document and your questions about it will be permanently deleted.';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get editDetails => 'Edit details';
+
+  @override
+  String get viewDocument => 'View document';
+
+  @override
+  String get deletePolicy => 'Delete policy';
+
+  @override
+  String get policyHealth => 'Policy health';
+
+  @override
+  String get noIssuesFound => 'No issues found in the details we read';
+
+  @override
+  String thingsToKnow(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count things to know about',
+      one: '1 thing to know about',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get markedRenewed => 'Marked as renewed. Add your new policy document to keep things up to date.';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get renewalTitle => 'Renewal';
+
+  @override
+  String get addEndDate => 'Add the policy end date to track renewal.';
+
+  @override
+  String expiredOn(String date) {
+    return 'This policy expired on $date.';
+  }
+
+  @override
+  String renewsOn(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(days, locale: localeName, other: '$days days left', one: '1 day left');
+    return 'Renews on $date — $_temp0.';
+  }
+
+  @override
+  String lastPremium(String amount) {
+    return 'Last premium: $amount';
+  }
+
+  @override
+  String get remindSchedule => 'We\'ll remind you 90, 60, 30, 15, 7 and 1 day before expiry.';
+
+  @override
+  String get remindersOff => 'Renewal reminders are turned off in settings.';
+
+  @override
+  String get markedAsRenewed => '✓ Marked as renewed';
+
+  @override
+  String get markedNotRenewing => 'Marked as not renewing';
+
+  @override
+  String get iRenewed => 'I\'ve renewed this policy';
+
+  @override
+  String get notRenewing => 'I\'m not renewing';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get claimHealthTitle => 'Health insurance claim';
+
+  @override
+  String get claimHealthStep1 => 'Check that the hospital is in your insurer\'s network (for cashless treatment).';
+
+  @override
+  String get claimHealthStep2 =>
+      'Planned admission: request cashless pre-authorisation at the hospital\'s insurance desk at least 48 hours before.';
+
+  @override
+  String get claimHealthStep3 => 'Emergency admission: inform your insurer or TPA within 24 hours.';
+
+  @override
+  String get claimHealthStep4 => 'Show your health card / policy number and photo ID at the hospital.';
+
+  @override
+  String get claimHealthStep5 =>
+      'For reimbursement (non-network hospital), pay the bill and submit the claim within the time stated in your policy.';
+
+  @override
+  String get claimHealthStep6 => 'Track your claim with the claim reference number your insurer gives you.';
+
+  @override
+  String get claimHealthDoc1 => 'Claim form (signed)';
+
+  @override
+  String get claimHealthDoc2 => 'Policy copy / health card';
+
+  @override
+  String get claimHealthDoc3 => 'Photo ID and address proof';
+
+  @override
+  String get claimHealthDoc4 => 'Discharge summary';
+
+  @override
+  String get claimHealthDoc5 => 'Original hospital bills and payment receipts';
+
+  @override
+  String get claimHealthDoc6 => 'Doctor\'s prescriptions and investigation reports';
+
+  @override
+  String get claimHealthDoc7 => 'Cancelled cheque or bank details (for reimbursement)';
+
+  @override
+  String get claimMotorTitle => 'Motor insurance claim';
+
+  @override
+  String get claimMotorStep1 =>
+      'Ensure everyone is safe. For theft or third-party injury, file an FIR with the police.';
+
+  @override
+  String get claimMotorStep2 => 'Inform your insurer as soon as possible and get a claim number.';
+
+  @override
+  String get claimMotorStep3 =>
+      'Do not repair the vehicle before the insurer\'s surveyor inspects it (unless told otherwise).';
+
+  @override
+  String get claimMotorStep4 =>
+      'Take the vehicle to a network garage for cashless repair, or any garage for reimbursement.';
+
+  @override
+  String get claimMotorStep5 => 'Pay any compulsory deductible and non-covered items; the insurer settles the rest.';
+
+  @override
+  String get claimMotorDoc1 => 'Claim form';
+
+  @override
+  String get claimMotorDoc2 => 'Policy copy';
+
+  @override
+  String get claimMotorDoc3 => 'Registration certificate (RC)';
+
+  @override
+  String get claimMotorDoc4 => 'Driving licence of the driver';
+
+  @override
+  String get claimMotorDoc5 => 'FIR (for theft, major accident or third-party claims)';
+
+  @override
+  String get claimMotorDoc6 => 'Repair estimate and final invoice';
+
+  @override
+  String get claimLifeTitle => 'Life insurance claim';
+
+  @override
+  String get claimLifeStep1 => 'The nominee should inform the insurer as soon as possible.';
+
+  @override
+  String get claimLifeStep2 => 'Collect the claim form from the insurer\'s branch or website.';
+
+  @override
+  String get claimLifeStep3 => 'Submit the form with the required documents.';
+
+  @override
+  String get claimLifeStep4 => 'The insurer may investigate claims made within the first few policy years.';
+
+  @override
+  String get claimLifeStep5 => 'Track the claim status with the insurer.';
+
+  @override
+  String get claimLifeDoc1 => 'Claim form';
+
+  @override
+  String get claimLifeDoc2 => 'Original policy document';
+
+  @override
+  String get claimLifeDoc3 => 'Death certificate';
+
+  @override
+  String get claimLifeDoc4 => 'Nominee\'s photo ID, address proof and bank details';
+
+  @override
+  String get claimLifeDoc5 => 'Medical records / FIR and post-mortem report (if applicable)';
+
+  @override
+  String get claimOtherTitle => 'Making a claim';
+
+  @override
+  String get claimOtherStep1 => 'Read your policy to confirm the event is covered.';
+
+  @override
+  String get claimOtherStep2 => 'Inform your insurer as soon as possible and get a claim number.';
+
+  @override
+  String get claimOtherStep3 => 'Submit the claim form and supporting documents.';
+
+  @override
+  String get claimOtherStep4 => 'Track your claim with the insurer.';
+
+  @override
+  String get claimOtherDoc1 => 'Claim form';
+
+  @override
+  String get claimOtherDoc2 => 'Policy copy';
+
+  @override
+  String get claimOtherDoc3 => 'Photo ID';
+
+  @override
+  String get claimOtherDoc4 => 'Proof of loss / bills';
+
+  @override
+  String get explore => 'Explore';
+
+  @override
+  String get claimGuides => 'Claim guides';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get gmailImport => 'Gmail import';
+
+  @override
+  String get digiLocker => 'DigiLocker';
+
+  @override
+  String get claimTracking => 'Claim tracking';
+
+  @override
+  String get wellness => 'Wellness';
+
+  @override
+  String get deathLife1 =>
+      'Inform the insurer as soon as possible (call centre, branch or website) and note the claim number.';
+
+  @override
+  String get deathLife2 => 'The nominee fills the death claim form and attaches the documents below.';
+
+  @override
+  String get deathLife3 =>
+      'For deaths within the first 3 policy years the insurer may investigate before paying — this is normal.';
+
+  @override
+  String get deathLife4 =>
+      'The claim amount is paid to the nominee\'s bank account. If the nominee is a minor, the appointee receives it.';
+
+  @override
+  String get deathHealth1 =>
+      'A health policy ends for the person who died. If it is a family floater, the other members stay covered until renewal.';
+
+  @override
+  String get deathHealth2 =>
+      'Any pending hospital bills can still be claimed by the nominee — submit them within the claim time limit.';
+
+  @override
+  String get deathHealth3 => 'Inform the insurer to remove the member and update the policy at renewal.';
+
+  @override
+  String get deathMotor1 =>
+      'The vehicle and its insurance must be transferred to the legal heir within the time the insurer specifies.';
+
+  @override
+  String get deathMotor2 => 'Inform the insurer with the death certificate and the new owner\'s documents.';
+
+  @override
+  String get deathMotor3 =>
+      'Until transfer, avoid using the vehicle — claims may be refused if the registered owner has died.';
+
+  @override
+  String get deathOther1 =>
+      'Inform the insurer with the death certificate and ask for their claim or transfer process.';
+
+  @override
+  String get deathDoc1 => 'Death certificate (original or attested copy)';
+
+  @override
+  String get deathDoc2 => 'Policy document or policy number';
+
+  @override
+  String get deathDoc3 => 'Nominee\'s photo ID and address proof (Aadhaar / PAN)';
+
+  @override
+  String get deathDoc4 => 'Nominee\'s bank details (cancelled cheque)';
+
+  @override
+  String get deathDoc5 => 'Medical records or hospital discharge summary (if applicable)';
+
+  @override
+  String get deathDoc6 => 'FIR and post-mortem report (for accidental death)';
+
+  @override
+  String shareSubject(String type) {
+    return 'My $type insurance details';
+  }
+
+  @override
+  String shareBody(String name, String type, String number, String cover, String nominees, String steps) {
+    return 'Keep this safe.\n\n$name — $type insurance\nPolicy number: $number\nCover: $cover\nNominees: $nominees\n\nIf something happens to me:\n$steps';
+  }
+
+  @override
+  String get seePolicyDocument => 'see policy document';
+
+  @override
+  String get addNominee => 'Add nominee';
+
+  @override
+  String get fullyAssigned => '100% of the claim amount is assigned';
+
+  @override
+  String get noNomineeYet => 'No nominee recorded yet';
+
+  @override
+  String assignedLeft(int assigned, int left) {
+    return '$assigned% assigned · $left% left';
+  }
+
+  @override
+  String get nomineeLegalNote =>
+      'This is your own record. The nominee that counts legally is the one registered with your insurer — keep them the same.';
+
+  @override
+  String minorAppointee(String name) {
+    return 'Minor · appointee: $name';
+  }
+
+  @override
+  String get notSet => 'not set';
+
+  @override
+  String get ifSomethingHappens => 'If something happens to you';
+
+  @override
+  String get docsFamilyNeeds => 'Documents your family will need';
+
+  @override
+  String get shareWithFamily => 'Share these details with family';
+
+  @override
+  String get needAppointee => 'Add an appointee — an adult who receives the money for a minor.';
+
+  @override
+  String get editNominee => 'Edit nominee';
+
+  @override
+  String get pickFromFamily => 'Pick from family';
+
+  @override
+  String get fullNameAsPolicy => 'Full name (as in the policy)';
+
+  @override
+  String get relationship => 'Relationship';
+
+  @override
+  String shareOfClaim(int percent) {
+    return 'Share of claim: $percent%';
+  }
+
+  @override
+  String get appointeeLabel => 'Appointee (adult who receives money for the minor)';
+
+  @override
+  String get phoneOptional => 'Phone (optional)';
+
+  @override
+  String get removeNominee => 'Remove nominee';
+
+  @override
+  String get notFoundFillIn => 'Not found in document — please fill in';
+
+  @override
+  String get doubleCheck => 'Please double-check this';
+
+  @override
+  String get startBeforeEnd => 'Start date must be before end date.';
+
+  @override
+  String get checkPolicyDetails => 'Check your policy details';
+
+  @override
+  String get enterPolicyDetails => 'Enter policy details';
+
+  @override
+  String get editPolicyDetails => 'Edit policy details';
+
+  @override
+  String get weReadDetails =>
+      'We read these details from your document. Please check them carefully — fields marked in amber need your attention.';
+
+  @override
+  String get insuranceType => 'Insurance type';
+
+  @override
+  String get insurerRequired => 'Insurer is required';
+
+  @override
+  String get planName => 'Plan name';
+
+  @override
+  String get idvRupees => 'IDV (₹)';
+
+  @override
+  String get sumAssuredRupees => 'Sum assured (₹)';
+
+  @override
+  String get sumInsuredRupees => 'Sum insured (₹)';
+
+  @override
+  String get premiumRupees => 'Premium (₹)';
+
+  @override
+  String get premiumFrequency => 'Premium frequency';
+
+  @override
+  String get notSure => 'Not sure';
+
+  @override
+  String get confirmAddPolicy => 'Confirm & add policy';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get whoIsCoveredQ => 'Who is covered?';
+
+  @override
+  String get addFamilyMembers => 'Add family members';
 }

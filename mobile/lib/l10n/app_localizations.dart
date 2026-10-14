@@ -733,6 +733,996 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Summaries and answers about your policies will be written in this language. You can ask questions in it too.'**
   String get aiAnswerLanguageHelp;
+
+  /// No description provided for @policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy'**
+  String get policy;
+
+  /// No description provided for @reviewExtracted.
+  ///
+  /// In en, this message translates to:
+  /// **'Please review the extracted details'**
+  String get reviewExtracted;
+
+  /// No description provided for @coverageReportHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'What is covered, what has limits and what is not — item by item'**
+  String get coverageReportHelp;
+
+  /// No description provided for @noNomineeAddOne.
+  ///
+  /// In en, this message translates to:
+  /// **'No nominee recorded — add one'**
+  String get noNomineeAddOne;
+
+  /// No description provided for @notRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded'**
+  String get notRecorded;
+
+  /// No description provided for @policyClauses.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy clauses'**
+  String get policyClauses;
+
+  /// No description provided for @policyClausesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Benefits, exclusions, waiting periods and limits — word for word'**
+  String get policyClausesHelp;
+
+  /// No description provided for @whoIsCovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is covered'**
+  String get whoIsCovered;
+
+  /// No description provided for @understandPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand your policy'**
+  String get understandPolicy;
+
+  /// No description provided for @keyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Key details'**
+  String get keyDetails;
+
+  /// No description provided for @coverageDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage details'**
+  String get coverageDetails;
+
+  /// No description provided for @typeInsurance.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} insurance'**
+  String typeInsurance(String type);
+
+  /// No description provided for @idv.
+  ///
+  /// In en, this message translates to:
+  /// **'Insured declared value'**
+  String get idv;
+
+  /// No description provided for @cover.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover'**
+  String get cover;
+
+  /// No description provided for @validRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid {start} – {end}'**
+  String validRange(String start, String end);
+
+  /// No description provided for @premiumValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium {amount}'**
+  String premiumValue(String amount);
+
+  /// No description provided for @askAiShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get askAiShort;
+
+  /// No description provided for @renewal.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal'**
+  String get renewal;
+
+  /// No description provided for @claimHelpAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim help'**
+  String get claimHelpAction;
+
+  /// No description provided for @documentsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents usually required'**
+  String get documentsRequired;
+
+  /// No description provided for @followInsurerProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Always follow the claim process stated in your policy and by your insurer.'**
+  String get followInsurerProcess;
+
+  /// No description provided for @readingPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading your policy…'**
+  String get readingPolicy;
+
+  /// No description provided for @watchOutFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch out for'**
+  String get watchOutFor;
+
+  /// No description provided for @policyNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy number'**
+  String get policyNumber;
+
+  /// No description provided for @insurer.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurer'**
+  String get insurer;
+
+  /// No description provided for @plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get plan;
+
+  /// No description provided for @startDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get startDate;
+
+  /// No description provided for @endDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get endDate;
+
+  /// No description provided for @premium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premium;
+
+  /// No description provided for @coverRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover'**
+  String get coverRow;
+
+  /// No description provided for @deletePolicyQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this policy?'**
+  String get deletePolicyQ;
+
+  /// No description provided for @deletePolicyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The policy, its document and your questions about it will be permanently deleted.'**
+  String get deletePolicyBody;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @editDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit details'**
+  String get editDetails;
+
+  /// No description provided for @viewDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'View document'**
+  String get viewDocument;
+
+  /// No description provided for @deletePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete policy'**
+  String get deletePolicy;
+
+  /// No description provided for @policyHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy health'**
+  String get policyHealth;
+
+  /// No description provided for @noIssuesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No issues found in the details we read'**
+  String get noIssuesFound;
+
+  /// No description provided for @thingsToKnow.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 thing to know about} other{{count} things to know about}}'**
+  String thingsToKnow(int count);
+
+  /// No description provided for @markedRenewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as renewed. Add your new policy document to keep things up to date.'**
+  String get markedRenewed;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @renewalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal'**
+  String get renewalTitle;
+
+  /// No description provided for @addEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the policy end date to track renewal.'**
+  String get addEndDate;
+
+  /// No description provided for @expiredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'This policy expired on {date}.'**
+  String expiredOn(String date);
+
+  /// No description provided for @renewsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews on {date} — {days, plural, =1{1 day left} other{{days} days left}}.'**
+  String renewsOn(String date, int days);
+
+  /// No description provided for @lastPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Last premium: {amount}'**
+  String lastPremium(String amount);
+
+  /// No description provided for @remindSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll remind you 90, 60, 30, 15, 7 and 1 day before expiry.'**
+  String get remindSchedule;
+
+  /// No description provided for @remindersOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal reminders are turned off in settings.'**
+  String get remindersOff;
+
+  /// No description provided for @markedAsRenewed.
+  ///
+  /// In en, this message translates to:
+  /// **'✓ Marked as renewed'**
+  String get markedAsRenewed;
+
+  /// No description provided for @markedNotRenewing.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as not renewing'**
+  String get markedNotRenewing;
+
+  /// No description provided for @iRenewed.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve renewed this policy'**
+  String get iRenewed;
+
+  /// No description provided for @notRenewing.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m not renewing'**
+  String get notRenewing;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @claimHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Health insurance claim'**
+  String get claimHealthTitle;
+
+  /// No description provided for @claimHealthStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Check that the hospital is in your insurer\'s network (for cashless treatment).'**
+  String get claimHealthStep1;
+
+  /// No description provided for @claimHealthStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned admission: request cashless pre-authorisation at the hospital\'s insurance desk at least 48 hours before.'**
+  String get claimHealthStep2;
+
+  /// No description provided for @claimHealthStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency admission: inform your insurer or TPA within 24 hours.'**
+  String get claimHealthStep3;
+
+  /// No description provided for @claimHealthStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Show your health card / policy number and photo ID at the hospital.'**
+  String get claimHealthStep4;
+
+  /// No description provided for @claimHealthStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'For reimbursement (non-network hospital), pay the bill and submit the claim within the time stated in your policy.'**
+  String get claimHealthStep5;
+
+  /// No description provided for @claimHealthStep6.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your claim with the claim reference number your insurer gives you.'**
+  String get claimHealthStep6;
+
+  /// No description provided for @claimHealthDoc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim form (signed)'**
+  String get claimHealthDoc1;
+
+  /// No description provided for @claimHealthDoc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy copy / health card'**
+  String get claimHealthDoc2;
+
+  /// No description provided for @claimHealthDoc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo ID and address proof'**
+  String get claimHealthDoc3;
+
+  /// No description provided for @claimHealthDoc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Discharge summary'**
+  String get claimHealthDoc4;
+
+  /// No description provided for @claimHealthDoc5.
+  ///
+  /// In en, this message translates to:
+  /// **'Original hospital bills and payment receipts'**
+  String get claimHealthDoc5;
+
+  /// No description provided for @claimHealthDoc6.
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor\'s prescriptions and investigation reports'**
+  String get claimHealthDoc6;
+
+  /// No description provided for @claimHealthDoc7.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled cheque or bank details (for reimbursement)'**
+  String get claimHealthDoc7;
+
+  /// No description provided for @claimMotorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Motor insurance claim'**
+  String get claimMotorTitle;
+
+  /// No description provided for @claimMotorStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure everyone is safe. For theft or third-party injury, file an FIR with the police.'**
+  String get claimMotorStep1;
+
+  /// No description provided for @claimMotorStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform your insurer as soon as possible and get a claim number.'**
+  String get claimMotorStep2;
+
+  /// No description provided for @claimMotorStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not repair the vehicle before the insurer\'s surveyor inspects it (unless told otherwise).'**
+  String get claimMotorStep3;
+
+  /// No description provided for @claimMotorStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Take the vehicle to a network garage for cashless repair, or any garage for reimbursement.'**
+  String get claimMotorStep4;
+
+  /// No description provided for @claimMotorStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay any compulsory deductible and non-covered items; the insurer settles the rest.'**
+  String get claimMotorStep5;
+
+  /// No description provided for @claimMotorDoc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim form'**
+  String get claimMotorDoc1;
+
+  /// No description provided for @claimMotorDoc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy copy'**
+  String get claimMotorDoc2;
+
+  /// No description provided for @claimMotorDoc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration certificate (RC)'**
+  String get claimMotorDoc3;
+
+  /// No description provided for @claimMotorDoc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving licence of the driver'**
+  String get claimMotorDoc4;
+
+  /// No description provided for @claimMotorDoc5.
+  ///
+  /// In en, this message translates to:
+  /// **'FIR (for theft, major accident or third-party claims)'**
+  String get claimMotorDoc5;
+
+  /// No description provided for @claimMotorDoc6.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair estimate and final invoice'**
+  String get claimMotorDoc6;
+
+  /// No description provided for @claimLifeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Life insurance claim'**
+  String get claimLifeTitle;
+
+  /// No description provided for @claimLifeStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'The nominee should inform the insurer as soon as possible.'**
+  String get claimLifeStep1;
+
+  /// No description provided for @claimLifeStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect the claim form from the insurer\'s branch or website.'**
+  String get claimLifeStep2;
+
+  /// No description provided for @claimLifeStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit the form with the required documents.'**
+  String get claimLifeStep3;
+
+  /// No description provided for @claimLifeStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'The insurer may investigate claims made within the first few policy years.'**
+  String get claimLifeStep4;
+
+  /// No description provided for @claimLifeStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the claim status with the insurer.'**
+  String get claimLifeStep5;
+
+  /// No description provided for @claimLifeDoc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim form'**
+  String get claimLifeDoc1;
+
+  /// No description provided for @claimLifeDoc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Original policy document'**
+  String get claimLifeDoc2;
+
+  /// No description provided for @claimLifeDoc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Death certificate'**
+  String get claimLifeDoc3;
+
+  /// No description provided for @claimLifeDoc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Nominee\'s photo ID, address proof and bank details'**
+  String get claimLifeDoc4;
+
+  /// No description provided for @claimLifeDoc5.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical records / FIR and post-mortem report (if applicable)'**
+  String get claimLifeDoc5;
+
+  /// No description provided for @claimOtherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Making a claim'**
+  String get claimOtherTitle;
+
+  /// No description provided for @claimOtherStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Read your policy to confirm the event is covered.'**
+  String get claimOtherStep1;
+
+  /// No description provided for @claimOtherStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform your insurer as soon as possible and get a claim number.'**
+  String get claimOtherStep2;
+
+  /// No description provided for @claimOtherStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit the claim form and supporting documents.'**
+  String get claimOtherStep3;
+
+  /// No description provided for @claimOtherStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your claim with the insurer.'**
+  String get claimOtherStep4;
+
+  /// No description provided for @claimOtherDoc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim form'**
+  String get claimOtherDoc1;
+
+  /// No description provided for @claimOtherDoc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy copy'**
+  String get claimOtherDoc2;
+
+  /// No description provided for @claimOtherDoc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo ID'**
+  String get claimOtherDoc3;
+
+  /// No description provided for @claimOtherDoc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Proof of loss / bills'**
+  String get claimOtherDoc4;
+
+  /// No description provided for @explore.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get explore;
+
+  /// No description provided for @claimGuides.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim guides'**
+  String get claimGuides;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @gmailImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Gmail import'**
+  String get gmailImport;
+
+  /// No description provided for @digiLocker.
+  ///
+  /// In en, this message translates to:
+  /// **'DigiLocker'**
+  String get digiLocker;
+
+  /// No description provided for @claimTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim tracking'**
+  String get claimTracking;
+
+  /// No description provided for @wellness.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellness'**
+  String get wellness;
+
+  /// No description provided for @deathLife1.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform the insurer as soon as possible (call centre, branch or website) and note the claim number.'**
+  String get deathLife1;
+
+  /// No description provided for @deathLife2.
+  ///
+  /// In en, this message translates to:
+  /// **'The nominee fills the death claim form and attaches the documents below.'**
+  String get deathLife2;
+
+  /// No description provided for @deathLife3.
+  ///
+  /// In en, this message translates to:
+  /// **'For deaths within the first 3 policy years the insurer may investigate before paying — this is normal.'**
+  String get deathLife3;
+
+  /// No description provided for @deathLife4.
+  ///
+  /// In en, this message translates to:
+  /// **'The claim amount is paid to the nominee\'s bank account. If the nominee is a minor, the appointee receives it.'**
+  String get deathLife4;
+
+  /// No description provided for @deathHealth1.
+  ///
+  /// In en, this message translates to:
+  /// **'A health policy ends for the person who died. If it is a family floater, the other members stay covered until renewal.'**
+  String get deathHealth1;
+
+  /// No description provided for @deathHealth2.
+  ///
+  /// In en, this message translates to:
+  /// **'Any pending hospital bills can still be claimed by the nominee — submit them within the claim time limit.'**
+  String get deathHealth2;
+
+  /// No description provided for @deathHealth3.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform the insurer to remove the member and update the policy at renewal.'**
+  String get deathHealth3;
+
+  /// No description provided for @deathMotor1.
+  ///
+  /// In en, this message translates to:
+  /// **'The vehicle and its insurance must be transferred to the legal heir within the time the insurer specifies.'**
+  String get deathMotor1;
+
+  /// No description provided for @deathMotor2.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform the insurer with the death certificate and the new owner\'s documents.'**
+  String get deathMotor2;
+
+  /// No description provided for @deathMotor3.
+  ///
+  /// In en, this message translates to:
+  /// **'Until transfer, avoid using the vehicle — claims may be refused if the registered owner has died.'**
+  String get deathMotor3;
+
+  /// No description provided for @deathOther1.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform the insurer with the death certificate and ask for their claim or transfer process.'**
+  String get deathOther1;
+
+  /// No description provided for @deathDoc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Death certificate (original or attested copy)'**
+  String get deathDoc1;
+
+  /// No description provided for @deathDoc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy document or policy number'**
+  String get deathDoc2;
+
+  /// No description provided for @deathDoc3.
+  ///
+  /// In en, this message translates to:
+  /// **'Nominee\'s photo ID and address proof (Aadhaar / PAN)'**
+  String get deathDoc3;
+
+  /// No description provided for @deathDoc4.
+  ///
+  /// In en, this message translates to:
+  /// **'Nominee\'s bank details (cancelled cheque)'**
+  String get deathDoc4;
+
+  /// No description provided for @deathDoc5.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical records or hospital discharge summary (if applicable)'**
+  String get deathDoc5;
+
+  /// No description provided for @deathDoc6.
+  ///
+  /// In en, this message translates to:
+  /// **'FIR and post-mortem report (for accidental death)'**
+  String get deathDoc6;
+
+  /// No description provided for @shareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'My {type} insurance details'**
+  String shareSubject(String type);
+
+  /// No description provided for @shareBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this safe.\n\n{name} — {type} insurance\nPolicy number: {number}\nCover: {cover}\nNominees: {nominees}\n\nIf something happens to me:\n{steps}'**
+  String shareBody(String name, String type, String number, String cover, String nominees, String steps);
+
+  /// No description provided for @seePolicyDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'see policy document'**
+  String get seePolicyDocument;
+
+  /// No description provided for @addNominee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add nominee'**
+  String get addNominee;
+
+  /// No description provided for @fullyAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'100% of the claim amount is assigned'**
+  String get fullyAssigned;
+
+  /// No description provided for @noNomineeYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No nominee recorded yet'**
+  String get noNomineeYet;
+
+  /// No description provided for @assignedLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{assigned}% assigned · {left}% left'**
+  String assignedLeft(int assigned, int left);
+
+  /// No description provided for @nomineeLegalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your own record. The nominee that counts legally is the one registered with your insurer — keep them the same.'**
+  String get nomineeLegalNote;
+
+  /// No description provided for @minorAppointee.
+  ///
+  /// In en, this message translates to:
+  /// **'Minor · appointee: {name}'**
+  String minorAppointee(String name);
+
+  /// No description provided for @notSet.
+  ///
+  /// In en, this message translates to:
+  /// **'not set'**
+  String get notSet;
+
+  /// No description provided for @ifSomethingHappens.
+  ///
+  /// In en, this message translates to:
+  /// **'If something happens to you'**
+  String get ifSomethingHappens;
+
+  /// No description provided for @docsFamilyNeeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents your family will need'**
+  String get docsFamilyNeeds;
+
+  /// No description provided for @shareWithFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Share these details with family'**
+  String get shareWithFamily;
+
+  /// No description provided for @needAppointee.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an appointee — an adult who receives the money for a minor.'**
+  String get needAppointee;
+
+  /// No description provided for @editNominee.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit nominee'**
+  String get editNominee;
+
+  /// No description provided for @pickFromFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from family'**
+  String get pickFromFamily;
+
+  /// No description provided for @fullNameAsPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name (as in the policy)'**
+  String get fullNameAsPolicy;
+
+  /// No description provided for @relationship.
+  ///
+  /// In en, this message translates to:
+  /// **'Relationship'**
+  String get relationship;
+
+  /// No description provided for @shareOfClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'Share of claim: {percent}%'**
+  String shareOfClaim(int percent);
+
+  /// No description provided for @appointeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointee (adult who receives money for the minor)'**
+  String get appointeeLabel;
+
+  /// No description provided for @phoneOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone (optional)'**
+  String get phoneOptional;
+
+  /// No description provided for @removeNominee.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove nominee'**
+  String get removeNominee;
+
+  /// No description provided for @notFoundFillIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not found in document — please fill in'**
+  String get notFoundFillIn;
+
+  /// No description provided for @doubleCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Please double-check this'**
+  String get doubleCheck;
+
+  /// No description provided for @startBeforeEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date must be before end date.'**
+  String get startBeforeEnd;
+
+  /// No description provided for @checkPolicyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your policy details'**
+  String get checkPolicyDetails;
+
+  /// No description provided for @enterPolicyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter policy details'**
+  String get enterPolicyDetails;
+
+  /// No description provided for @editPolicyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit policy details'**
+  String get editPolicyDetails;
+
+  /// No description provided for @weReadDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'We read these details from your document. Please check them carefully — fields marked in amber need your attention.'**
+  String get weReadDetails;
+
+  /// No description provided for @insuranceType.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance type'**
+  String get insuranceType;
+
+  /// No description provided for @insurerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurer is required'**
+  String get insurerRequired;
+
+  /// No description provided for @planName.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan name'**
+  String get planName;
+
+  /// No description provided for @idvRupees.
+  ///
+  /// In en, this message translates to:
+  /// **'IDV (₹)'**
+  String get idvRupees;
+
+  /// No description provided for @sumAssuredRupees.
+  ///
+  /// In en, this message translates to:
+  /// **'Sum assured (₹)'**
+  String get sumAssuredRupees;
+
+  /// No description provided for @sumInsuredRupees.
+  ///
+  /// In en, this message translates to:
+  /// **'Sum insured (₹)'**
+  String get sumInsuredRupees;
+
+  /// No description provided for @premiumRupees.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium (₹)'**
+  String get premiumRupees;
+
+  /// No description provided for @premiumFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium frequency'**
+  String get premiumFrequency;
+
+  /// No description provided for @notSure.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sure'**
+  String get notSure;
+
+  /// No description provided for @confirmAddPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & add policy'**
+  String get confirmAddPolicy;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @whoIsCoveredQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is covered?'**
+  String get whoIsCoveredQ;
+
+  /// No description provided for @addFamilyMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'Add family members'**
+  String get addFamilyMembers;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

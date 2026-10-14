@@ -349,4 +349,540 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get aiAnswerLanguageHelp =>
       'आपकी पॉलिसियों के सारांश और जवाब इसी भाषा में लिखे जाएँगे। आप इसमें सवाल भी पूछ सकते हैं।';
+
+  @override
+  String get policy => 'पॉलिसी';
+
+  @override
+  String get reviewExtracted => 'कृपया निकाली गई जानकारी जाँच लें';
+
+  @override
+  String get coverageReportHelp => 'क्या कवर है, किस पर सीमा है और क्या कवर नहीं है — एक-एक करके';
+
+  @override
+  String get noNomineeAddOne => 'कोई नॉमिनी दर्ज नहीं — एक जोड़ें';
+
+  @override
+  String get notRecorded => 'दर्ज नहीं';
+
+  @override
+  String get policyClauses => 'पॉलिसी की शर्तें';
+
+  @override
+  String get policyClausesHelp => 'लाभ, बहिष्करण (exclusions), वेटिंग पीरियड और सीमाएँ — शब्दशः';
+
+  @override
+  String get whoIsCovered => 'किसे कवर मिलता है';
+
+  @override
+  String get understandPolicy => 'अपनी पॉलिसी समझें';
+
+  @override
+  String get keyDetails => 'मुख्य जानकारी';
+
+  @override
+  String get coverageDetails => 'कवरेज की जानकारी';
+
+  @override
+  String typeInsurance(String type) {
+    return '$type बीमा';
+  }
+
+  @override
+  String get idv => 'इंश्योर्ड डिक्लेयर्ड वैल्यू (IDV)';
+
+  @override
+  String get cover => 'कवर';
+
+  @override
+  String validRange(String start, String end) {
+    return 'वैध: $start – $end';
+  }
+
+  @override
+  String premiumValue(String amount) {
+    return 'प्रीमियम $amount';
+  }
+
+  @override
+  String get askAiShort => 'AI से पूछें';
+
+  @override
+  String get renewal => 'रिन्यूअल';
+
+  @override
+  String get claimHelpAction => 'क्लेम में मदद';
+
+  @override
+  String get documentsRequired => 'आम तौर पर ज़रूरी दस्तावेज़';
+
+  @override
+  String get followInsurerProcess => 'हमेशा वही क्लेम प्रक्रिया अपनाएँ जो आपकी पॉलिसी और बीमा कंपनी बताती है।';
+
+  @override
+  String get readingPolicy => 'आपकी पॉलिसी पढ़ी जा रही है…';
+
+  @override
+  String get watchOutFor => 'इन बातों का ध्यान रखें';
+
+  @override
+  String get policyNumber => 'पॉलिसी नंबर';
+
+  @override
+  String get insurer => 'बीमा कंपनी';
+
+  @override
+  String get plan => 'प्लान';
+
+  @override
+  String get startDate => 'शुरू होने की तारीख';
+
+  @override
+  String get endDate => 'खत्म होने की तारीख';
+
+  @override
+  String get premium => 'प्रीमियम';
+
+  @override
+  String get coverRow => 'कवर';
+
+  @override
+  String get deletePolicyQ => 'यह पॉलिसी डिलीट करें?';
+
+  @override
+  String get deletePolicyBody => 'पॉलिसी, उसका दस्तावेज़ और उसके बारे में आपके सवाल हमेशा के लिए मिटा दिए जाएँगे।';
+
+  @override
+  String get delete => 'डिलीट करें';
+
+  @override
+  String get editDetails => 'जानकारी बदलें';
+
+  @override
+  String get viewDocument => 'दस्तावेज़ देखें';
+
+  @override
+  String get deletePolicy => 'पॉलिसी डिलीट करें';
+
+  @override
+  String get policyHealth => 'पॉलिसी हेल्थ';
+
+  @override
+  String get noIssuesFound => 'हमने जो जानकारी पढ़ी, उसमें कोई समस्या नहीं मिली';
+
+  @override
+  String thingsToKnow(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count बातें जानने लायक');
+    return '$_temp0';
+  }
+
+  @override
+  String get markedRenewed => 'रिन्यू के रूप में दर्ज किया। सब अपडेट रखने के लिए अपनी नई पॉलिसी का दस्तावेज़ जोड़ें।';
+
+  @override
+  String get add => 'जोड़ें';
+
+  @override
+  String get renewalTitle => 'रिन्यूअल';
+
+  @override
+  String get addEndDate => 'रिन्यूअल ट्रैक करने के लिए पॉलिसी खत्म होने की तारीख जोड़ें।';
+
+  @override
+  String expiredOn(String date) {
+    return 'यह पॉलिसी $date को खत्म हो गई।';
+  }
+
+  @override
+  String renewsOn(String date, int days) {
+    return '$date को रिन्यू होगी — $days दिन बाकी।';
+  }
+
+  @override
+  String lastPremium(String amount) {
+    return 'पिछला प्रीमियम: $amount';
+  }
+
+  @override
+  String get remindSchedule => 'हम खत्म होने से 90, 60, 30, 15, 7 और 1 दिन पहले याद दिलाएँगे।';
+
+  @override
+  String get remindersOff => 'सेटिंग्स में रिन्यूअल रिमाइंडर बंद हैं।';
+
+  @override
+  String get markedAsRenewed => '✓ रिन्यू के रूप में दर्ज';
+
+  @override
+  String get markedNotRenewing => 'रिन्यू न करने के रूप में दर्ज';
+
+  @override
+  String get iRenewed => 'मैंने यह पॉलिसी रिन्यू कर ली है';
+
+  @override
+  String get notRenewing => 'मैं रिन्यू नहीं करूँगा/करूँगी';
+
+  @override
+  String get undo => 'वापस लें';
+
+  @override
+  String get claimHealthTitle => 'हेल्थ इंश्योरेंस क्लेम';
+
+  @override
+  String get claimHealthStep1 => 'जाँच लें कि अस्पताल आपकी बीमा कंपनी के नेटवर्क में है (कैशलेस इलाज के लिए)।';
+
+  @override
+  String get claimHealthStep2 =>
+      'पहले से तय भर्ती: कम से कम 48 घंटे पहले अस्पताल के इंश्योरेंस डेस्क पर कैशलेस प्री-ऑथराइज़ेशन माँगें।';
+
+  @override
+  String get claimHealthStep3 => 'इमरजेंसी में भर्ती: 24 घंटे के अंदर अपनी बीमा कंपनी या TPA को सूचना दें।';
+
+  @override
+  String get claimHealthStep4 => 'अस्पताल में अपना हेल्थ कार्ड / पॉलिसी नंबर और फ़ोटो ID दिखाएँ।';
+
+  @override
+  String get claimHealthStep5 =>
+      'रीइम्बर्समेंट के लिए (नेटवर्क से बाहर का अस्पताल), बिल चुकाएँ और पॉलिसी में लिखी समय-सीमा के अंदर क्लेम जमा करें।';
+
+  @override
+  String get claimHealthStep6 => 'बीमा कंपनी से मिले क्लेम रेफ़रेंस नंबर से अपना क्लेम ट्रैक करें।';
+
+  @override
+  String get claimHealthDoc1 => 'क्लेम फ़ॉर्म (हस्ताक्षर सहित)';
+
+  @override
+  String get claimHealthDoc2 => 'पॉलिसी की कॉपी / हेल्थ कार्ड';
+
+  @override
+  String get claimHealthDoc3 => 'फ़ोटो ID और पते का प्रमाण';
+
+  @override
+  String get claimHealthDoc4 => 'डिस्चार्ज समरी';
+
+  @override
+  String get claimHealthDoc5 => 'अस्पताल के मूल बिल और भुगतान की रसीदें';
+
+  @override
+  String get claimHealthDoc6 => 'डॉक्टर के पर्चे और जाँच रिपोर्टें';
+
+  @override
+  String get claimHealthDoc7 => 'कैंसल चेक या बैंक की जानकारी (रीइम्बर्समेंट के लिए)';
+
+  @override
+  String get claimMotorTitle => 'मोटर इंश्योरेंस क्लेम';
+
+  @override
+  String get claimMotorStep1 =>
+      'पहले सबकी सुरक्षा पक्की करें। चोरी या थर्ड-पार्टी को चोट लगने पर पुलिस में FIR दर्ज कराएँ।';
+
+  @override
+  String get claimMotorStep2 => 'जल्द से जल्द बीमा कंपनी को सूचना दें और क्लेम नंबर लें।';
+
+  @override
+  String get claimMotorStep3 =>
+      'बीमा कंपनी के सर्वेयर की जाँच से पहले गाड़ी की मरम्मत न कराएँ (जब तक अलग से न कहा जाए)।';
+
+  @override
+  String get claimMotorStep4 =>
+      'कैशलेस मरम्मत के लिए गाड़ी नेटवर्क गैराज ले जाएँ, या रीइम्बर्समेंट के लिए किसी भी गैराज में।';
+
+  @override
+  String get claimMotorStep5 =>
+      'अनिवार्य डिडक्टिबल और जो चीज़ें कवर नहीं हैं उनका भुगतान आप करें; बाकी बीमा कंपनी चुकाती है।';
+
+  @override
+  String get claimMotorDoc1 => 'क्लेम फ़ॉर्म';
+
+  @override
+  String get claimMotorDoc2 => 'पॉलिसी की कॉपी';
+
+  @override
+  String get claimMotorDoc3 => 'रजिस्ट्रेशन सर्टिफ़िकेट (RC)';
+
+  @override
+  String get claimMotorDoc4 => 'ड्राइवर का ड्राइविंग लाइसेंस';
+
+  @override
+  String get claimMotorDoc5 => 'FIR (चोरी, बड़ी दुर्घटना या थर्ड-पार्टी क्लेम के लिए)';
+
+  @override
+  String get claimMotorDoc6 => 'मरम्मत का अनुमान और अंतिम बिल';
+
+  @override
+  String get claimLifeTitle => 'लाइफ़ इंश्योरेंस क्लेम';
+
+  @override
+  String get claimLifeStep1 => 'नॉमिनी जल्द से जल्द बीमा कंपनी को सूचना दें।';
+
+  @override
+  String get claimLifeStep2 => 'बीमा कंपनी की शाखा या वेबसाइट से क्लेम फ़ॉर्म लें।';
+
+  @override
+  String get claimLifeStep3 => 'ज़रूरी दस्तावेज़ों के साथ फ़ॉर्म जमा करें।';
+
+  @override
+  String get claimLifeStep4 => 'पॉलिसी के शुरुआती कुछ सालों में किए गए क्लेम की बीमा कंपनी जाँच कर सकती है।';
+
+  @override
+  String get claimLifeStep5 => 'बीमा कंपनी से क्लेम की स्थिति ट्रैक करें।';
+
+  @override
+  String get claimLifeDoc1 => 'क्लेम फ़ॉर्म';
+
+  @override
+  String get claimLifeDoc2 => 'पॉलिसी का मूल दस्तावेज़';
+
+  @override
+  String get claimLifeDoc3 => 'मृत्यु प्रमाण पत्र';
+
+  @override
+  String get claimLifeDoc4 => 'नॉमिनी की फ़ोटो ID, पते का प्रमाण और बैंक की जानकारी';
+
+  @override
+  String get claimLifeDoc5 => 'मेडिकल रिकॉर्ड / FIR और पोस्टमॉर्टम रिपोर्ट (अगर लागू हो)';
+
+  @override
+  String get claimOtherTitle => 'क्लेम कैसे करें';
+
+  @override
+  String get claimOtherStep1 => 'पॉलिसी पढ़कर पक्का करें कि यह घटना कवर है।';
+
+  @override
+  String get claimOtherStep2 => 'जल्द से जल्द बीमा कंपनी को सूचना दें और क्लेम नंबर लें।';
+
+  @override
+  String get claimOtherStep3 => 'क्लेम फ़ॉर्म और सहायक दस्तावेज़ जमा करें।';
+
+  @override
+  String get claimOtherStep4 => 'बीमा कंपनी से अपना क्लेम ट्रैक करें।';
+
+  @override
+  String get claimOtherDoc1 => 'क्लेम फ़ॉर्म';
+
+  @override
+  String get claimOtherDoc2 => 'पॉलिसी की कॉपी';
+
+  @override
+  String get claimOtherDoc3 => 'फ़ोटो ID';
+
+  @override
+  String get claimOtherDoc4 => 'नुकसान का प्रमाण / बिल';
+
+  @override
+  String get explore => 'एक्सप्लोर';
+
+  @override
+  String get claimGuides => 'क्लेम गाइड';
+
+  @override
+  String get comingSoon => 'जल्द आ रहा है';
+
+  @override
+  String get gmailImport => 'Gmail से इम्पोर्ट';
+
+  @override
+  String get digiLocker => 'डिजीलॉकर';
+
+  @override
+  String get claimTracking => 'क्लेम ट्रैकिंग';
+
+  @override
+  String get wellness => 'वेलनेस';
+
+  @override
+  String get deathLife1 =>
+      'जल्द से जल्द बीमा कंपनी को सूचना दें (कॉल सेंटर, शाखा या वेबसाइट) और क्लेम नंबर नोट कर लें।';
+
+  @override
+  String get deathLife2 => 'नॉमिनी डेथ क्लेम फ़ॉर्म भरें और नीचे दिए दस्तावेज़ लगाएँ।';
+
+  @override
+  String get deathLife3 =>
+      'पॉलिसी के पहले 3 सालों में मृत्यु होने पर बीमा कंपनी भुगतान से पहले जाँच कर सकती है — यह सामान्य है।';
+
+  @override
+  String get deathLife4 =>
+      'क्लेम की रकम नॉमिनी के बैंक खाते में आती है। अगर नॉमिनी नाबालिग है, तो अपॉइंटी को मिलती है।';
+
+  @override
+  String get deathHealth1 =>
+      'जिस व्यक्ति की मृत्यु हुई, उसके लिए हेल्थ पॉलिसी खत्म हो जाती है। फ़ैमिली फ़्लोटर में बाकी सदस्य रिन्यूअल तक कवर रहते हैं।';
+
+  @override
+  String get deathHealth2 =>
+      'अस्पताल के बकाया बिलों का क्लेम नॉमिनी फिर भी कर सकते हैं — क्लेम की समय-सीमा के अंदर जमा करें।';
+
+  @override
+  String get deathHealth3 => 'सदस्य को हटाने के लिए बीमा कंपनी को सूचना दें और रिन्यूअल पर पॉलिसी अपडेट कराएँ।';
+
+  @override
+  String get deathMotor1 =>
+      'गाड़ी और उसका बीमा, बीमा कंपनी की बताई समय-सीमा में कानूनी वारिस के नाम ट्रांसफ़र होना चाहिए।';
+
+  @override
+  String get deathMotor2 => 'मृत्यु प्रमाण पत्र और नए मालिक के दस्तावेज़ों के साथ बीमा कंपनी को सूचना दें।';
+
+  @override
+  String get deathMotor3 =>
+      'ट्रांसफ़र होने तक गाड़ी न चलाएँ — रजिस्टर्ड मालिक की मृत्यु के बाद क्लेम खारिज हो सकते हैं।';
+
+  @override
+  String get deathOther1 =>
+      'मृत्यु प्रमाण पत्र के साथ बीमा कंपनी को सूचना दें और उनकी क्लेम या ट्रांसफ़र प्रक्रिया पूछें।';
+
+  @override
+  String get deathDoc1 => 'मृत्यु प्रमाण पत्र (मूल या सत्यापित कॉपी)';
+
+  @override
+  String get deathDoc2 => 'पॉलिसी दस्तावेज़ या पॉलिसी नंबर';
+
+  @override
+  String get deathDoc3 => 'नॉमिनी की फ़ोटो ID और पते का प्रमाण (आधार / PAN)';
+
+  @override
+  String get deathDoc4 => 'नॉमिनी के बैंक की जानकारी (कैंसल चेक)';
+
+  @override
+  String get deathDoc5 => 'मेडिकल रिकॉर्ड या अस्पताल की डिस्चार्ज समरी (अगर लागू हो)';
+
+  @override
+  String get deathDoc6 => 'FIR और पोस्टमॉर्टम रिपोर्ट (दुर्घटना में मृत्यु पर)';
+
+  @override
+  String shareSubject(String type) {
+    return 'मेरे $type बीमा की जानकारी';
+  }
+
+  @override
+  String shareBody(String name, String type, String number, String cover, String nominees, String steps) {
+    return 'इसे संभाल कर रखें।\n\n$name — $type बीमा\nपॉलिसी नंबर: $number\nकवर: $cover\nनॉमिनी: $nominees\n\nअगर मुझे कुछ हो जाए:\n$steps';
+  }
+
+  @override
+  String get seePolicyDocument => 'पॉलिसी दस्तावेज़ देखें';
+
+  @override
+  String get addNominee => 'नॉमिनी जोड़ें';
+
+  @override
+  String get fullyAssigned => 'क्लेम की 100% रकम बाँट दी गई है';
+
+  @override
+  String get noNomineeYet => 'अभी कोई नॉमिनी दर्ज नहीं';
+
+  @override
+  String assignedLeft(int assigned, int left) {
+    return '$assigned% बाँटा गया · $left% बाकी';
+  }
+
+  @override
+  String get nomineeLegalNote =>
+      'यह आपका अपना रिकॉर्ड है। कानूनी तौर पर वही नॉमिनी माना जाता है जो बीमा कंपनी में दर्ज है — दोनों एक जैसे रखें।';
+
+  @override
+  String minorAppointee(String name) {
+    return 'नाबालिग · अपॉइंटी: $name';
+  }
+
+  @override
+  String get notSet => 'तय नहीं';
+
+  @override
+  String get ifSomethingHappens => 'अगर आपको कुछ हो जाए';
+
+  @override
+  String get docsFamilyNeeds => 'आपके परिवार को ज़रूरी दस्तावेज़';
+
+  @override
+  String get shareWithFamily => 'यह जानकारी परिवार के साथ साझा करें';
+
+  @override
+  String get needAppointee => 'एक अपॉइंटी जोड़ें — कोई वयस्क जो नाबालिग की ओर से रकम लेगा।';
+
+  @override
+  String get editNominee => 'नॉमिनी बदलें';
+
+  @override
+  String get pickFromFamily => 'परिवार में से चुनें';
+
+  @override
+  String get fullNameAsPolicy => 'पूरा नाम (पॉलिसी के अनुसार)';
+
+  @override
+  String get relationship => 'रिश्ता';
+
+  @override
+  String shareOfClaim(int percent) {
+    return 'क्लेम में हिस्सा: $percent%';
+  }
+
+  @override
+  String get appointeeLabel => 'अपॉइंटी (वयस्क जो नाबालिग की ओर से रकम लेगा)';
+
+  @override
+  String get phoneOptional => 'फ़ोन (वैकल्पिक)';
+
+  @override
+  String get removeNominee => 'नॉमिनी हटाएँ';
+
+  @override
+  String get notFoundFillIn => 'दस्तावेज़ में नहीं मिला — कृपया भरें';
+
+  @override
+  String get doubleCheck => 'कृपया इसे दोबारा जाँचें';
+
+  @override
+  String get startBeforeEnd => 'शुरू होने की तारीख, खत्म होने की तारीख से पहले होनी चाहिए।';
+
+  @override
+  String get checkPolicyDetails => 'अपनी पॉलिसी की जानकारी जाँचें';
+
+  @override
+  String get enterPolicyDetails => 'पॉलिसी की जानकारी भरें';
+
+  @override
+  String get editPolicyDetails => 'पॉलिसी की जानकारी बदलें';
+
+  @override
+  String get weReadDetails =>
+      'हमने यह जानकारी आपके दस्तावेज़ से पढ़ी है। कृपया ध्यान से जाँचें — पीले रंग से चिह्नित फ़ील्ड पर ध्यान देना ज़रूरी है।';
+
+  @override
+  String get insuranceType => 'बीमा का प्रकार';
+
+  @override
+  String get insurerRequired => 'बीमा कंपनी का नाम ज़रूरी है';
+
+  @override
+  String get planName => 'प्लान का नाम';
+
+  @override
+  String get idvRupees => 'IDV (₹)';
+
+  @override
+  String get sumAssuredRupees => 'सम एश्योर्ड (₹)';
+
+  @override
+  String get sumInsuredRupees => 'सम इंश्योर्ड (₹)';
+
+  @override
+  String get premiumRupees => 'प्रीमियम (₹)';
+
+  @override
+  String get premiumFrequency => 'प्रीमियम कितनी बार';
+
+  @override
+  String get notSure => 'पता नहीं';
+
+  @override
+  String get confirmAddPolicy => 'पुष्टि करें और पॉलिसी जोड़ें';
+
+  @override
+  String get select => 'चुनें';
+
+  @override
+  String get whoIsCoveredQ => 'किसे कवर मिलता है?';
+
+  @override
+  String get addFamilyMembers => 'परिवार के सदस्य जोड़ें';
 }

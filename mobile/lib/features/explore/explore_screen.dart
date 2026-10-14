@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/widgets/policy_card.dart';
 import '../policy/presentation/claim_guide.dart';
+import '../../core/locale.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
@@ -10,12 +11,12 @@ class ExploreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Explore')),
+      appBar: AppBar(title: Text(context.l10n.explore)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.md, AppSpacing.md, 128),
         children: [
-          const SectionHeader('Claim guides'),
-          for (final entry in claimGuides.entries)
+          SectionHeader(context.l10n.claimGuides),
+          for (final entry in claimGuidesFor(context.l10n).entries)
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
               child: Card(
@@ -40,16 +41,16 @@ class ExploreScreen extends StatelessWidget {
                 ),
               ),
             ),
-          const SectionHeader('Coming soon'),
+          SectionHeader(context.l10n.comingSoon),
           // Future modules (P2/P3) shown as labelled tiles only — no placeholder flows.
-          const Wrap(
+          Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: [
-              _SoonTile(Icons.mail_outline_rounded, 'Gmail import'),
-              _SoonTile(Icons.account_balance_wallet_outlined, 'DigiLocker'),
-              _SoonTile(Icons.track_changes_rounded, 'Claim tracking'),
-              _SoonTile(Icons.spa_outlined, 'Wellness'),
+              _SoonTile(Icons.mail_outline_rounded, context.l10n.gmailImport),
+              _SoonTile(Icons.account_balance_wallet_outlined, context.l10n.digiLocker),
+              _SoonTile(Icons.track_changes_rounded, context.l10n.claimTracking),
+              _SoonTile(Icons.spa_outlined, context.l10n.wellness),
             ],
           ),
         ],
@@ -75,7 +76,7 @@ class _SoonTile extends StatelessWidget {
             Icon(icon, color: AppColors.textSecondary),
             const SizedBox(height: AppSpacing.sm),
             Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-            const Text('Coming soon', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text(context.l10n.comingSoon, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           ],
         ),
       ),

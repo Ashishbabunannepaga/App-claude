@@ -10,6 +10,7 @@ import '../../../core/widgets/async_states.dart';
 import '../../account/data/account_repository.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
+import '../../../core/locale.dart';
 
 enum PolicyFormMode { verify, manual, edit }
 
@@ -69,9 +70,9 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
   /// Highlight fields the AI was unsure about (only when verifying an extraction).
   String? _hint(String field, bool hasValue) {
     if (widget.mode != PolicyFormMode.verify) return null;
-    if (!hasValue) return 'Not found in document — please fill in';
+    if (!hasValue) return context.l10n.notFoundFillIn;
     final c = widget.policy?.fieldConfidence[field] ?? 1;
-    return c < _lowConfidence ? 'Please double-check this' : null;
+    return c < _lowConfidence ? context.l10n.doubleCheck : null;
   }
 
   InputDecoration _decoration(String label, String field, bool hasValue) {
@@ -109,7 +110,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_start != null && _end != null && !_start!.isBefore(_end!)) {
-      setState(() => _error = 'Start date must be before end date.');
+      setState(() => _error = context.l10n.startBeforeEnd);
       return;
     }
     setState(() {
@@ -151,9 +152,9 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
   @override
   Widget build(BuildContext context) {
     final title = switch (widget.mode) {
-      PolicyFormMode.verify => 'Check your policy details',
-      PolicyFormMode.manual => 'Enter policy details',
-      PolicyFormMode.edit => 'Edit policy details',
+      PolicyFormMode.verify => context.l10n.checkPolicyDetails,
+      PolicyFormMode.manual => context.l10n.enterPolicyDetails,
+      PolicyFormMode.edit => context.l10n.editPolicyDetails,
     };
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -167,17 +168,13 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
                 color: AppColors.warningTint,
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Text(
-                    'We read these details from your document. Please check them carefully — '
-                    'fields marked in amber need your attention.',
-                    style: TextStyle(color: Colors.brown.shade700),
-                  ),
+                  child: Text(context.l10n.weReadDetails, style: TextStyle(color: Colors.brown.shade700)),
                 ),
               ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
               initialValue: _type,
-              decoration: const InputDecoration(labelText: 'Insurance type'),
+              decoration: InputDecoration(labelText: context.l10n.insuranceType),
               items: const [
                 'health',
                 'life',
@@ -190,24 +187,39 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
             TextFormField(
               controller: _insurer,
               textCapitalization: TextCapitalization.words,
-              decoration: _decoration('Insurer', 'insurer', _insurer.text.isNotEmpty),
-              validator: (v) => (v ?? '').trim().isEmpty ? 'Insurer is required' : null,
+              decoration: _decoration(context.l10n.insurer, 'insurer', _insurer.text.isNotEmpty),
+              validator: (v) => (v ?? '').trim().isEmpty ? context.l10n.insurerRequired : null,
             ),
             const SizedBox(height: AppSpacing.md),
-            TextFormField(controller: _plan, decoration: _decoration('Plan name', 'plan_name', _plan.text.isNotEmpty)),
+            TextFormField(
+              controller: _plan,
+              decoration: _decoration(context.l10n.planName, 'plan_name', _plan.text.isNotEmpty),
+            ),
             const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _number,
-              decoration: _decoration('Policy number', 'policy_number', _number.text.isNotEmpty),
+              decoration: _decoration(context.l10n.policyNumber, 'policy_number', _number.text.isNotEmpty),
             ),
             const SizedBox(height: AppSpacing.md),
             Row(
               children: [
                 Expanded(
-                  child: _DateField('Start date', _start, () => _pickDate(true), _hint('start_date', _start != null)),
+                  child: _DateField(
+                    context.l10n.startDate,
+                    _start,
+                    () => _pickDate(true),
+                    _hint('start_date', _start != null),
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                Expanded(child: _DateField('End date', _end, () => _pickDate(false), _hint('end_date', _end != null))),
+                Expanded(
+                  child: _DateField(
+                    context.l10n.endDate,
+                    _end,
+                    () => _pickDate(false),
+                    _hint('end_date', _end != null),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
@@ -217,10 +229,10 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
               decoration: _decoration(
                 _type == 'motor'
-                    ? 'IDV (₹)'
+                    ? context.l10n.idvRupees
                     : _type == 'life'
-                    ? 'Sum assured (₹)'
-                    : 'Sum insured (₹)',
+                    ? context.l10n.sumAssuredRupees
+                    : context.l10n.sumInsuredRupees,
                 'sum_insured',
                 _cover.text.isNotEmpty,
               ),
@@ -230,20 +242,15 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
               controller: _premium,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-              decoration: _decoration('Premium (₹)', 'premium', _premium.text.isNotEmpty),
+              decoration: _decoration(context.l10n.premiumRupees, 'premium', _premium.text.isNotEmpty),
             ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String?>(
               initialValue: _frequency,
-              decoration: const InputDecoration(labelText: 'Premium frequency'),
-              items: const [
-                null,
-                'annual',
-                'half_yearly',
-                'quarterly',
-                'monthly',
-                'single',
-              ].map((f) => DropdownMenuItem(value: f, child: Text(f == null ? 'Not sure' : humanise(f)))).toList(),
+              decoration: InputDecoration(labelText: context.l10n.premiumFrequency),
+              items: const [null, 'annual', 'half_yearly', 'quarterly', 'monthly', 'single']
+                  .map((f) => DropdownMenuItem(value: f, child: Text(f == null ? context.l10n.notSure : humanise(f))))
+                  .toList(),
               onChanged: (v) => setState(() => _frequency = v),
             ),
             if (_type != 'motor') _MembersPicker(selected: _members, onChanged: () => setState(() {})),
@@ -254,7 +261,7 @@ class _PolicyFormState extends ConsumerState<_PolicyForm> {
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               onPressed: _saving ? null : _save,
-              child: Text(widget.mode == PolicyFormMode.verify ? 'Confirm & add policy' : 'Save'),
+              child: Text(widget.mode == PolicyFormMode.verify ? context.l10n.confirmAddPolicy : context.l10n.save),
             ),
             const SizedBox(height: AppSpacing.lg),
           ],
@@ -283,7 +290,7 @@ class _DateField extends StatelessWidget {
         helperStyle: const TextStyle(color: AppColors.warning),
         suffixIcon: const Icon(Icons.calendar_today_rounded, size: 18),
       ),
-      child: Text(value == null ? 'Select' : formatDate(value)),
+      child: Text(value == null ? context.l10n.select : formatDate(value)),
     ),
   );
 }
@@ -301,13 +308,13 @@ class _MembersPicker extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Who is covered?', style: TextStyle(fontWeight: FontWeight.w600)),
+          Text(context.l10n.whoIsCoveredQ, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: AppSpacing.sm),
           if (family.isEmpty)
             TextButton.icon(
               onPressed: () => context.push('/family'),
               icon: const Icon(Icons.person_add_alt_1_rounded),
-              label: const Text('Add family members'),
+              label: Text(context.l10n.addFamilyMembers),
             )
           else
             Wrap(

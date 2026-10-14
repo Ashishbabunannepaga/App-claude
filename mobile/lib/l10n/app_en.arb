@@ -141,5 +141,278 @@
   "appLockHelp": "Use fingerprint, face or device PIN to open the app",
   "setUpScreenLock": "Set up a screen lock on your phone first.",
   "aiAnswerLanguage": "AI answer language",
-  "aiAnswerLanguageHelp": "Summaries and answers about your policies will be written in this language. You can ask questions in it too."
+  "aiAnswerLanguageHelp": "Summaries and answers about your policies will be written in this language. You can ask questions in it too.",
+  "policy": "Policy",
+  "reviewExtracted": "Please review the extracted details",
+  "coverageReportHelp": "What is covered, what has limits and what is not — item by item",
+  "noNomineeAddOne": "No nominee recorded — add one",
+  "notRecorded": "Not recorded",
+  "policyClauses": "Policy clauses",
+  "policyClausesHelp": "Benefits, exclusions, waiting periods and limits — word for word",
+  "whoIsCovered": "Who is covered",
+  "understandPolicy": "Understand your policy",
+  "keyDetails": "Key details",
+  "coverageDetails": "Coverage details",
+  "typeInsurance": "{type} insurance",
+  "@typeInsurance": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "idv": "Insured declared value",
+  "cover": "Cover",
+  "validRange": "Valid {start} – {end}",
+  "@validRange": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumValue": "Premium {amount}",
+  "@premiumValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askAiShort": "Ask AI",
+  "renewal": "Renewal",
+  "claimHelpAction": "Claim help",
+  "documentsRequired": "Documents usually required",
+  "followInsurerProcess": "Always follow the claim process stated in your policy and by your insurer.",
+  "readingPolicy": "Reading your policy…",
+  "watchOutFor": "Watch out for",
+  "policyNumber": "Policy number",
+  "insurer": "Insurer",
+  "plan": "Plan",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "premium": "Premium",
+  "coverRow": "Cover",
+  "deletePolicyQ": "Delete this policy?",
+  "deletePolicyBody": "The policy, its document and your questions about it will be permanently deleted.",
+  "delete": "Delete",
+  "editDetails": "Edit details",
+  "viewDocument": "View document",
+  "deletePolicy": "Delete policy",
+  "policyHealth": "Policy health",
+  "noIssuesFound": "No issues found in the details we read",
+  "thingsToKnow": "{count, plural, =1{1 thing to know about} other{{count} things to know about}}",
+  "@thingsToKnow": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "markedRenewed": "Marked as renewed. Add your new policy document to keep things up to date.",
+  "add": "Add",
+  "renewalTitle": "Renewal",
+  "addEndDate": "Add the policy end date to track renewal.",
+  "expiredOn": "This policy expired on {date}.",
+  "@expiredOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "renewsOn": "Renews on {date} — {days, plural, =1{1 day left} other{{days} days left}}.",
+  "@renewsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "lastPremium": "Last premium: {amount}",
+  "@lastPremium": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "remindSchedule": "We'll remind you 90, 60, 30, 15, 7 and 1 day before expiry.",
+  "remindersOff": "Renewal reminders are turned off in settings.",
+  "markedAsRenewed": "✓ Marked as renewed",
+  "markedNotRenewing": "Marked as not renewing",
+  "iRenewed": "I've renewed this policy",
+  "notRenewing": "I'm not renewing",
+  "undo": "Undo",
+  "claimHealthTitle": "Health insurance claim",
+  "claimHealthStep1": "Check that the hospital is in your insurer's network (for cashless treatment).",
+  "claimHealthStep2": "Planned admission: request cashless pre-authorisation at the hospital's insurance desk at least 48 hours before.",
+  "claimHealthStep3": "Emergency admission: inform your insurer or TPA within 24 hours.",
+  "claimHealthStep4": "Show your health card / policy number and photo ID at the hospital.",
+  "claimHealthStep5": "For reimbursement (non-network hospital), pay the bill and submit the claim within the time stated in your policy.",
+  "claimHealthStep6": "Track your claim with the claim reference number your insurer gives you.",
+  "claimHealthDoc1": "Claim form (signed)",
+  "claimHealthDoc2": "Policy copy / health card",
+  "claimHealthDoc3": "Photo ID and address proof",
+  "claimHealthDoc4": "Discharge summary",
+  "claimHealthDoc5": "Original hospital bills and payment receipts",
+  "claimHealthDoc6": "Doctor's prescriptions and investigation reports",
+  "claimHealthDoc7": "Cancelled cheque or bank details (for reimbursement)",
+  "claimMotorTitle": "Motor insurance claim",
+  "claimMotorStep1": "Ensure everyone is safe. For theft or third-party injury, file an FIR with the police.",
+  "claimMotorStep2": "Inform your insurer as soon as possible and get a claim number.",
+  "claimMotorStep3": "Do not repair the vehicle before the insurer's surveyor inspects it (unless told otherwise).",
+  "claimMotorStep4": "Take the vehicle to a network garage for cashless repair, or any garage for reimbursement.",
+  "claimMotorStep5": "Pay any compulsory deductible and non-covered items; the insurer settles the rest.",
+  "claimMotorDoc1": "Claim form",
+  "claimMotorDoc2": "Policy copy",
+  "claimMotorDoc3": "Registration certificate (RC)",
+  "claimMotorDoc4": "Driving licence of the driver",
+  "claimMotorDoc5": "FIR (for theft, major accident or third-party claims)",
+  "claimMotorDoc6": "Repair estimate and final invoice",
+  "claimLifeTitle": "Life insurance claim",
+  "claimLifeStep1": "The nominee should inform the insurer as soon as possible.",
+  "claimLifeStep2": "Collect the claim form from the insurer's branch or website.",
+  "claimLifeStep3": "Submit the form with the required documents.",
+  "claimLifeStep4": "The insurer may investigate claims made within the first few policy years.",
+  "claimLifeStep5": "Track the claim status with the insurer.",
+  "claimLifeDoc1": "Claim form",
+  "claimLifeDoc2": "Original policy document",
+  "claimLifeDoc3": "Death certificate",
+  "claimLifeDoc4": "Nominee's photo ID, address proof and bank details",
+  "claimLifeDoc5": "Medical records / FIR and post-mortem report (if applicable)",
+  "claimOtherTitle": "Making a claim",
+  "claimOtherStep1": "Read your policy to confirm the event is covered.",
+  "claimOtherStep2": "Inform your insurer as soon as possible and get a claim number.",
+  "claimOtherStep3": "Submit the claim form and supporting documents.",
+  "claimOtherStep4": "Track your claim with the insurer.",
+  "claimOtherDoc1": "Claim form",
+  "claimOtherDoc2": "Policy copy",
+  "claimOtherDoc3": "Photo ID",
+  "claimOtherDoc4": "Proof of loss / bills",
+  "explore": "Explore",
+  "claimGuides": "Claim guides",
+  "comingSoon": "Coming soon",
+  "gmailImport": "Gmail import",
+  "digiLocker": "DigiLocker",
+  "claimTracking": "Claim tracking",
+  "wellness": "Wellness",
+  "deathLife1": "Inform the insurer as soon as possible (call centre, branch or website) and note the claim number.",
+  "deathLife2": "The nominee fills the death claim form and attaches the documents below.",
+  "deathLife3": "For deaths within the first 3 policy years the insurer may investigate before paying — this is normal.",
+  "deathLife4": "The claim amount is paid to the nominee's bank account. If the nominee is a minor, the appointee receives it.",
+  "deathHealth1": "A health policy ends for the person who died. If it is a family floater, the other members stay covered until renewal.",
+  "deathHealth2": "Any pending hospital bills can still be claimed by the nominee — submit them within the claim time limit.",
+  "deathHealth3": "Inform the insurer to remove the member and update the policy at renewal.",
+  "deathMotor1": "The vehicle and its insurance must be transferred to the legal heir within the time the insurer specifies.",
+  "deathMotor2": "Inform the insurer with the death certificate and the new owner's documents.",
+  "deathMotor3": "Until transfer, avoid using the vehicle — claims may be refused if the registered owner has died.",
+  "deathOther1": "Inform the insurer with the death certificate and ask for their claim or transfer process.",
+  "deathDoc1": "Death certificate (original or attested copy)",
+  "deathDoc2": "Policy document or policy number",
+  "deathDoc3": "Nominee's photo ID and address proof (Aadhaar / PAN)",
+  "deathDoc4": "Nominee's bank details (cancelled cheque)",
+  "deathDoc5": "Medical records or hospital discharge summary (if applicable)",
+  "deathDoc6": "FIR and post-mortem report (for accidental death)",
+  "shareSubject": "My {type} insurance details",
+  "@shareSubject": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "shareBody": "Keep this safe.\n\n{name} — {type} insurance\nPolicy number: {number}\nCover: {cover}\nNominees: {nominees}\n\nIf something happens to me:\n{steps}",
+  "@shareBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "number": {
+        "type": "String"
+      },
+      "cover": {
+        "type": "String"
+      },
+      "nominees": {
+        "type": "String"
+      },
+      "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "seePolicyDocument": "see policy document",
+  "addNominee": "Add nominee",
+  "fullyAssigned": "100% of the claim amount is assigned",
+  "noNomineeYet": "No nominee recorded yet",
+  "assignedLeft": "{assigned}% assigned · {left}% left",
+  "@assignedLeft": {
+    "placeholders": {
+      "assigned": {
+        "type": "int"
+      },
+      "left": {
+        "type": "int"
+      }
+    }
+  },
+  "nomineeLegalNote": "This is your own record. The nominee that counts legally is the one registered with your insurer — keep them the same.",
+  "minorAppointee": "Minor · appointee: {name}",
+  "@minorAppointee": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notSet": "not set",
+  "ifSomethingHappens": "If something happens to you",
+  "docsFamilyNeeds": "Documents your family will need",
+  "shareWithFamily": "Share these details with family",
+  "needAppointee": "Add an appointee — an adult who receives the money for a minor.",
+  "editNominee": "Edit nominee",
+  "pickFromFamily": "Pick from family",
+  "fullNameAsPolicy": "Full name (as in the policy)",
+  "relationship": "Relationship",
+  "shareOfClaim": "Share of claim: {percent}%",
+  "@shareOfClaim": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "appointeeLabel": "Appointee (adult who receives money for the minor)",
+  "phoneOptional": "Phone (optional)",
+  "removeNominee": "Remove nominee",
+  "notFoundFillIn": "Not found in document — please fill in",
+  "doubleCheck": "Please double-check this",
+  "startBeforeEnd": "Start date must be before end date.",
+  "checkPolicyDetails": "Check your policy details",
+  "enterPolicyDetails": "Enter policy details",
+  "editPolicyDetails": "Edit policy details",
+  "weReadDetails": "We read these details from your document. Please check them carefully — fields marked in amber need your attention.",
+  "insuranceType": "Insurance type",
+  "insurerRequired": "Insurer is required",
+  "planName": "Plan name",
+  "idvRupees": "IDV (₹)",
+  "sumAssuredRupees": "Sum assured (₹)",
+  "sumInsuredRupees": "Sum insured (₹)",
+  "premiumRupees": "Premium (₹)",
+  "premiumFrequency": "Premium frequency",
+  "notSure": "Not sure",
+  "confirmAddPolicy": "Confirm & add policy",
+  "select": "Select",
+  "whoIsCoveredQ": "Who is covered?",
+  "addFamilyMembers": "Add family members"
 }

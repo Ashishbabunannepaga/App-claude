@@ -10,57 +10,48 @@ import '../../../core/widgets/policy_card.dart';
 import '../../account/data/account_repository.dart';
 import '../data/models.dart';
 import '../data/policy_repository.dart';
+import '../../../core/locale.dart';
 
 const nomineeRelations = ['spouse', 'child', 'parent', 'sibling', 'other'];
 
 /// What the family should do if the policyholder dies — per policy type.
 /// TODO(before launch): have this content reviewed by an insurance claims expert.
-const _afterDeathSteps = {
-  'life': [
-    'Inform the insurer as soon as possible (call centre, branch or website) and note the claim number.',
-    'The nominee fills the death claim form and attaches the documents below.',
-    'For deaths within the first 3 policy years the insurer may investigate before paying — this is normal.',
-    'The claim amount is paid to the nominee\'s bank account. If the nominee is a minor, the appointee receives it.',
-  ],
-  'health': [
-    'A health policy ends for the person who died. If it is a family floater, the other members stay covered until renewal.',
-    'Any pending hospital bills can still be claimed by the nominee — submit them within the claim time limit.',
-    'Inform the insurer to remove the member and update the policy at renewal.',
-  ],
-  'motor': [
-    'The vehicle and its insurance must be transferred to the legal heir within the time the insurer specifies.',
-    'Inform the insurer with the death certificate and the new owner\'s documents.',
-    'Until transfer, avoid using the vehicle — claims may be refused if the registered owner has died.',
-  ],
-  'other': ['Inform the insurer with the death certificate and ask for their claim or transfer process.'],
+Map<String, List<String>> _afterDeathSteps(AppLocalizations t) => {
+  'life': [t.deathLife1, t.deathLife2, t.deathLife3, t.deathLife4],
+  'health': [t.deathHealth1, t.deathHealth2, t.deathHealth3],
+  'motor': [t.deathMotor1, t.deathMotor2, t.deathMotor3],
+  'other': [t.deathOther1],
 };
 
-const _afterDeathDocs = [
-  'Death certificate (original or attested copy)',
-  'Policy document or policy number',
-  'Nominee\'s photo ID and address proof (Aadhaar / PAN)',
-  'Nominee\'s bank details (cancelled cheque)',
-  'Medical records or hospital discharge summary (if applicable)',
-  'FIR and post-mortem report (for accidental death)',
+List<String> _afterDeathDocs(AppLocalizations t) => [
+  t.deathDoc1,
+  t.deathDoc2,
+  t.deathDoc3,
+  t.deathDoc4,
+  t.deathDoc5,
+  t.deathDoc6,
 ];
 
 class NomineesScreen extends ConsumerWidget {
   const NomineesScreen({super.key, required this.policyId});
   final String policyId;
 
-  Future<void> _share(Policy p) async {
+  Future<void> _share(Policy p, AppLocalizations t) async {
     final names = p.nominees.map((n) => '${n.fullName} (${humanise(n.relation)}, ${n.sharePercent}%)').join(', ');
-    final steps = (_afterDeathSteps[p.policyType] ?? _afterDeathSteps['other']!).map((s) => '• $s').join('\n');
+    final all = _afterDeathSteps(t);
+    final steps = (all[p.policyType] ?? all['other']!).map((s) => '• $s').join('\n');
+    final type = policyTypeLabel(p.policyType);
     await SharePlus.instance.share(
       ShareParams(
-        subject: 'My ${policyTypeLabel(p.policyType).toLowerCase()} insurance details',
-        text:
-            'Keep this safe.\n\n'
-            '${p.displayName} — ${policyTypeLabel(p.policyType)} insurance\n'
-            'Policy number: ${p.policyNumber ?? 'see policy document'}\n'
-            'Cover: ${formatInr(p.sumInsured)}\n'
-            'Nominees: ${names.isEmpty ? 'not recorded' : names}\n\n'
-            'If something happens to me:\n$steps',
+        subject: t.shareSubject(type),
+        text: t.shareBody(
+          p.displayName,
+          type,
+          p.policyNumber ?? t.seePolicyDocument,
+          formatInr(p.sumInsured),
+          names.isEmpty ? t.notRecorded.toLowerCase() : names,
+          steps,
+        ),
       ),
     );
   }
@@ -69,13 +60,13 @@ class NomineesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final policy = ref.watch(policyProvider(policyId));
     return Scaffold(
-      appBar: AppBar(title: const Text('Nominees')),
+      appBar: AppBar(title: Text(context.l10n.nominees)),
       floatingActionButton: policy.value == null || policy.value!.nominees.fold(0, (a, n) => a + n.sharePercent) >= 100
           ? null
           : FloatingActionButton.extended(
               onPressed: () => showNomineeSheet(context, policy.value!),
               icon: const Icon(Icons.person_add_alt_1_rounded),
-              label: const Text('Add nominee'),
+              label: Text(context.l10n.addNominee),
             ),
       body: AsyncValueView(
         value: policy,
@@ -105,10 +96,10 @@ class NomineesScreen extends ConsumerWidget {
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         total == 100
-                            ? '100% of the claim amount is assigned'
+                            ? context.l10n.fullyAssigned
                             : total == 0
-                            ? 'No nominee recorded yet'
-                            : '$total% assigned · ${100 - total}% left',
+                            ? context.l10n.noNomineeYet
+                            : context.l10n.assignedLeft(total, 100 - total),
                         style: TextStyle(color: total == 100 ? AppColors.accent : AppColors.warning),
                       ),
                     ],
@@ -116,12 +107,8 @@ class NomineesScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'This is your own record. The nominee that counts legally is the one registered with your insurer — '
-                'keep them the same.',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
-              ),
-              if (p.nominees.isNotEmpty) const SectionHeader('Nominees'),
+              Text(context.l10n.nomineeLegalNote, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              if (p.nominees.isNotEmpty) SectionHeader(context.l10n.nominees),
               for (final n in p.nominees)
                 Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -139,7 +126,7 @@ class NomineesScreen extends ConsumerWidget {
                       subtitle: Text(
                         [
                           humanise(n.relation),
-                          if (n.isMinor) 'Minor · appointee: ${n.appointeeName ?? 'not set'}',
+                          if (n.isMinor) context.l10n.minorAppointee(n.appointeeName ?? context.l10n.notSet),
                           if (n.phone != null) n.phone!,
                         ].join(' · '),
                       ),
@@ -148,14 +135,16 @@ class NomineesScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-              const SectionHeader('If something happens to you'),
+              SectionHeader(context.l10n.ifSomethingHappens),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final (i, step) in (_afterDeathSteps[p.policyType] ?? _afterDeathSteps['other']!).indexed)
+                      for (final (i, step)
+                          in (_afterDeathSteps(context.l10n)[p.policyType] ?? _afterDeathSteps(context.l10n)['other']!)
+                              .indexed)
                         Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                           child: Row(
@@ -168,9 +157,9 @@ class NomineesScreen extends ConsumerWidget {
                           ),
                         ),
                       const Divider(),
-                      const Text('Documents your family will need', style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(context.l10n.docsFamilyNeeds, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: AppSpacing.xs),
-                      for (final d in _afterDeathDocs)
+                      for (final d in _afterDeathDocs(context.l10n))
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
@@ -187,9 +176,9 @@ class NomineesScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.md),
               OutlinedButton.icon(
-                onPressed: () => _share(p),
+                onPressed: () => _share(p, context.l10n),
                 icon: const Icon(Icons.ios_share_rounded),
-                label: const Text('Share these details with family'),
+                label: Text(context.l10n.shareWithFamily),
               ),
             ],
           );
@@ -243,7 +232,7 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
 
   Future<void> _save() async {
     if (_isMinor && _appointee.text.trim().isEmpty) {
-      setState(() => _error = 'Add an appointee — an adult who receives the money for a minor.');
+      setState(() => _error = context.l10n.needAppointee);
       return;
     }
     setState(() => _saving = true);
@@ -293,12 +282,12 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              widget.nominee == null ? 'Add nominee' : 'Edit nominee',
+              widget.nominee == null ? context.l10n.addNominee : context.l10n.editNominee,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             if (widget.nominee == null && family.any((m) => m.relation != 'self')) ...[
               const SizedBox(height: AppSpacing.sm),
-              const Text('Pick from family', style: TextStyle(color: AppColors.textSecondary)),
+              Text(context.l10n.pickFromFamily, style: const TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: AppSpacing.xs),
               Wrap(
                 spacing: AppSpacing.sm,
@@ -322,17 +311,17 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
               controller: _name,
               textCapitalization: TextCapitalization.words,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(labelText: 'Full name (as in the policy)'),
+              decoration: InputDecoration(labelText: context.l10n.fullNameAsPolicy),
             ),
             const SizedBox(height: AppSpacing.md),
             DropdownButtonFormField<String>(
               initialValue: _relation,
-              decoration: const InputDecoration(labelText: 'Relationship'),
+              decoration: InputDecoration(labelText: context.l10n.relationship),
               items: [for (final r in nomineeRelations) DropdownMenuItem(value: r, child: Text(humanise(r)))],
               onChanged: (v) => setState(() => _relation = v ?? _relation),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text('Share of claim: ${_share.round()}%', style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text(context.l10n.shareOfClaim(_share.round()), style: const TextStyle(fontWeight: FontWeight.w600)),
             Slider(
               value: _share.clamp(1, _available.toDouble().clamp(1, 100)),
               min: 1,
@@ -343,7 +332,7 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
             ),
             OutlinedButton.icon(
               icon: const Icon(Icons.cake_outlined),
-              label: Text(_dob == null ? 'Date of birth (optional)' : formatDate(_dob)),
+              label: Text(_dob == null ? context.l10n.dobOptional : formatDate(_dob)),
               onPressed: () async {
                 final picked = await showDatePicker(
                   context: context,
@@ -359,26 +348,29 @@ class _NomineeFormState extends ConsumerState<_NomineeForm> {
               TextField(
                 controller: _appointee,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Appointee (adult who receives money for the minor)'),
+                decoration: InputDecoration(labelText: context.l10n.appointeeLabel),
               ),
             ],
             const SizedBox(height: AppSpacing.md),
             TextField(
               controller: _phone,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Phone (optional)'),
+              decoration: InputDecoration(labelText: context.l10n.phoneOptional),
             ),
             if (_error != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Text(_error!, style: const TextStyle(color: AppColors.error)),
             ],
             const SizedBox(height: AppSpacing.lg),
-            FilledButton(onPressed: _name.text.trim().isEmpty || _saving ? null : _save, child: const Text('Save')),
+            FilledButton(
+              onPressed: _name.text.trim().isEmpty || _saving ? null : _save,
+              child: Text(context.l10n.save),
+            ),
             if (widget.nominee != null)
               TextButton(
                 onPressed: _delete,
                 style: TextButton.styleFrom(foregroundColor: AppColors.error),
-                child: const Text('Remove nominee'),
+                child: Text(context.l10n.removeNominee),
               ),
           ],
         ),
