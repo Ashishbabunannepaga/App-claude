@@ -83,6 +83,13 @@ bad → **Wipe Data**. A real phone over wireless debugging (docs/DEMO.md) avoid
 Normal for a debug build on a cold emulator (debug code is not optimised). Judge speed with
 `flutter run --profile` on a real phone.
 
+## Login says "The connection timed out" but the backend is running
+
+The phone reaches the backend (the log shows `GET /health 200`), but the database is not running. Check:
+`http://127.0.0.1:8000/health/ready` in a browser on the PC. `"database": "unreachable"` means Postgres is down:
+start **Docker Desktop**, then `docker compose up -d` in the `App-claude` folder, wait 10 seconds, and try again.
+`docker ps` must list a `pgvector` container.
+
 ## `No supported devices found with name or id matching '--dart-define=…'`
 
 `$phone` was empty (new terminal). Paste the two lines again before `flutter run`:
