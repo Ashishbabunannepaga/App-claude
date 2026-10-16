@@ -1,6 +1,6 @@
 # Beginner's guide — running, testing and changing InsureIQ
 
-Written for someone new to mobile development. Read it top to bottom once; afterwards use it as a reference.
+> Newer, up-to-date setup steps: [`INTERN_SETUP.md`](INTERN_SETUP.md). This older guide is kept for reference.
 
 ---
 

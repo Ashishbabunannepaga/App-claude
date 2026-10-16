@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
+/// Button labels replace the text theme's style, so they carry the font and the Indian-script fallbacks themselves
+/// (without them Hindi labels on filled and outlined buttons render as empty boxes where the system has no
+/// Devanagari font, e.g. the web build).
+const _buttonText = TextStyle(
+  fontFamily: 'Inter',
+  fontFamilyFallback: indicFontFallback,
+  fontSize: 16,
+  fontWeight: FontWeight.w700,
+);
+
 const indicFontFallback = [
   'NotoSansDevanagari',
   'NotoSansTamil',
@@ -82,7 +92,7 @@ class AppTheme {
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: _buttonText,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -90,7 +100,7 @@ class AppTheme {
           minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusSm)),
           side: BorderSide(color: AppColors.border, width: 1.5),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: _buttonText,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(

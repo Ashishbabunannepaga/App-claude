@@ -137,4 +137,13 @@ void main() {
     expect(find.bySemanticsLabel('Add policy'), findsWidgets);
     semantics.dispose();
   });
+
+  test('button labels keep the Indian-script fallback fonts (Hindi on filled/outlined buttons)', () {
+    for (final theme in [AppTheme.light(), AppTheme.dark()]) {
+      for (final style in [theme.filledButtonTheme.style!, theme.outlinedButtonTheme.style!]) {
+        final text = style.textStyle!.resolve({})!;
+        expect(text.fontFamilyFallback, contains('NotoSansDevanagari'));
+      }
+    }
+  });
 }
