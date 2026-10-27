@@ -66,7 +66,7 @@ Own AI is only as good as the data. Every step below is already supported by the
 1. **Collect** anonymised policies (Week 0 task) → upload them through the app or a script.
 2. **Correct**: every user correction on the verify screen is stored with confidence 1.0 — that is a labelled example.
 3. **Label clauses**: the rule-based clause types are a starting label set; reviewers fix mistakes → training data.
-4. **Evaluate**: golden Q&A sets per policy (intern) measure every model change.
+4. **Evaluate**: golden Q&A sets per policy (QA) measure every model change.
 5. **Train**: once ~2–5k labelled policies exist, fine-tune a small model for extraction and clause typing, and
    compare it against the API models on the golden set before switching.
 

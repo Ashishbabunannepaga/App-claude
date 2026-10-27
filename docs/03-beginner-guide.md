@@ -1,6 +1,6 @@
 # Beginner's guide — running, testing and changing InsureIQ
 
-> Newer, up-to-date setup steps: [`INTERN_SETUP.md`](INTERN_SETUP.md). This older guide is kept for reference.
+> Newer, up-to-date setup steps: [`SETUP.md`](SETUP.md). This older guide is kept for reference.
 
 ---
 

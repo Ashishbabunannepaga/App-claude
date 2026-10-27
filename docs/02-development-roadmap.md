@@ -1,6 +1,6 @@
 # Phase 2 — Development Roadmap (12 weeks)
 
-**Team:** **Lead** = you (technical/product lead: backend, AI, DB, architecture) · **Mobile** = Flutter developer · **Intern** = AI & Software Engineering intern · **Design** = part-time UI/UX · **Legal** = external counsel.
+**Team:** **Lead** = you (technical/product lead: backend, AI, DB, architecture) · **Mobile** = Flutter developer · **QA** = AI & data QA engineer · **Design** = part-time UI/UX · **Legal** = external counsel.
 
 Assumed start: Monday 5 Oct 2026 → target store submission in Week 11 (14–18 Dec 2026), public release by early Jan 2027 including review buffer. Indian festive season (Diwali ~8 Nov 2026) falls in Week 5 — plan reduced capacity.
 
@@ -19,7 +19,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | Privacy Policy, T&C, grievance officer (DPDP) | Legal | Signed-off drafts |
 | IRDAI opinion that V1 (organise/understand own policies, no selling) is permissible | Legal | Written opinion |
 | AI vendor DPAs / zero-retention terms; OCR vendor review | Lead + Legal | Vendor register |
-| Collect 50–100 anonymised policy documents (health/life/motor, digital + scanned) | Intern | Dataset in private bucket with labels sheet |
+| Collect 50–100 anonymised policy documents (health/life/motor, digital + scanned) | QA | Dataset in private bucket with labels sheet |
 | SMS provider + DLT template registration (TRAI requirement for OTP SMS in India) | Lead | DLT template approved — **long lead time, start now** |
 
 ## Week 1 — Foundation
@@ -31,7 +31,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | ✅ Flutter project, theme tokens, router, network layer | Mobile |
 | 🔲 Figma: design system + core screens (login, home, portfolio, add, verify, detail, chat) | Design |
 | 🔲 Requirements freeze (this doc + blueprint signed off) | Lead |
-| 🔲 Labelling sheet schema for the test dataset | Intern |
+| 🔲 Labelling sheet schema for the test dataset | QA |
 
 **Deliverables:** running backend `/health`, Flutter app boots on Android emulator + iOS simulator. **Acceptance:** CI green; one-command local setup documented.
 
@@ -44,7 +44,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | ✅ Login/OTP/profile screens, secure token storage, auth guard, silent refresh | Mobile |
 | ✅ Real SMS provider integration (behind `OtpSender`) | Lead |
 | 🔲 Consent screen copy from Legal | Mobile + Legal |
-| 🔲 Auth tests (rate limits, expiry, reuse detection) — extend | Intern |
+| 🔲 Auth tests (rate limits, expiry, reuse detection) — extend | QA |
 
 **Dependencies:** DLT template for SMS. **Acceptance:** a new user can sign up on a real device; tokens survive app restart; logout revokes.
 
@@ -56,7 +56,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | ✅ Add-policy source chooser, file picker, upload progress, processing status polling | Mobile |
 | ✅ Camera capture (`image_picker`) for photos | Mobile |
 | 🔲 Staging infrastructure (DB, bucket, Redis, worker) | Lead |
-| 🔲 Label first 30 documents (ground-truth fields) | Intern |
+| 🔲 Label first 30 documents (ground-truth fields) | QA |
 
 **Acceptance:** upload 20 MB PDF on 4G with progress; file is private in bucket; delete removes it.
 
@@ -67,8 +67,8 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | ✅ Text extraction (pypdf) + OCR fallback (Tesseract) | Lead |
 | ✅ Classification + AI structured extraction + regex validation + confidence | Lead |
 | ✅ Verify/correct screen with low-confidence highlighting, manual entry | Mobile |
-| 🔲 Type-specific detail schemas (health/life/motor) refined against dataset | Lead + Intern |
-| 🔲 Extraction accuracy script vs labelled set | Intern |
+| 🔲 Type-specific detail schemas (health/life/motor) refined against dataset | Lead + QA |
+| 🔲 Extraction accuracy script vs labelled set | QA |
 
 **Acceptance:** ≥ 90% accuracy on the six core fields (number, insurer, start, end, premium, cover) on digital PDFs; ≥ 75% on scans; every failure recoverable via manual entry.
 
@@ -78,7 +78,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 |-------|-------|
 | ✅ Chunking, embeddings, pgvector search, Q&A endpoint with citations & refusal | Lead |
 | ✅ Chat screen with citations, disclaimer, loading/error states | Mobile |
-| 🔲 Golden Q&A set (10 questions × 30 policies) | Intern |
+| 🔲 Golden Q&A set (10 questions × 30 policies) | QA |
 
 **Acceptance:** answers cite a page; out-of-document questions are refused, not invented.
 
@@ -87,7 +87,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | Tasks | Owner |
 |-------|-------|
 | ✅ Policy summary ("Understand my policy") | Lead |
-| 🔲 Hybrid retrieval (keyword + vector), prompt tuning, eval loop | Lead + Intern |
+| 🔲 Hybrid retrieval (keyword + vector), prompt tuning, eval loop | Lead + QA |
 | 🔲 Cost & latency budget per question (target < 6 s p90) | Lead |
 | ✅ Policy detail screen with type-specific sections | Mobile |
 
@@ -122,7 +122,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 |-------|-------|
 | 🔲 Security review: authZ tests on every endpoint, ✅ Redis rate limits, log scrubbing, pip-audit | Lead |
 | 🔲 Crashlytics, Sentry, uptime alerts | Mobile + Lead |
-| 🔲 Device matrix testing (low-end Android, small iPhone, tablets off) | Intern + Mobile |
+| 🔲 Device matrix testing (low-end Android, small iPhone, tablets off) | QA + Mobile |
 | 🔲 Accessibility pass (contrast, text scaling, screen readers) | Mobile + Design |
 
 ## Week 10 — Hardening II
@@ -130,7 +130,7 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | Tasks | Owner |
 |-------|-------|
 | 🔲 Performance: cold start < 3 s, list rendering, API p95 < 500 ms (non-AI) | Mobile + Lead |
-| 🔲 Full AI regression run, fix top failure modes | Lead + Intern |
+| 🔲 Full AI regression run, fix top failure modes | Lead + QA |
 | 🔲 Bug bash, UI polish | All |
 | ✅ Admin panel (minimal, PII-masked) (P1) | Lead |
 
@@ -168,4 +168,4 @@ Status legend: ✅ done in this repository · 🔲 to do.
 | Store account / D-U-N-S delays | Start Week 0 |
 | Gmail restricted-scope verification | Deferred to V2 |
 | Regulatory | No selling/recommendation in V1; legal opinion before any |
-| Lead bottleneck | Mobile owns all Flutter; intern owns dataset + evaluation |
+| Lead bottleneck | Mobile owns all Flutter; QA owns dataset + evaluation |

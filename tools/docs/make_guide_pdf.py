@@ -1,4 +1,4 @@
-"""Builds docs/CapitUp-Setup-Guide.pdf from docs/INTERN_SETUP.md (with its screenshots).
+"""Builds docs/CapitUp-Setup-Guide.pdf from docs/SETUP.md (with its screenshots).
 
 Needs: pip install markdown; Node with Playwright (Chromium).  Run from the repo root:
     python tools/docs/make_guide_pdf.py
@@ -41,7 +41,7 @@ const { chromium } = require('playwright');
 
 
 def main() -> None:
-    body = markdown.markdown((DOCS / "INTERN_SETUP.md").read_text(encoding="utf-8"), extensions=["tables", "fenced_code"])
+    body = markdown.markdown((DOCS / "SETUP.md").read_text(encoding="utf-8"), extensions=["tables", "fenced_code"])
     html = f'<!doctype html><html><head><meta charset="utf-8"><title>CapitUp setup guide</title><style>{CSS}</style></head><body>{body}</body></html>'
     page = DOCS / "_guide.html"  # next to the .md so the screenshot paths resolve
     page.write_text(html, encoding="utf-8")

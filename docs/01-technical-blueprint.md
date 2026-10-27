@@ -261,7 +261,7 @@ Any exception → status = failed with a user-safe error code; retry allowed (ma
   4. LLM must return JSON `{answerable, answer, citations:[ids], confidence}` and is instructed to answer **only** from context and say it cannot find it otherwise.
   5. **Post-validation**: citations must reference provided chunk ids; if `answerable` but no valid citation → downgrade to "couldn't confirm from your document". Answers always carry a disclaimer ("Based on your policy document. Confirm with your insurer before making a claim decision.").
   6. Store Q&A for evaluation (users can 👍/👎 — P1).
-- **Evaluation** (intern): golden set of questions per test policy with expected answers & pages; nightly script computing extraction field accuracy and Q&A groundedness.
+- **Evaluation** (QA): golden set of questions per test policy with expected answers & pages; nightly script computing extraction field accuracy and Q&A groundedness.
 - **Data handling with AI vendors**: use API tiers with zero-data-retention / no-training terms; document in DPDP vendor register; strip phone/email from prompts where not needed.
 
 ## 12. Storage architecture

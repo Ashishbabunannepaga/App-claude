@@ -11,7 +11,7 @@ V1 core loop: **Add policy → Read → Understand → Ask → Track → Renew**
 |---|---|
 | 📐 Technical blueprint (Phase 1) | [`docs/01-technical-blueprint.md`](docs/01-technical-blueprint.md) |
 | 🗓️ 12-week roadmap (Phase 2) | [`docs/02-development-roadmap.md`](docs/02-development-roadmap.md) |
-| 🧑‍💻 **New developer? Start here: setup guide** (folders, Windows install, run on a phone, screenshots) | [`docs/INTERN_SETUP.md`](docs/INTERN_SETUP.md) |
+| 🧑‍💻 **New developer? Start here: setup guide** (folders, Windows install, run on a phone, screenshots) | [`docs/SETUP.md`](docs/SETUP.md) |
 | 🎓 **New here? Beginner's guide** (install, run on your phone, daily workflow) | [`docs/03-beginner-guide.md`](docs/03-beginner-guide.md) |
 | 🔭 Vision plan (5 phases → what is built / next / needs partners) | [`docs/04-vision-plan.md`](docs/04-vision-plan.md) |
 | 🐍 Backend (FastAPI + PostgreSQL/pgvector) | [`backend/`](backend) |

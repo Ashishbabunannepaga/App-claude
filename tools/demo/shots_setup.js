@@ -1,4 +1,4 @@
-// Setup-guide screenshots (docs/screenshots/v3): English (light), Hindi, dark. Usage: node shots_intern.js <outdir> <ids.txt>
+// Setup-guide screenshots (docs/screenshots/v3): English (light), Hindi, dark. Usage: node shots_setup.js <outdir> <ids.txt>
 const { chromium } = require('playwright');
 const fs = require('fs');
 const OUT = process.argv[2];
