@@ -1,0 +1,213 @@
+<title>CapitUp Photo Booth</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
+<style>
+/* Layout: a fabricator's concept sheet. Drawings to scale on a pale drafting ground, specs in tables beside them. */
+:root {
+  --ground: #F3F6F5; --sheet: #FFFFFF; --ink: #0B2B2E; --fg: #0F1F1D; --muted: #55635F;
+  --line: #DCE4E1; --gold: #F5A81C; --gold-text: #7A4E00; --teal: #0B7A75; --flag: #FFF3D6; --flag-fg: #7A4E00;
+  --dim: #0B7A75; --floor: #C9D3D0; --person: #9AA8A4; --venue: #E6ECEA;
+  --font: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #081A1C; --sheet: #0E2427; --fg: #E8EFED; --muted: #9DB0AC; --line: #23403F; --gold-text: #F5A81C;
+  --teal: #4FC2BB; --flag: #3A2A06; --flag-fg: #FFD27A; --dim: #4FC2BB; --floor: #35504E; --person: #4D6663; --venue: #13302F;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #081A1C; --sheet: #0E2427; --fg: #E8EFED; --muted: #9DB0AC; --line: #23403F; --gold-text: #F5A81C;
+  --teal: #4FC2BB; --flag: #3A2A06; --flag-fg: #FFD27A; --dim: #4FC2BB; --floor: #35504E; --person: #4D6663; --venue: #13302F;
+  color-scheme: dark }
+body { background: var(--ground); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.55; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 56px; }
+header.top { display: grid; gap: 14px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+h1 { font-size: clamp(34px, 6vw, 60px); line-height: 1.02; font-weight: 900; letter-spacing: -.03em; margin: 0; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--gold-text); }
+h2 { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+h3 { font-size: 18px; font-weight: 800; margin: 0; }
+p { margin: 0; max-width: 68ch; }
+.lede { font-size: 18px; color: var(--muted); }
+section { display: grid; gap: 20px; }
+.flag { display: inline-block; background: var(--flag); color: var(--flag-fg); font-size: 11px; font-weight: 800;
+  letter-spacing: .08em; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; vertical-align: 2px; white-space: nowrap; }
+.note { background: var(--flag); color: var(--flag-fg); padding: 14px 16px; border-radius: 10px; font-size: 15px; }
+.concept { background: var(--sheet); border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: grid; gap: 18px; }
+.concept.pick { border: 2px solid var(--gold); }
+.chead { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+.chead .tag { font-size: 13px; font-weight: 700; color: var(--muted); }
+.pick .tag { color: var(--gold-text); }
+.draw { overflow-x: auto; }
+.draw svg { display: block; width: 100%; height: auto; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.pair > * { min-width: 0; }
+.pair .narrow svg { max-width: 300px; margin: 0 auto; }
+.views { display: grid; grid-template-columns: 3fr 2fr; gap: 20px; align-items: start; }
+.views > * { min-width: 0; }
+.cap { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 24px; font-size: 14px; }
+.facts dt { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: 2px 0 0; font-weight: 600; }
+.tbl { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: 800; border-bottom: 0; }
+ol.flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: s; }
+ol.flow li { counter-increment: s; display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+ol.flow li::before { content: counter(s); width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--gold);
+  display: grid; place-items: center; font-weight: 900; }
+ol.flow b { display: block; }
+ol.flow span { color: var(--muted); font-size: 15px; }
+.files { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.file { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 8px; align-content: start; }
+.file .art { background: var(--venue); border-radius: 8px; padding: 10px; display: grid; place-items: center; }
+.file .art svg { width: 100%; height: auto; max-height: 220px; display: block; }
+.file b { font-size: 14px; }
+.file span { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+code { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: .9em; background: var(--venue); padding: 1px 5px; border-radius: 4px; }
+ul.approve { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 75ch; }
+.swatches { display: flex; flex-wrap: wrap; gap: 12px; }
+.sw { display: grid; grid-template-columns: 40px auto; gap: 10px; align-items: center; font-size: 13px; }
+.sw i { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); }
+.sw b { display: block; font-size: 14px; }
+/* drawing tokens */
+.dimline { stroke: var(--dim); stroke-width: 6; fill: none; }
+.dimtext { fill: var(--dim); font: 700 64px var(--font); }
+.floor { stroke: var(--floor); stroke-width: 10; }
+.person { fill: var(--person); }
+.venue { fill: var(--venue); }
+.lbl { fill: var(--muted); font: 600 52px var(--font); }
+@media (max-width: 760px) { .views, .pair { grid-template-columns: 1fr; } .concept { padding: 16px; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">CapitUp India · event booth · concept pack v1</div>
+    <h1>A 6-foot photo booth that makes reading your policy <em>worth a selfie</em>.</h1>
+    <p class="lede">Three concepts for a freestanding 1.8 m booth, drawn to scale. Concept A is recommended and has print-ready files. Every item marked <span class="flag">Needs approval</span> must be signed off by CapitUp before printing.</p>
+    <div class="note"><b>Logo:</b> the official CapitUp logo file is not in the project, so every logo position is an exact-size, labelled box and nothing is redrawn. Put the approved vector master at <code>marketing/photo-booth/print/logo/capitup-logo.svg</code> and re-run the build. The logo then goes in at its own proportions, so its colours and spacing stay exactly as supplied. The logo always sits on a light plate because the teal in the logo would get lost on the dark booth. <span class="flag">Needs approval</span></div>
+  </header>
+
+  <section>
+    <h2>Look and feel</h2>
+    <p>The base is matte deep ink with gold as the only accent. Warm 2700 K LED light runs along the edges. Light plates carry the logo and the QR code. Type is Inter, the font the CapitUp app already uses.</p>
+    <div class="swatches">
+      <div class="sw"><i style="background:#0B2B2E"></i><div><b>Ink #0B2B2E</b>matte base · ~C88 M52 Y55 K62</div></div>
+      <div class="sw"><i style="background:#F5A81C"></i><div><b>Gold #F5A81C</b>the one accent · ~C0 M38 Y92 K0</div></div>
+      <div class="sw"><i style="background:#0B7A75"></i><div><b>Teal #0B7A75</b>URL text only · ~C88 M28 Y56 K12</div></div>
+      <div class="sw"><i style="background:#F6F8F7"></i><div><b>Paper #F6F8F7</b>logo & QR plates · ~C3 M0 Y2 K0</div></div>
+    </div>
+    <p class="cap">The CMYK values are starting points. Approve colour against a printed proof on the actual fabric and ACP. <span class="flag">Needs approval</span></p>
+    <p><b>Tagline:</b> “Check your policy. Share your win.” <span class="flag">Needs approval</span> &nbsp;Alternatives: “Read the fine print. Strike a pose.” · “Policy checked. Main-character energy.”</p>
+  </section>
+
+  <section>
+    <h2>Concept sketches</h2>
+
+    <article class="concept pick">
+      <div class="chead"><h3>A · The Frame</h3><span class="tag">Recommended · print files ready</span></div>
+      <p>A flat fabric wall with a lit top sign. Gold corner brackets frame 1 to 3 people. The tagline sits to the left and the logo and QR plate to the right, both kept beside the people so they stay visible in every photo.</p>
+      <div class="views">
+        <figure style="margin:0">
+          <div class="draw">{{ELEV_A}}</div>
+          <figcaption class="cap">Front elevation, to scale (mm). The figures are 1650 and 1720 mm tall. Tall visitors cover the lower part of the top sign, which is why the logo and QR plate on the right sit beside the people.</figcaption>
+        </figure>
+        <figure style="margin:0">
+          <div class="draw">{{PLAN_A}}</div>
+          <figcaption class="cap">Plan view: footprint about 3.6 × 2.4 m, with the visitor path.</figcaption>
+        </figure>
+      </div>
+      <dl class="facts">
+        <div><dt>Overall</dt><dd>2400 W × 1800 H × 400 D</dd></div>
+        <div><dt>Selfie frame</dt><dd>1100 W × 1390 H, fits 1–3 people</dd></div>
+        <div><dt>QR</dt><dd>360 mm, centre at 1.1 m, scans from about 3 m</dd></div>
+        <div><dt>Setup</dt><dd>2 people, about 30 min, no tools</dd></div>
+        <div><dt>Packed</dt><dd>3 bags, about 28 kg total</dd></div>
+        <div><dt>Cost / unit</dt><dd>₹45k–70k + GST</dd></div>
+      </dl>
+    </article>
+
+    <div class="pair">
+    <article class="concept">
+      <div class="chead"><h3>B · The Portal</h3><span class="tag">Most premium · heaviest</span></div>
+      <p>A walk-through arch with two 450 mm pillars and a top sign. The warm LED strip runs around the inner edge of the opening, so people stand in a ring of light. The QR code is on the right pillar at eye level. A fabric backdrop sits 900 mm behind the arch.</p>
+      <div class="draw">{{ELEV_B}}</div>
+      <dl class="facts">
+        <div><dt>Overall</dt><dd>2400 W × 1800 H × 600 D</dd></div>
+        <div><dt>Opening</dt><dd>1500 W × 1500 H</dd></div>
+        <div><dt>Setup</dt><dd>2 people, 45–60 min</dd></div>
+        <div><dt>Cost / unit</dt><dd>₹87k–1.31L + GST</dd></div>
+      </dl>
+    </article>
+
+    <article class="concept">
+      <div class="chead"><h3>C · The Phone</h3><span class="tag">Cheapest · most Gen Z</span></div>
+      <p>A giant phone standee with the screen cut out. People step behind it and lean into the screen, which reads like a CapitUp app screen. Fits 1–2 people. The QR code sits low, so it needs a separate QR standee.</p>
+      <div class="draw narrow">{{ELEV_C}}</div>
+      <dl class="facts">
+        <div><dt>Overall</dt><dd>1100 W × 1800 H × 450 D</dd></div>
+        <div><dt>Window</dt><dd>860 W × 1100 H, top at 1650</dd></div>
+        <div><dt>Setup</dt><dd>1 person, 10 min</dd></div>
+        <div><dt>Cost / unit</dt><dd>₹20k–32k + GST</dd></div>
+      </dl>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Materials and cost: Concept A, per unit</h2>
+    <p>These are indicative 2026 rates from Indian large-format printers and exhibition fabricators in metro cities, before GST. Get 2–3 quotes before ordering. <span class="flag">Needs approval</span> (budget)</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Item</th><th>Spec</th><th class="n">Qty</th><th class="n">₹ low</th><th class="n">₹ high</th></tr></thead>
+      <tbody>
+        {{BOM_ROWS}}
+      </tbody>
+    </table></div>
+    <p class="cap">With 18% GST the total is about ₹53,600–₹82,100. Not included: transport to the venue, set-up labour and venue power. Each event uses about ₹2,400–4,200 of stickers.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Concept</th><th>Main build</th><th class="n">₹ per unit, before GST</th></tr></thead>
+      <tbody>
+        <tr><td>A · The Frame</td><td>SEG aluminium frame + fabric, ACP header, LED channels, props</td><td class="n">45,400 – 69,600</td></tr>
+        <tr><td>B · The Portal</td><td>Two 18 mm MDF pillars clad in ACP with matte PU paint, ACP header, SEG backdrop, LED, props</td><td class="n">87,000 – 1,31,000</td></tr>
+        <tr><td>C · The Phone</td><td>3 mm ACP cut on a CNC router, A-frame back stand, LED edge strip, separate QR standee, props</td><td class="n">20,000 – 32,000</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Print files: Concept A</h2>
+    <p>Each file is 1:1 in millimetres, with bleed. Send the PDFs in <code>print/out/print/</code> to the printer. The proofs in <code>print/out/proof/</code> show the trim line (cyan) and safe area (magenta, dashed) for sign-off. Sticker and prop cut lines are a magenta <code>cut</code> layer.</p>
+    <div class="files">{{FILES}}</div>
+  </section>
+
+  <section>
+    <h2>How a visitor uses it</h2>
+    <ol class="flow">
+      <li><div><b>Spot it</b><span>The lit top sign is visible over the crowd. One host stands at the booth and asks, “Want a photo?”</span></div></li>
+      <li><div><b>Grab a prop</b><span>The visitor picks up the “My Policy Report” card. It is a sample that shows no real policy and no personal data.</span></div></li>
+      <li><div><b>Stand in the frame</b><span>Up to three people stand on the “Stand here” floor decal inside the gold brackets.</span></div></li>
+      <li><div><b>Take the photo on their own phone</b><span>The visitor clips their phone onto the stand over the “Phone goes here” floor spot, 1.8 m from the frame, then taps the Bluetooth shutter or uses the timer. The photo never leaves their phone, and CapitUp stores nothing.</span></div></li>
+      <li><div><b>Share it</b><span>They post the photo with #PolicyChecked and tag CapitUp’s account. <span class="flag">Needs approval</span> (hashtag and handle)</span></div></li>
+      <li><div><b>Scan the QR code</b><span>With the phone still in hand, they scan the QR code on the light plate to the right of the frame. capitupindia.com opens in the browser.</span></div></li>
+      <li><div><b>Stick your win</b><span>They take two stickers: one to keep and one for the sticker wall, which asks, “What did your policy surprise you with?”</span></div></li>
+    </ol>
+    <div class="note"><b>No client data at the booth.</b> Hosts don't collect policy numbers, phone numbers or documents, and they don't photograph visitors on company devices. Anyone who wants a review signs up on the website, where consent is captured. On the morning of each event, scan the QR code with one iPhone and one Android phone from 3 m away.</div>
+  </section>
+
+  <section>
+    <h2>What CapitUp needs to approve</h2>
+    <ul class="approve">
+      <li>The official logo vector, clear-space and minimum-size rules, and whether there is an approved on-dark version</li>
+      <li>The tagline “Check your policy. Share your win.”</li>
+      <li>The supporting lines: “We read the fine print, so you don't have to.” · “Policy review, in plain words” · “Scan to check your policy” · “We don't sell insurance.” Check them against what the service actually does and against IRDAI advertising norms.</li>
+      <li>The hashtag #PolicyChecked and the social handle to tag</li>
+      <li>The six sticker lines and the sample report card content</li>
+      <li>The QR destination: currently plain https://capitupindia.com. Add UTM tags if event tracking is wanted.</li>
+      <li>Colour proofs on the real materials, the budget and vendor choice, and the venue rules (power, floor decals, fire-retardant fabric certificate)</li>
+    </ul>
+  </section>
+</div>
