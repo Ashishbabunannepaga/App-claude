@@ -170,12 +170,19 @@ clients: []
 
 # ---------------------------------------------------------------------
 # AI help for files the keyword rules are unsure about (optional).
-# Needs an Anthropic API key in the ANTHROPIC_API_KEY environment variable.
-# Only the email subject, sender company, file name and the first part of the
-# document text are sent - PAN and Aadhaar numbers are masked first.
+#
+# WHERE THE KEY GOES: open  api-key.txt  (in this same folder - setup.bat
+# creates it) and paste your key on its own line. Do NOT put the key in
+# this file.
+#
+# Only the email subject, sender's company domain, file name and the first
+# part of the document text are sent - PAN, Aadhaar, phone numbers and email
+# names are masked first. KYC files are never sent.
 # ---------------------------------------------------------------------
 ai:
-  enabled: false
-  model: claude-opus-5-5     # most accurate. claude-haiku-5-5 is far cheaper for bulk runs.
+  enabled: false             # change to true to switch the AI step on
+  provider: openai           # openai  or  anthropic
+  model: gpt-4o-mini         # any chat model your OpenAI account can use
+  api_key_file: api-key.txt
   max_chars: 2500            # how much document text to send per file
-  workers: 4                 # parallel requests
+  workers: 4                 # parallel requests (lower it if you see rate-limit errors)

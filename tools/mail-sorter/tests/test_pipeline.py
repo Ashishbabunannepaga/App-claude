@@ -148,23 +148,48 @@ def test_full_pipeline_and_review_roundtrip(cfg):
     assert conn.execute("SELECT category FROM files WHERE sha256=?", (sha,)).fetchone()[0] == new
 
 
-def test_ai_pass_with_fake_client(cfg, monkeypatch):
+def _fake_verdict():
+    from mailsorter.ai import Verdict
+    return Verdict(category="claims", client="Sunrise Pharma", insurer="Tata AIG",
+                   policy_no="P-1", reason="Hospital bill")
+
+
+@pytest.mark.parametrize("provider", ["openai", "anthropic"])
+def test_ai_pass_with_fake_client(cfg, monkeypatch, tmp_path, provider):
     """The AI step updates only unsure files, never KYC/high ones, and masks data."""
     import types
-    import anthropic
-    from mailsorter.ai import Verdict, ai_pass
+    from mailsorter.ai import ai_pass
 
     sent = []
+    if provider == "openai":
+        import openai
 
-    class FakeMessages:
-        def parse(self, **kw):
-            sent.append(kw["messages"][0]["content"])
-            v = Verdict(category="claims", client="Sunrise Pharma", insurer="Tata AIG",
-                        policy_no="P-1", reason="Hospital bill")
-            return types.SimpleNamespace(stop_reason="end_turn", parsed_output=v)
+        class FakeCompletions:
+            def parse(self, **kw):
+                assert kw["response_format"].__name__ == "Verdict"
+                sent.append(kw["messages"][1]["content"])
+                msg = types.SimpleNamespace(refusal=None, parsed=_fake_verdict())
+                return types.SimpleNamespace(choices=[types.SimpleNamespace(message=msg)])
 
-    monkeypatch.setattr(anthropic, "Anthropic", lambda **kw: types.SimpleNamespace(messages=FakeMessages()))
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test")
+        def fake_client(**kw):
+            assert kw["api_key"] == "sk-test-from-file"
+            return types.SimpleNamespace(chat=types.SimpleNamespace(completions=FakeCompletions()))
+        monkeypatch.setattr(openai, "OpenAI", fake_client)
+    else:
+        import anthropic
+
+        class FakeMessages:
+            def parse(self, **kw):
+                sent.append(kw["messages"][0]["content"])
+                return types.SimpleNamespace(stop_reason="end_turn", parsed_output=_fake_verdict())
+        monkeypatch.setattr(anthropic, "Anthropic",
+                            lambda **kw: types.SimpleNamespace(messages=FakeMessages()))
+
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    key_file = tmp_path / "api-key.txt"
+    key_file.write_text("# Paste your key below\nsk-test-from-file\n", encoding="utf-8")
+    cfg.ai_provider, cfg.ai_key_file = provider, key_file
 
     make_demo(cfg, n_emails=150)
     classify_all(cfg)
@@ -176,3 +201,13 @@ def test_ai_pass_with_fake_client(cfg, monkeypatch):
     assert all("ABCDE1234F" not in s for s in sent)
     got = conn.execute("SELECT category, method, client FROM files WHERE method='ai'").fetchall()
     assert got and all(tuple(r) == ("Claims", "ai", "Sunrise Pharma") for r in got)
+
+
+def test_ai_skipped_without_key(cfg, monkeypatch, tmp_path, capsys):
+    from mailsorter.ai import ai_pass
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    cfg.ai_key_file = tmp_path / "missing.txt"
+    make_demo(cfg, n_emails=20)
+    classify_all(cfg)
+    ai_pass(cfg, db.connect(cfg.db_path))
+    assert "no API key" in capsys.readouterr().out

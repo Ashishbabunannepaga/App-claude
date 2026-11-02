@@ -1,4 +1,4 @@
-"""Optional pass 2 - ask Claude about files the keyword rules were unsure about.
+"""Optional pass 2 - ask an AI model (OpenAI or Claude) about files the keyword rules were unsure about.
 
 Only a small, masked excerpt is sent: file name, email subject, sender's
 company domain and the first part of the document text. PAN and Aadhaar
@@ -52,14 +52,68 @@ def system_prompt(cfg: Config) -> str:
     )
 
 
+KEY_ENV = {"openai": "OPENAI_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
+
+
+def api_key(cfg: Config) -> str:
+    """The key comes from the environment variable, or else from the key file
+    (api-key.txt next to config.yaml). Never from config.yaml itself."""
+    key = os.environ.get(KEY_ENV[cfg.ai_provider], "").strip()
+    if key:
+        return key
+    path = cfg.ai_key_file
+    if path and path.exists():
+        for line in path.read_text(encoding="utf-8-sig").splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                return line
+    return ""
+
+
+def make_asker(cfg: Config, key: str):
+    """Returns ask(system, content) -> Verdict | None for the configured provider."""
+    if cfg.ai_provider == "openai":
+        import openai
+        client = openai.OpenAI(api_key=key, max_retries=5)
+
+        def ask(system: str, content: str):
+            resp = client.chat.completions.parse(
+                model=cfg.ai_model,
+                messages=[{"role": "system", "content": system},
+                          {"role": "user", "content": content}],
+                response_format=Verdict,
+            )
+            msg = resp.choices[0].message
+            return None if msg.refusal else msg.parsed
+        return ask
+
+    import anthropic
+    client = anthropic.Anthropic(api_key=key, max_retries=5)
+
+    def ask(system: str, content: str):
+        resp = client.messages.parse(
+            model=cfg.ai_model,
+            max_tokens=4000,
+            system=system,
+            messages=[{"role": "user", "content": content}],
+            output_format=Verdict,
+        )
+        if resp.stop_reason == "refusal":
+            return None
+        return resp.parsed_output
+    return ask
+
+
 def ai_pass(cfg: Config, conn) -> None:
-    try:
-        import anthropic
-    except ImportError:
-        print("AI step skipped: run  pip install anthropic  first.")
+    key = api_key(cfg)
+    if not key:
+        print(f"AI step skipped: no API key. Paste your {cfg.ai_provider} key into "
+              f"{cfg.ai_key_file} (see README, 'AI step').")
         return
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        print("AI step skipped: ANTHROPIC_API_KEY is not set (see README, 'Switching on AI').")
+    try:
+        ask_model = make_asker(cfg, key)
+    except ImportError:
+        print(f"AI step skipped: run 1-setup.bat again to install the {cfg.ai_provider} package.")
         return
 
     rows = db.first_message_for_files(
@@ -72,7 +126,6 @@ def ai_pass(cfg: Config, conn) -> None:
     print(f"AI step: checking {len(rows):,} files with {cfg.ai_model} "
           f"({cfg.ai_workers} at a time)...")
 
-    client = anthropic.Anthropic(max_retries=5)
     system = system_prompt(cfg)
     valid = {n.lower(): n for n in cfg.category_names}
 
@@ -85,16 +138,7 @@ def ai_pass(cfg: Config, conn) -> None:
             f"Email body (start): {mask(strip_quoted(r['body'] or '')[:600])}\n"
             f"Document text (start): {mask((r['text'] or '')[: cfg.ai_max_chars])}"
         )
-        resp = client.messages.parse(
-            model=cfg.ai_model,
-            max_tokens=4000,
-            system=system,
-            messages=[{"role": "user", "content": content}],
-            output_format=Verdict,
-        )
-        if resp.stop_reason == "refusal" or resp.parsed_output is None:
-            return r, None
-        return r, resp.parsed_output
+        return r, ask_model(system, content)
 
     done = changed = failed = 0
     with ThreadPoolExecutor(max_workers=cfg.ai_workers) as pool:
@@ -102,10 +146,15 @@ def ai_pass(cfg: Config, conn) -> None:
         for fut in as_completed(futures):
             try:
                 r, v = fut.result()
-            except Exception as exc:  # network / rate limit after retries
+            except Exception as exc:  # network / rate limit after retries / bad key
                 failed += 1
                 if failed <= 5:
                     print(f"   AI error: {exc}")
+                if failed == 20 and done == 0:
+                    print("AI step stopped: every request is failing. Check the API key, "
+                          "the model name in config.yaml, and that the account has credit.")
+                    pool.shutdown(wait=False, cancel_futures=True)
+                    break
                 continue
             done += 1
             if v is None:

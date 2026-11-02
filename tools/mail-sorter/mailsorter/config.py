@@ -42,6 +42,8 @@ class Config:
     insurers: list[Named]
     clients: list[Named]
     ai_enabled: bool
+    ai_provider: str
+    ai_key_file: Path | None
     ai_model: str
     ai_max_chars: int
     ai_workers: int
@@ -100,6 +102,15 @@ def load_config(path: str | os.PathLike) -> Config:
     if not cats:
         raise ValueError("config.yaml has no categories")
 
+    provider = str(ai.get("provider", "openai")).strip().lower()
+    if provider not in ("openai", "anthropic"):
+        raise ValueError("ai.provider must be 'openai' or 'anthropic'")
+    key_file = str(ai.get("api_key_file", "api-key.txt")).strip()
+    key_path = Path(os.path.expandvars(key_file)) if key_file else None
+    if key_path and not key_path.is_absolute():
+        key_path = (path.parent / key_path).resolve()
+    default_model = "gpt-4o-mini" if provider == "openai" else "claude-opus-5-5"
+
     mode = str(org.get("mode", "move")).lower()
     if mode not in ("move", "copy"):
         raise ValueError("organize.mode must be 'move' or 'copy'")
@@ -122,7 +133,9 @@ def load_config(path: str | os.PathLike) -> Config:
         insurers=_named(raw.get("insurers")),
         clients=_named(raw.get("clients")),
         ai_enabled=bool(ai.get("enabled", False)),
-        ai_model=str(ai.get("model", "claude-opus-5-5")),
+        ai_provider=provider,
+        ai_key_file=key_path,
+        ai_model=str(ai.get("model") or default_model),
         ai_max_chars=int(ai.get("max_chars", 2500)),
         ai_workers=max(1, int(ai.get("workers", 4))),
         source_path=path,
