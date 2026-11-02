@@ -1,0 +1,181 @@
+# =====================================================================
+#  Mail Sorter - settings
+#  Edit this file in Notepad. Lines starting with # are notes.
+#  Keep the spacing (indentation) exactly as it is.
+# =====================================================================
+
+paths:
+  # Local folder on the PC (fast disk). Holds the database and logs.
+  # Do NOT put this on the shared drive.
+  work_dir: 'C:\MailSorter\work'
+
+  # Where raw attachments are saved before sorting. Needs free space roughly
+  # equal to the attachments in the mailbox (after duplicates are removed).
+  # Tip: putting this on the SAME drive as output_dir makes the sort step
+  # instant (files are renamed, not copied).
+  store_dir: 'C:\MailSorter\work\store'
+
+  # The shared drive folder your boss will browse. Use the full network
+  # path (\\server\share\...) so links work for everyone, not a drive letter.
+  output_dir: '\\SERVER\Shared\Mail Attachments'
+
+outlook:
+  # Leave empty to read every mailbox and every PST file open in Outlook.
+  # Or list the names exactly as shown in Outlook's folder pane.
+  include_stores: []
+  # Folders to skip (matched by folder name).
+  skip_folders: [Deleted Items, Junk Email, Junk E-mail, Outbox, Drafts, Sync Issues,
+                 Conflicts, Local Failures, Server Failures, Conversation History,
+                 RSS Feeds, RSS Subscriptions, Calendar, Contacts, Tasks, Notes, Journal]
+  # Pictures smaller than this are logos/signatures - skipped.
+  min_image_kb: 40
+  # File types that are never real documents.
+  skip_extensions: [.ics, .vcf, .p7s, .p7m, .p7c, .asc, .sig]
+
+organize:
+  # move = saves disk space (recommended).  copy = keeps a second copy in store_dir.
+  mode: move
+  # Folder layout inside output_dir. Tokens you can use:
+  #   {category} {fy} (FY2025-26) {year} {month} (2025-04) {client} {insurer} {policy}
+  # Client-first example:  '{client}/{category}/{fy}'
+  layout: '{category}/{fy}/{client}'
+  # File name. {name} is the original attachment name.
+  filename: '{date}_{insurer}_{name}'
+
+# Your company's own email domains (mail from these is "us", not a client).
+own_domains: [capitupindia.com]
+
+# Free email providers - for these the client is taken from the sender's name.
+free_mail_domains: [gmail.com, yahoo.com, yahoo.co.in, hotmail.com, outlook.com,
+                    rediffmail.com, live.com, icloud.com, ymail.com, protonmail.com]
+
+# ---------------------------------------------------------------------
+# Categories. Order matters: when two categories tie, the higher one wins.
+#   keywords: words/phrases looked for in file name (strongest), email
+#             subject, the document's text and the email body.
+#   requires: (optional) category only counts if one of these also appears.
+#   ignore:   (optional) phrases removed before checking this category.
+#   description: used by the AI (if switched on).
+# ---------------------------------------------------------------------
+categories:
+  - name: Endorsement Addition
+    description: Endorsement adding members/employees/lives/vehicles/locations to an existing policy.
+    keywords: [addition, additions, add member, add members, member addition, inclusion,
+               inclusions, new joinee, new joinees, newly joined, addition endorsement,
+               addition list, add on list]
+    requires: [endorsement, endt, member, members, employee, employees, joinee, joinees,
+               lives, dependent, dependents, insured, inclusion, inclusions, addition list]
+
+  - name: Endorsement Deletion
+    description: Endorsement removing members/employees/lives/vehicles from an existing policy.
+    keywords: [deletion, deletions, delete member, member deletion, deletion endorsement,
+               exit list, exits, resigned, resignation, left the organisation,
+               left the organization, removal, deletion list]
+    requires: [endorsement, endt, member, members, employee, employees, lives, dependent,
+               dependents, insured, deletion list, exit list]
+
+  - name: Endorsement Other
+    description: Any other endorsement - corrections, changes of name/address/sum insured, endorsement copies.
+    keywords: [endorsement, endorsements, endt, endt copy, correction, rectification,
+               change in sum insured, change of address, name correction]
+
+  - name: Claims
+    description: Claim intimation, claim documents, hospital bills, discharge summary, survey reports, settlement letters, TPA queries.
+    keywords: [claim, claims, claim form, intimation, claim intimation, settlement,
+               settlement letter, discharge summary, discharge, hospital bill,
+               final bill, survey report, surveyor, cashless, reimbursement,
+               pre auth, preauth, pre-authorisation, tpa query, deficiency, fir,
+               loss assessment, repudiation]
+    ignore: [no claim bonus, claim ratio, claims ratio, claim experience, claims experience,
+             claim free, claim history, claims history, claims mis, claim mis, ncb]
+
+  - name: Quotes
+    description: Quotations, RFQs, terms, quote comparisons from insurers.
+    keywords: [quote, quotes, quotation, quotations, rfq, request for quote, terms,
+               revised terms, comparison, quote comparison, qcr, indicative premium,
+               premium indication, placement slip]
+
+  - name: Renewals
+    description: Renewal notices, renewal data, expiring policy details, claims experience for renewal.
+    keywords: [renewal, renewals, renewal notice, due for renewal, expiring, expiry,
+               renew, claims experience, claim ratio, claims ratio, claims mis]
+
+  - name: Policy Copies
+    description: Issued policy documents, policy schedules, cover notes, certificates of insurance, e-cards.
+    keywords: [policy copy, policy schedule, policy document, policy wording,
+               policy wordings, cover note, covernote, certificate of insurance,
+               e policy, e-policy, policy issued, issued policy, e card, e-card,
+               ecard, policy pdf, coi]
+
+  - name: Booking
+    description: Policy booking/issuance requests - proposal forms, payment proofs, cheques, booking confirmations.
+    keywords: [booking, booked, book the policy, policy booking, proposal, proposal form,
+               payment, payment proof, cheque, utr, neft, rtgs, premium paid,
+               payment confirmation, issuance, issue policy, receipt]
+
+  - name: KYC
+    description: KYC documents - PAN, Aadhaar, GST certificate, CKYC, incorporation certificate, cancelled cheque, ID/address proof.
+    keywords: [kyc, ckyc, pan card, pan, aadhaar, aadhar, gst certificate, gstin,
+               incorporation, certificate of incorporation, moa, aoa, cancelled cheque,
+               id proof, address proof, passport, voter id, driving licence]
+
+  - name: Invoices & CD
+    description: Invoices, tax invoices, brokerage/commission, debit/credit notes, CD (cash deposit) statements.
+    keywords: [invoice, tax invoice, cd statement, cd balance, cd account, cash deposit,
+               brokerage, commission, debit note, credit note, statement of account,
+               soa, ledger, reconciliation, payout]
+
+# Name used when nothing matches.
+fallback_category: Other - Needs Review
+
+# ---------------------------------------------------------------------
+# Insurers - 'match' is checked against email addresses and text.
+# ---------------------------------------------------------------------
+insurers:
+  - {name: ICICI Lombard,       match: [icicilombard, icici lombard]}
+  - {name: HDFC ERGO,           match: [hdfcergo, hdfc ergo]}
+  - {name: Bajaj Allianz,       match: [bajajallianz, bajaj allianz, bajaj general, bajajgeneral]}
+  - {name: Tata AIG,            match: [tataaig, tata aig]}
+  - {name: New India Assurance, match: [newindia, new india assurance]}
+  - {name: United India,        match: [uiic, united india]}
+  - {name: Oriental Insurance,  match: [orientalinsurance, oriental insurance]}
+  - {name: National Insurance,  match: [nic.co.in, national insurance]}
+  - {name: SBI General,         match: [sbigeneral, sbi general]}
+  - {name: Reliance General,    match: [reliancegeneral, reliance general]}
+  - {name: Go Digit,            match: [godigit, go digit, digit insurance]}
+  - {name: Star Health,         match: [starhealth, star health]}
+  - {name: Care Health,         match: [careinsurance, carehealth, care health]}
+  - {name: Niva Bupa,           match: [nivabupa, niva bupa, maxbupa, max bupa]}
+  - {name: Aditya Birla Health, match: [adityabirla, aditya birla]}
+  - {name: Chola MS,            match: [cholams, chola ms, cholamandalam]}
+  - {name: Future Generali,     match: [futuregenerali, future generali, generali central]}
+  - {name: IFFCO Tokio,         match: [iffcotokio, iffco tokio]}
+  - {name: Royal Sundaram,      match: [royalsundaram, royal sundaram]}
+  - {name: Universal Sompo,     match: [universalsompo, universal sompo]}
+  - {name: Kotak General,       match: [kotakgeneral, kotak general, zurich kotak, zurichkotak]}
+  - {name: Liberty General,     match: [libertyinsurance, liberty general]}
+  - {name: Magma General,       match: [magmahdi, magma general, magma hdi]}
+  - {name: ManipalCigna,        match: [manipalcigna, manipal cigna]}
+  - {name: Shriram General,     match: [shriramgi, shriram general]}
+  - {name: Acko,                match: [acko]}
+  - {name: Raheja QBE,          match: [rahejaqbe, raheja qbe]}
+
+# ---------------------------------------------------------------------
+# Clients (optional but strongly recommended for your top clients).
+# Without this list the client is guessed from the sender's company domain.
+# ---------------------------------------------------------------------
+clients: []
+#  - {name: ABC Pharma Ltd, match: [abcpharma, abc pharma]}
+#  - {name: XYZ Logistics,  match: [xyzlogistics.com, xyz logistics]}
+
+# ---------------------------------------------------------------------
+# AI help for files the keyword rules are unsure about (optional).
+# Needs an Anthropic API key in the ANTHROPIC_API_KEY environment variable.
+# Only the email subject, sender company, file name and the first part of the
+# document text are sent - PAN and Aadhaar numbers are masked first.
+# ---------------------------------------------------------------------
+ai:
+  enabled: false
+  model: claude-opus-5-5     # most accurate. claude-haiku-5-5 is far cheaper for bulk runs.
+  max_chars: 2500            # how much document text to send per file
+  workers: 4                 # parallel requests
