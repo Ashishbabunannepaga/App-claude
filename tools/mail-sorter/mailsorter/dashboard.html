@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mail Attachments</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #1b1f24; --muted: #5f6b7a; --line: #e3e7ec;
+  --accent: #1f5fa8; --accent-soft: #e6eef8; --warn: #a15c00; --warn-soft: #fff3e0;
+  --row-hover: #f2f6fb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111418; --panel: #1a1e24; --ink: #e8ecf1; --muted: #9aa5b3; --line: #2b313a;
+    --accent: #6ea8ff; --accent-soft: #1d2b40; --warn: #ffb562; --warn-soft: #3a2a14;
+    --row-hover: #20262e;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+header { padding: 20px 24px 8px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: baseline; }
+h1 { font-size: 22px; margin: 0; font-weight: 600; }
+.sub { color: var(--muted); font-size: 13px; }
+main { padding: 8px 24px 40px; max-width: 1500px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+.kpi .n { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.kpi .l { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.kpi.warn { cursor: pointer; }
+.kpi.warn .n { color: var(--warn); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.panel h2 { font-size: 13px; margin: 0 0 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.bars { display: flex; flex-direction: column; gap: 4px; max-height: 300px; overflow-y: auto; }
+.bar { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(60px, 1.3fr) auto; gap: 8px; align-items: center;
+  padding: 3px 6px; border-radius: 6px; cursor: pointer; border: 1px solid transparent; background: none;
+  color: inherit; font: inherit; text-align: left; width: 100%; }
+.bar:hover { background: var(--row-hover); }
+.bar.on { border-color: var(--accent); background: var(--accent-soft); }
+.bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar .track { display: block; height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.bar .fill { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+.bar .cnt { font-variant-numeric: tabular-nums; color: var(--muted); min-width: 48px; text-align: right; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+input, select, button.btn { font: inherit; color: inherit; background: var(--panel); border: 1px solid var(--line);
+  border-radius: 8px; padding: 7px 10px; min-height: 36px; }
+input[type=search] { flex: 1 1 260px; min-width: 0; }
+select { max-width: 220px; }
+button.btn { cursor: pointer; }
+button.btn:hover { border-color: var(--accent); }
+.count { color: var(--muted); margin-left: auto; }
+.tablewrap { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 980px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; cursor: pointer;
+  user-select: none; white-space: nowrap; position: sticky; top: 0; background: var(--panel); }
+th .arrow { opacity: .6; }
+tbody tr:hover { background: var(--row-hover); }
+td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.file a { color: var(--accent); text-decoration: none; word-break: break-word; }
+td.file a:hover { text-decoration: underline; }
+td.subj { color: var(--muted); max-width: 360px; }
+.chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft);
+  color: var(--accent); font-size: 12px; white-space: nowrap; }
+.chip.review { background: var(--warn-soft); color: var(--warn); }
+.tag { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; margin-left: 4px; }
+.pager { display: flex; gap: 8px; align-items: center; justify-content: flex-end; padding: 10px; }
+.empty { padding: 30px; text-align: center; color: var(--muted); }
+@media (max-width: 600px) {
+  header, main { padding-left: 16px; padding-right: 16px; }
+  select { max-width: 100%; flex: 1 1 140px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Mail Attachments</h1>
+  <span class="sub" id="generated"></span>
+</header>
+<main>
+  <section class="kpis" id="kpis"></section>
+  <section class="grid">
+    <div class="panel"><h2>By category</h2><div class="bars" id="bar-cat"></div></div>
+    <div class="panel"><h2>By financial year</h2><div class="bars" id="bar-fy"></div></div>
+    <div class="panel"><h2>Top insurers</h2><div class="bars" id="bar-ins"></div></div>
+    <div class="panel"><h2>Top clients</h2><div class="bars" id="bar-cli"></div></div>
+  </section>
+  <section class="filters">
+    <input type="search" id="q" placeholder="Search file name, subject, client, policy no, sender…" aria-label="Search">
+    <select id="f-cat" aria-label="Category"></select>
+    <select id="f-fy" aria-label="Financial year"></select>
+    <select id="f-ins" aria-label="Insurer"></select>
+    <select id="f-cli" aria-label="Client"></select>
+    <select id="f-type" aria-label="File type"></select>
+    <button class="btn" id="clear" type="button">Clear filters</button>
+    <span class="count" id="count"></span>
+  </section>
+  <div class="tablewrap">
+    <table>
+      <thead><tr id="thead"></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="pager" id="pager"></div>
+  </div>
+</main>
+<script>
+const DATA = /*__DATA__*/null;
+const PAGE = 100;
+const C = { date: 0, cat: 1, cli: 2, ins: 3, pol: 4, name: 5, type: 6, kb: 7, subj: 8, from: 9, path: 10, conf: 11, n: 12 };
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => n.toLocaleString("en-IN");
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fyOf = (d) => { if (!d) return "Unknown"; const y = +d.slice(0, 4), m = +d.slice(5, 7); const s = m >= 4 ? y : y - 1; return `FY${s}-${String((s + 1) % 100).padStart(2, "0")}`; };
+const href = (p) => p ? p.split("/").map(encodeURIComponent).join("/") : "";
+
+const rows = DATA.rows.map((r) => {
+  r.fy = fyOf(r[C.date]);
+  r.hay = [r[C.name], r[C.subj], DATA.clients[r[C.cli]], DATA.insurers[r[C.ins]], r[C.pol], r[C.from], DATA.categories[r[C.cat]]].join(" ").toLowerCase();
+  return r;
+});
+const reviewIdx = DATA.categories.indexOf(DATA.review);
+const state = { q: "", cat: "", fy: "", ins: "", cli: "", type: "", review: false, sort: C.date, dir: -1, page: 0 };
+
+$("generated").textContent = `Updated ${DATA.generated} · ${fmt(rows.length)} files`;
+
+function fillSelect(el, label, values, names) {
+  el.innerHTML = `<option value="">${label}</option>` + values.map((v) => `<option value="${esc(v)}">${esc(names ? names[v] : v)}</option>`).join("");
+}
+const countBy = (list, fn) => { const m = new Map(); for (const r of list) { const k = fn(r); m.set(k, (m.get(k) || 0) + 1); } return m; };
+const byCount = (m) => [...m.entries()].sort((a, b) => b[1] - a[1]);
+fillSelect($("f-cat"), "All categories", DATA.categories.map((_, i) => i).filter((i) => rows.some((r) => r[C.cat] === i)), DATA.categories);
+fillSelect($("f-fy"), "All years", [...new Set(rows.map((r) => r.fy))].sort().reverse());
+fillSelect($("f-ins"), "All insurers", byCount(countBy(rows, (r) => r[C.ins])).map(([k]) => k), DATA.insurers);
+fillSelect($("f-cli"), "All clients", byCount(countBy(rows, (r) => r[C.cli])).map(([k]) => k), DATA.clients);
+fillSelect($("f-type"), "All file types", byCount(countBy(rows, (r) => r[C.type] || "?")).map(([k]) => k));
+
+function filtered(skip) {
+  const q = state.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  return rows.filter((r) =>
+    (skip === "cat" || state.cat === "" || r[C.cat] === +state.cat) &&
+    (!state.review || r[C.cat] === reviewIdx || r[C.conf] === "low") &&
+    (skip === "fy" || state.fy === "" || r.fy === state.fy) &&
+    (skip === "ins" || state.ins === "" || r[C.ins] === +state.ins) &&
+    (skip === "cli" || state.cli === "" || r[C.cli] === +state.cli) &&
+    (state.type === "" || (r[C.type] || "?") === state.type) &&
+    q.every((w) => r.hay.includes(w)));
+}
+
+function bars(el, entries, names, key, limit) {
+  const top = entries.slice(0, limit);
+  const max = Math.max(1, ...top.map((e) => e[1]));
+  el.innerHTML = top.length ? top.map(([k, n]) => {
+    const on = String(state[key]) === String(k);
+    const label = names ? names[k] : k;
+    return `<button type="button" class="bar${on ? " on" : ""}" data-key="${key}" data-val="${esc(k)}" title="${esc(label)}: ${fmt(n)}">
+      <span class="name">${esc(label)}</span><span class="track"><span class="fill" style="width:${(n / max) * 100}%"></span></span><span class="cnt">${fmt(n)}</span></button>`;
+  }).join("") : `<div class="empty">No files</div>`;
+}
+
+function render() {
+  const list = filtered();
+  const emails = list.reduce((s, r) => s + (r[C.n] || 1), 0);
+  const review = list.filter((r) => r[C.cat] === reviewIdx || r[C.conf] === "low").length;
+  const gb = list.reduce((s, r) => s + r[C.kb], 0) / 1048576;
+  $("kpis").innerHTML = [
+    ["Files", fmt(list.length)], ["Times received", fmt(emails)],
+    ["Clients", fmt(new Set(list.map((r) => r[C.cli])).size)],
+    ["Insurers", fmt(new Set(list.map((r) => r[C.ins])).size)],
+    ["Size", gb >= 1 ? `${gb.toFixed(1)} GB` : gb * 1024 >= 1 ? `${(gb * 1024).toFixed(0)} MB` : `${Math.round(gb * 1048576)} KB`],
+  ].map(([l, n]) => `<div class="kpi"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("") +
+    `<div class="kpi warn" id="kpi-review" role="button" tabindex="0" title="Show only files that need a human look"><div class="n">${fmt(review)}</div><div class="l">${state.review ? "Showing: needs review ✕" : "Needs review"}</div></div>`;
+  $("kpi-review").onclick = () => { state.review = !state.review; state.page = 0; render(); };
+
+  const catOrder = byCount(countBy(filtered("cat"), (r) => r[C.cat]));
+  bars($("bar-cat"), catOrder, DATA.categories, "cat", 30);
+  bars($("bar-fy"), [...countBy(filtered("fy"), (r) => r.fy).entries()].sort((a, b) => (a[0] < b[0] ? 1 : -1)), null, "fy", 30);
+  bars($("bar-ins"), byCount(countBy(filtered("ins"), (r) => r[C.ins])), DATA.insurers, "ins", 15);
+  bars($("bar-cli"), byCount(countBy(filtered("cli"), (r) => r[C.cli])), DATA.clients, "cli", 15);
+
+  const k = state.sort, dir = state.dir;
+  const val = (r) => k === C.cat ? DATA.categories[r[k]] : k === C.cli ? DATA.clients[r[k]] : k === C.ins ? DATA.insurers[r[k]] : r[k];
+  list.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * dir; });
+
+  const pages = Math.max(1, Math.ceil(list.length / PAGE));
+  state.page = Math.min(state.page, pages - 1);
+  const slice = list.slice(state.page * PAGE, state.page * PAGE + PAGE);
+  $("count").textContent = `${fmt(list.length)} of ${fmt(rows.length)} files`;
+  $("tbody").innerHTML = slice.length ? slice.map((r) => {
+    const cat = DATA.categories[r[C.cat]];
+    const isReview = r[C.cat] === reviewIdx || r[C.conf] === "low";
+    const name = esc(r[C.name]);
+    const file = r[C.path] ? `<a href="${href(r[C.path])}" target="_blank" rel="noopener">${name}</a>` : name;
+    return `<tr><td class="date">${esc(r[C.date])}</td>
+      <td><span class="chip${isReview ? " review" : ""}">${esc(cat)}</span></td>
+      <td>${esc(DATA.clients[r[C.cli]])}</td><td>${esc(DATA.insurers[r[C.ins]])}</td><td>${esc(r[C.pol])}</td>
+      <td class="file">${file}<span class="tag">${esc(r[C.type] || "?")}</span></td>
+      <td class="subj">${esc(r[C.subj])}</td><td>${esc(r[C.from])}</td></tr>`;
+  }).join("") : `<tr><td colspan="8" class="empty">No files match these filters.</td></tr>`;
+
+  $("pager").innerHTML = pages > 1 ? `<button class="btn" data-p="-1" ${state.page ? "" : "disabled"}>‹ Prev</button>
+    <span>Page ${state.page + 1} of ${fmt(pages)}</span>
+    <button class="btn" data-p="1" ${state.page < pages - 1 ? "" : "disabled"}>Next ›</button>` : "";
+
+  $("f-cat").value = state.cat; $("f-fy").value = state.fy; $("f-ins").value = state.ins;
+  $("f-cli").value = state.cli; $("f-type").value = state.type;
+}
+
+const HEAD = [["Date", C.date], ["Category", C.cat], ["Client", C.cli], ["Insurer", C.ins], ["Policy no", C.pol], ["File", C.name], ["Email subject", C.subj], ["From", C.from]];
+function renderHead() {
+  $("thead").innerHTML = HEAD.map(([l, k]) => `<th data-k="${k}">${l} <span class="arrow">${state.sort === k ? (state.dir > 0 ? "▲" : "▼") : ""}</span></th>`).join("");
+}
+$("thead").addEventListener("click", (e) => {
+  const th = e.target.closest("th"); if (!th) return;
+  const k = +th.dataset.k;
+  if (state.sort === k) state.dir = -state.dir; else { state.sort = k; state.dir = k === C.date ? -1 : 1; }
+  renderHead(); render();
+});
+document.querySelector(".grid").addEventListener("click", (e) => {
+  const b = e.target.closest(".bar"); if (!b) return;
+  const key = b.dataset.key;
+  state[key] = String(state[key]) === b.dataset.val ? "" : b.dataset.val;
+  state.page = 0; render();
+});
+$("pager").addEventListener("click", (e) => { const b = e.target.closest("button[data-p]"); if (!b) return; state.page += +b.dataset.p; render(); window.scrollTo({ top: $("q").offsetTop - 10 }); });
+[["f-cat", "cat"], ["f-fy", "fy"], ["f-ins", "ins"], ["f-cli", "cli"], ["f-type", "type"]].forEach(([id, key]) =>
+  $(id).addEventListener("change", (e) => { state[key] = e.target.value; state.page = 0; render(); }));
+let t; $("q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.page = 0; render(); }, 200); });
+$("clear").addEventListener("click", () => { Object.assign(state, { q: "", cat: "", fy: "", ins: "", cli: "", type: "", review: false, page: 0 }); $("q").value = ""; render(); });
+renderHead(); render();
+</script>
+</body>
+</html>
