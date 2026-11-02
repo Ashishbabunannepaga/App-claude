@@ -43,7 +43,7 @@ def main(argv=None) -> int:
 
     extract_opts(sub.add_parser("extract", help="step 1: save attachments from Outlook"))
     c = sub.add_parser("classify", help="step 2: decide categories")
-    c.add_argument("--ai", action="store_true", help="also ask Claude about unsure files")
+    c.add_argument("--ai", action="store_true", help="also ask the AI model about unsure files")
     c.add_argument("--redo", action="store_true", help="re-sort everything (keeps manual corrections)")
     sub.add_parser("organize", help="step 3: file into the shared-drive folders")
     sub.add_parser("report", help="step 4: Excel index + dashboard")

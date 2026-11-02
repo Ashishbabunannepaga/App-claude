@@ -78,18 +78,24 @@ Double-click **`3-full-run.bat`**.
 
 ## Optional: AI step for unclear files
 
-The keyword rules usually sort most files. For the rest (scanned PDFs, `document1.pdf`, vague subjects), Claude can read a short excerpt and decide.
+The keyword rules usually sort most files. For the rest (scanned PDFs, `document1.pdf`, vague subjects), an AI model can read a short excerpt and decide. The tool works with an **OpenAI** key (the default) or an **Anthropic (Claude)** key.
 
 **What gets sent:** the file name, the email subject, the sender's company domain, the start of the email, and the first ~2,500 characters of the document's text. PAN numbers, Aadhaar numbers, mobile numbers and email names are **masked before sending**. KYC files and files the rules were sure about are **never sent**. Get your boss's OK on this, because claim documents can contain health information.
 
 **To switch it on:**
 
-1. Create an API key at <https://console.anthropic.com> (needs a payment method).
-2. Windows search → "Edit the system environment variables" → Environment Variables → New (user variable). Name it `ANTHROPIC_API_KEY` and paste the key as the value.
-3. In `config.yaml` set `ai:` → `enabled: true`.
-4. Run **`2-trial-run.bat`** first and check the cost in the Anthropic console before the full run.
+1. Open **`api-key.txt`** in this folder (`1-setup.bat` creates it) and paste your key on its own line under the `#` lines. Save. Keep this file private: don't email it or copy it to the shared drive.
+2. Open **`config.yaml`** and, near the bottom under `ai:`, change `enabled: false` to **`enabled: true`**.
+3. Run **`2-trial-run.bat`**. The output shows `AI step: checking N files...` and then how many it moved.
+4. Check the cost on your OpenAI usage page before starting the full run.
 
-**Cost:** the default model, `claude-opus-5-5`, is the most accurate but the most expensive. A very rough estimate is 1–2 rupees per file it checks, so 20,000 unclear files could cost tens of thousands of rupees. Setting `model: claude-haiku-5-5` costs a small fraction of that and is usually good enough for this kind of sorting. Try both on the trial month and compare.
+| `config.yaml` setting | What it does |
+|---|---|
+| `provider: openai` | Use `anthropic` instead if you have a Claude key; the key still goes in `api-key.txt`. |
+| `model: gpt-4o-mini` | A cheap, fast OpenAI model that is fine for sorting. If OpenAI says the model isn't found, put in any chat model your account lists. |
+| `workers: 4` | Parallel requests. Lower it to 1–2 if you see "rate limit" errors. |
+
+The key can also come from the `OPENAI_API_KEY` (or `ANTHROPIC_API_KEY`) Windows environment variable, which takes priority over the file.
 
 ## Troubleshooting
 
@@ -115,7 +121,7 @@ python -m mailsorter all      [extract options] [--ai]
 python -m mailsorter import-review [--file path.xlsx]
 python -m mailsorter status
 python -m mailsorter demo     # then: --demo classify / organize / report
-python -m pytest tests        # 21 tests, run on any OS (Outlook step excluded)
+python -m pytest tests        # 23 tests, run on any OS (Outlook step excluded)
 ```
 
 | Module | Job |
@@ -124,7 +130,7 @@ python -m pytest tests        # 21 tests, run on any OS (Outlook step excluded)
 | `store.py` | SHA-256 de-duplication into `store_dir/ab/<hash>.<ext>` |
 | `db.py` | SQLite tables `messages`, `files` and `attachments`. This is what makes the tool resumable. |
 | `classify.py` | Keyword scoring: file name ×3, subject ×2, document text ×1, newest part of the body ×1. Plus `requires`/`ignore` rules per category, and client / insurer / policy-number extraction. |
-| `ai.py` | Optional Claude pass with structured JSON output for files the rules weren't sure about. Masks personal data before sending. |
+| `ai.py` | Optional AI pass (OpenAI or Claude, structured JSON output) for files the rules weren't sure about. Masks personal data before sending. Key from env var or `api-key.txt`. |
 | `organize.py` | Builds the folder layout. Handles Windows-safe names, the 250-character path limit, name collisions, and re-filing after corrections. |
 | `report.py` | Write-only openpyxl Excel (handles 100k+ rows) with a category dropdown, plus `import-review` |
 | `dashboard.html` | Self-contained offline dashboard (no internet needed). Data is embedded by `report.py`. |

@@ -2,7 +2,7 @@
 
 Pass 1 is keyword rules (free, instant). Words found in the file NAME count
 most, then the email SUBJECT, then the document text and email body.
-Pass 2 (optional) asks Claude about files the rules were unsure about.
+Pass 2 (optional) asks an AI model (OpenAI or Claude) about files the rules were unsure about.
 Files corrected by hand (method = 'manual') are never changed again.
 """
 from __future__ import annotations
