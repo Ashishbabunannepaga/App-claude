@@ -51,7 +51,27 @@ CREATE TABLE IF NOT EXISTS attachments (
 CREATE INDEX IF NOT EXISTS ix_att_sha ON attachments(sha256);
 CREATE INDEX IF NOT EXISTS ix_att_entry ON attachments(entry_id);
 CREATE INDEX IF NOT EXISTS ix_files_cat ON files(category);
+
+CREATE TABLE IF NOT EXISTS ai_batches (
+    batch_id   TEXT PRIMARY KEY,
+    status     TEXT,
+    n_requests INTEGER,
+    created    TEXT
+);
 """
+
+# Columns added after the first release - added in place to existing databases.
+MIGRATIONS = [
+    ("messages", "to_addrs", "TEXT"),        # semicolon separated
+    ("messages", "cc_addrs", "TEXT"),
+    ("messages", "is_forward", "INTEGER"),
+    ("messages", "fwd_from", "TEXT"),        # original sender of a forwarded mail
+    ("messages", "email_category", "TEXT"),  # AI: what the email is about
+    ("messages", "summary", "TEXT"),         # AI: one-line summary
+    ("messages", "ai_status", "TEXT"),       # NULL | queued | done | failed
+    ("messages", "ai_batch", "TEXT"),
+    ("messages", "ai_files", "TEXT"),        # JSON list of file hashes sent as F1, F2, ...
+]
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
@@ -61,6 +81,11 @@ def connect(db_path: Path) -> sqlite3.Connection:
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA synchronous=NORMAL")
     conn.executescript(SCHEMA)
+    for table, col, typ in MIGRATIONS:
+        cols = {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}
+        if col not in cols:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {typ}")
+    conn.commit()
     return conn
 
 
@@ -73,12 +98,14 @@ def first_message_for_files(conn: sqlite3.Connection, where: str = "", params: t
     sql = f"""
     WITH first AS (
         SELECT a.sha256, a.filename, m.*,
-               ROW_NUMBER() OVER (PARTITION BY a.sha256 ORDER BY m.received) AS rn,
+               ROW_NUMBER() OVER (PARTITION BY a.sha256 ORDER BY m.received, a.id) AS rn,
                COUNT(*) OVER (PARTITION BY a.sha256) AS n_emails
         FROM attachments a JOIN messages m ON m.entry_id = a.entry_id
     )
     SELECT f.*, first.filename, first.subject, first.sender_name, first.sender_email,
-           first.recipients, first.received, first.body, first.folder, first.n_emails
+           first.recipients, first.received, first.body, first.folder, first.n_emails,
+           first.entry_id, first.to_addrs, first.cc_addrs, first.fwd_from, first.is_forward,
+           first.summary, first.email_category
     FROM files f JOIN first ON first.sha256 = f.sha256 AND first.rn = 1
     {where}
     ORDER BY first.received

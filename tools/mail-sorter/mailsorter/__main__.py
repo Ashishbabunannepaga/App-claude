@@ -7,6 +7,8 @@
     python -m mailsorter all      [same options as extract] [--ai]
     python -m mailsorter import-review [--file "Attachments Index.xlsx"]
     python -m mailsorter status
+    python -m mailsorter estimate (what the AI step would cost)
+    python -m mailsorter ai       (run / resume only the AI step)
     python -m mailsorter demo     (fake mailbox - no Outlook needed)
 """
 from __future__ import annotations
@@ -43,7 +45,7 @@ def main(argv=None) -> int:
 
     extract_opts(sub.add_parser("extract", help="step 1: save attachments from Outlook"))
     c = sub.add_parser("classify", help="step 2: decide categories")
-    c.add_argument("--ai", action="store_true", help="also ask the AI model about unsure files")
+    c.add_argument("--ai", action="store_true", help="also run the AI step (see config.yaml ai:)")
     c.add_argument("--redo", action="store_true", help="re-sort everything (keeps manual corrections)")
     sub.add_parser("organize", help="step 3: file into the shared-drive folders")
     sub.add_parser("report", help="step 4: Excel index + dashboard")
@@ -53,6 +55,8 @@ def main(argv=None) -> int:
     r = sub.add_parser("import-review", help="read category corrections from the Excel file")
     r.add_argument("--file", type=Path)
     sub.add_parser("status", help="show what has been done so far")
+    sub.add_parser("estimate", help="show what the AI step would cost for the emails read so far")
+    sub.add_parser("ai", help="run (or resume) only the AI step")
     d = sub.add_parser("demo", help="build a fake mailbox to try the tool without Outlook")
     d.add_argument("--emails", type=int, default=400)
 
@@ -102,9 +106,29 @@ def main(argv=None) -> int:
         print(f"Attachments total:  {q('SELECT COUNT(*) FROM attachments'):,} (incl. duplicates)")
         print(f"Sorted:             {q('SELECT COUNT(*) FROM files WHERE category IS NOT NULL'):,}")
         print(f"Filed in folders:   {q('SELECT COUNT(*) FROM files WHERE organized_path IS NOT NULL'):,}")
+        ai_done = q("SELECT COUNT(*) FROM messages WHERE ai_status='done'")
+        ai_queued = q("SELECT COUNT(*) FROM messages WHERE ai_status='queued'")
+        print(f"Read by AI:         {ai_done:,} emails  (waiting in a batch: {ai_queued:,})")
         for row in conn.execute("SELECT category, COUNT(*) FROM files WHERE category IS NOT NULL "
                                 "GROUP BY category ORDER BY 2 DESC"):
             print(f"   {row[0]:<28} {row[1]:>8,}")
+    elif args.cmd == "estimate":
+        from . import db
+        from .ai import print_estimate
+        conn = db.connect(cfg.db_path)
+        if not conn.execute("SELECT COUNT(*) FROM files WHERE category IS NOT NULL").fetchone()[0]:
+            print("Nothing read yet - run the trial or full run first (with AI switched off it is free).")
+            return 0
+        for scope in ("all", "unsure"):
+            print_estimate(cfg, conn, scope)
+            print()
+        done = conn.execute("SELECT COUNT(*) FROM messages WHERE ai_status='done'").fetchone()[0]
+        if done:
+            print(f"({done:,} emails were already read by the AI - they are not counted or charged again.)")
+    elif args.cmd == "ai":
+        from . import db
+        from .ai import ai_pass
+        ai_pass(cfg, db.connect(cfg.db_path))
     elif args.cmd == "demo":
         from .demo import make_demo
         make_demo(cfg, args.emails)

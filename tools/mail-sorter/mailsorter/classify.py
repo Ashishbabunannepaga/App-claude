@@ -7,12 +7,14 @@ Files corrected by hand (method = 'manual') are never changed again.
 """
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from . import db
 from .config import Config, Named
+from .parse import parse_body
 from .textread import read_text
 
 WEIGHTS = {"filename": 3, "subject": 2, "text": 1, "body": 1}
@@ -102,15 +104,17 @@ class Classifier:
         return self._match(self.cfg.insurers, addresses.lower()) or \
             self._match(self.cfg.insurers, " ".join(text.lower().split()))
 
-    def client(self, sender_name: str, sender_email: str, recipients: str, text: str) -> str:
-        found = self._match(self.cfg.clients, f"{sender_email};{recipients}".lower()) or \
+    def client(self, sender_name: str, sender_email: str, recipients: str, text: str,
+               forwarded_from: list[str] | None = None) -> str:
+        fwd = [f for f in (forwarded_from or []) if f]
+        found = self._match(self.cfg.clients, ";".join([sender_email, *fwd, recipients]).lower()) or \
             self._match(self.cfg.clients, " ".join(text.lower().split()))
         if found:
             return found
-        # The sender first, then whoever was on To/CC - skipping our own staff
-        # and insurer addresses, so a mail from an insurer to us + the client
-        # still finds the client.
-        candidates = [sender_email] + [r for r in recipients.split(";") if r]
+        # The sender first, then the original senders of forwarded/quoted mails,
+        # then whoever was on To/CC - skipping our own staff and insurers. So
+        # "boss forwards the client's mail to the insurer" still finds the client.
+        candidates = [sender_email] + fwd + [r for r in recipients.split(";") if r]
         for addr in candidates:
             domain = addr.rsplit("@", 1)[-1] if "@" in addr else ""
             if not domain or domain in self.cfg.own_domains:
@@ -137,7 +141,11 @@ class Classifier:
         return ""
 
     def classify(self, row) -> Result:
-        body = strip_quoted(row["body"] or "")
+        parsed = parse_body(row["body"] or "", row["subject"] or "")
+        # The newest message, plus the content of anything forwarded (for a
+        # forward, that IS the real content). Older quoted replies are left out.
+        body = "\n".join([parsed.newest, *(p.body for p in parsed.forwarded)])
+        fwd_senders = [p.sender_email for p in parsed.parts if p.sender_email]
         text = row["text"] or ""
         fields = {
             "filename": row["filename"] or "",
@@ -154,7 +162,8 @@ class Classifier:
             confidence=confidence,
             scores=scores,
             client=self.client(row["sender_name"] or "", row["sender_email"] or "",
-                               row["recipients"] or "", f"{row['subject']} {row['filename']} {text}"),
+                               row["recipients"] or "", f"{row['subject']} {row['filename']} {text}",
+                               fwd_senders),
             insurer=self.insurer(addresses, all_text),
             policy_no=self.policy_no(row["filename"], row["subject"], text, body),
         )
@@ -173,26 +182,57 @@ def domain_to_name(domain: str) -> str:
     return core.replace("-", " ").replace("_", " ").title()
 
 
+def _read_one(job):
+    sha, path, ext = job
+    return sha, read_text(Path(path), ext)
+
+
+def _read_all(jobs):
+    """Reads documents in parallel (PDF text extraction is CPU-heavy)."""
+    workers = max(1, min(8, (os.cpu_count() or 2) - 1))
+    if workers == 1 or len(jobs) < 50:
+        yield from map(_read_one, jobs)
+        return
+    from concurrent.futures import ProcessPoolExecutor
+    try:
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            yield from pool.map(_read_one, jobs, chunksize=20)
+    except (OSError, RuntimeError):   # no multiprocessing available - read one by one
+        yield from map(_read_one, jobs)
+
+
 def classify_all(cfg: Config, use_ai: bool = False, redo: bool = False) -> None:
     conn = db.connect(cfg.db_path)
     clf = Classifier(cfg)
 
-    # 1) read document text once (cached in the database)
+    # 1) read document text once (cached in the database), using every CPU core
     pending = conn.execute(
         "SELECT sha256, ext, COALESCE(organized_path, '') AS op, store_path FROM files WHERE text IS NULL"
     ).fetchall()
     if pending:
         print(f"Reading text from {len(pending):,} documents...")
-    for i, r in enumerate(pending, 1):
-        path = cfg.output_dir / r["op"] if r["op"] else Path(r["store_path"])
-        conn.execute("UPDATE files SET text=? WHERE sha256=?", (read_text(path, r["ext"]), r["sha256"]))
-        if i % 200 == 0:
-            conn.commit()
-            print(f"   {i:,}/{len(pending):,}", flush=True)
+        jobs = [(r["sha256"], str(cfg.output_dir / r["op"]) if r["op"] else r["store_path"], r["ext"])
+                for r in pending]
+        for i, (sha, text) in enumerate(_read_all(jobs), 1):
+            conn.execute("UPDATE files SET text=? WHERE sha256=?", (text, sha))
+            if i % 500 == 0:
+                conn.commit()
+                print(f"   {i:,}/{len(pending):,}", flush=True)
+        conn.commit()
+
+    # 1b) forwards: who originally sent each forwarded email
+    msgs = conn.execute("SELECT entry_id, subject, body FROM messages WHERE is_forward IS NULL").fetchall()
+    own = set(cfg.own_domains)
+    for m in msgs:
+        parsed = parse_body(m["body"] or "", m["subject"] or "")
+        conn.execute("UPDATE messages SET is_forward=?, fwd_from=? WHERE entry_id=?",
+                     (int(parsed.is_forward),
+                      parsed.original_sender(own) if parsed.is_forward else "", m["entry_id"]))
     conn.commit()
 
     # 2) keyword rules
-    where = "WHERE COALESCE(f.method,'') != 'manual'"
+    # Files decided by hand or by the AI are not overwritten by the rules.
+    where = "WHERE COALESCE(f.method,'') NOT IN ('manual', 'ai')"
     if not redo:
         where += " AND f.category IS NULL"
     rows = db.first_message_for_files(conn, where).fetchall()

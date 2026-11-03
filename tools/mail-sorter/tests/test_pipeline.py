@@ -1,6 +1,7 @@
 """Run with:  python -m pytest tests  (from tools/mail-sorter)."""
 from __future__ import annotations
 
+import json
 import sqlite3
 from pathlib import Path
 
@@ -95,7 +96,7 @@ def test_helpers():
     assert safe('a<b>:c"d/e\\f|g?h*') == "a b c d e f g h"
     assert safe("CON") == "_CON"
     assert strip_quoted("new text\nFrom: old\nclaim") == "new text\n"
-    masked = mask("PAN ABCDE1234F aadhaar 1234 5678 9012 call 9876543210 a.b@x.com")
+    masked = mask("PAN ABCDE1234F aadhaar 1234 5678 9012 call 9876543210 a.b@x.com GSTIN 27ABCDE1234F1Z5")
     assert "ABCDE1234F" not in masked and "1234 5678 9012" not in masked
     assert "9876543210" not in masked and "a.b@" not in masked
 
@@ -148,59 +149,244 @@ def test_full_pipeline_and_review_roundtrip(cfg):
     assert conn.execute("SELECT category FROM files WHERE sha256=?", (sha,)).fetchone()[0] == new
 
 
-def _fake_verdict():
-    from mailsorter.ai import Verdict
-    return Verdict(category="claims", client="Sunrise Pharma", insurer="Tata AIG",
-                   policy_no="P-1", reason="Hospital bill")
+# ------------------------------------------------------------------ forwards / CC
+def test_parse_gmail_and_outlook_forwards():
+    from mailsorter.parse import parse_body
+    g = parse_body("Please process.\n\n---------- Forwarded message ---------\n"
+                   "From: HR <hr@sunrise.com>\nDate: Mon, 3 Jun 2024\nSubject: Addition\n"
+                   "To: ops@capitupindia.com\nCc: fin@sunrise.com\n\nAdd these members.",
+                   "Fwd: Addition")
+    assert g.is_forward and g.newest == "Please process."
+    assert (g.parts[0].kind, g.parts[0].sender_email, g.parts[0].cc) == ("forwarded", "hr@sunrise.com", "fin@sunrise.com")
+    assert g.parts[0].body == "Add these members."
+    assert g.original_sender({"capitupindia.com"}) == "hr@sunrise.com"
+
+    o = parse_body("Noted.\n\nFrom: Ravi <ravi@tataaig.com>\nSent: Tuesday, 4 June 2024\n"
+                   "To: ops@capitupindia.com\nSubject: RE: Claim\n\nSend discharge summary.\n\n"
+                   "On Mon, 3 Jun 2024 at 10:15, HR <hr@sunrise.com> wrote:\n> docs attached",
+                   "RE: Claim")
+    assert not o.is_forward and o.newest == "Noted."
+    assert [p.sender_email for p in o.parts] == ["ravi@tataaig.com", "hr@sunrise.com"]
 
 
-@pytest.mark.parametrize("provider", ["openai", "anthropic"])
-def test_ai_pass_with_fake_client(cfg, monkeypatch, tmp_path, provider):
-    """The AI step updates only unsure files, never KYC/high ones, and masks data."""
-    import types
-    from mailsorter.ai import ai_pass
+def test_forward_finds_client_from_original_sender(cfg):
+    """Our staff forwards the client's mail to the insurer: client = original sender."""
+    body = ("Please process.\n\nFrom: HR <hr@kaveri-logistics.in>\nSent: Monday\n"
+            "To: ops@capitupindia.com\nSubject: Claim intimation\n\nClaim docs attached.")
+    res = Classifier(cfg).classify(row(filename="docs.pdf", subject="FW: Claim intimation", body=body,
+                                       sender_email="ops@capitupindia.com",
+                                       recipients="uw@tataaig.com"))
+    assert res.client == "Kaveri Logistics"
+    assert res.insurer == "Tata AIG"
+    assert res.category == "Claims"
 
-    sent = []
-    if provider == "openai":
-        import openai
 
-        class FakeCompletions:
-            def parse(self, **kw):
-                assert kw["response_format"].__name__ == "Verdict"
-                sent.append(kw["messages"][1]["content"])
-                msg = types.SimpleNamespace(refusal=None, parsed=_fake_verdict())
+def test_to_cc_and_forward_reach_excel(cfg):
+    make_demo(cfg, n_emails=120)
+    classify_all(cfg)
+    organize(cfg)
+    report(cfg)
+    conn = db.connect(cfg.db_path)
+    assert conn.execute("SELECT COUNT(*) FROM messages WHERE is_forward=1 AND fwd_from != ''").fetchone()[0] > 0
+    ws = load_workbook(cfg.output_dir / EXCEL_NAME, read_only=True)["Index"]
+    head = [c.value for c in next(ws.iter_rows(max_row=1))]
+    assert {"To", "CC", "Forwarded from", "Email summary (AI)"} <= set(head)
+    fwd_col = head.index("Forwarded from")
+    assert any(r[fwd_col] for r in ws.iter_rows(min_row=2, values_only=True))
+
+
+# ------------------------------------------------------------------ AI step
+def _verdict_json(n_files, category="Claims"):
+    return json.dumps({
+        "email_category": category, "summary": "Client sends claim documents",
+        "client": "Sunrise Pharma", "insurer": "Tata AIG", "policy_no": "P-1",
+        "files": [{"file_id": f"F{i}", "category": category, "policy_no": "", "reason": "claim form"}
+                  for i in range(1, n_files + 1)]})
+
+
+def _n_files(content: str) -> int:
+    return content.count("\n[F")
+
+
+class FakeOpenAI:
+    """Stands in for openai.OpenAI: chat completions + files + batches."""
+    def __init__(self, **kw):
+        import types
+        self.kw = kw
+        self.sent = []
+        self.batches_made = {}
+        outer = self
+
+        class Completions:
+            def create(self, **body):
+                assert body["response_format"]["json_schema"]["strict"] is True
+                content = body["messages"][1]["content"]
+                outer.sent.append(content)
+                msg = types.SimpleNamespace(refusal=None, content=_verdict_json(_n_files(content)))
                 return types.SimpleNamespace(choices=[types.SimpleNamespace(message=msg)])
 
-        def fake_client(**kw):
-            assert kw["api_key"] == "sk-test-from-file"
-            return types.SimpleNamespace(chat=types.SimpleNamespace(completions=FakeCompletions()))
-        monkeypatch.setattr(openai, "OpenAI", fake_client)
-    else:
-        import anthropic
+        class Files:
+            def create(self, file, purpose):
+                outer.uploaded = file.read().decode("utf-8")
+                return types.SimpleNamespace(id="file-in")
 
-        class FakeMessages:
-            def parse(self, **kw):
-                sent.append(kw["messages"][0]["content"])
-                return types.SimpleNamespace(stop_reason="end_turn", parsed_output=_fake_verdict())
-        monkeypatch.setattr(anthropic, "Anthropic",
-                            lambda **kw: types.SimpleNamespace(messages=FakeMessages()))
+            def content(self, file_id):
+                lines = []
+                for raw in outer.uploaded.splitlines():
+                    req = json.loads(raw)
+                    content = req["body"]["messages"][1]["content"]
+                    outer.sent.append(content)
+                    lines.append(json.dumps({"custom_id": req["custom_id"], "response": {
+                        "status_code": 200, "body": {"choices": [{"message": {
+                            "content": _verdict_json(_n_files(content)), "refusal": None}}]}}}))
+                return types.SimpleNamespace(text="\n".join(lines))
 
+        class Batches:
+            def create(self, **kw):
+                outer.batches_made["b1"] = 0
+                return types.SimpleNamespace(id="b1", status="validating")
+
+            def retrieve(self, bid):
+                outer.batches_made[bid] += 1      # first poll: still running, then done
+                done = outer.batches_made[bid] > 1
+                return types.SimpleNamespace(
+                    id=bid, status="completed" if done else "in_progress",
+                    output_file_id="file-out" if done else None, error_file_id=None,
+                    request_counts=types.SimpleNamespace(completed=1, total=2))
+
+        self.chat = types.SimpleNamespace(completions=Completions())
+        self.files = Files()
+        self.batches = Batches()
+
+
+@pytest.fixture()
+def fake_openai(monkeypatch):
+    import openai
+    made = []
+
+    def factory(**kw):
+        c = FakeOpenAI(**kw)
+        made.append(c)
+        return c
+    monkeypatch.setattr(openai, "OpenAI", factory)
+    return made
+
+
+def _ai_cfg(cfg, tmp_path, monkeypatch, **over):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     key_file = tmp_path / "api-key.txt"
     key_file.write_text("# Paste your key below\nsk-test-from-file\n", encoding="utf-8")
-    cfg.ai_provider, cfg.ai_key_file = provider, key_file
+    cfg.ai_key_file = key_file
+    cfg.ai_batch = "never"
+    for k, v in over.items():
+        setattr(cfg, k, v)
+    return cfg
 
+
+def test_ai_reads_each_email_once_with_full_context(cfg, tmp_path, monkeypatch, fake_openai):
+    from mailsorter.ai import ai_pass
+    _ai_cfg(cfg, tmp_path, monkeypatch)
     make_demo(cfg, n_emails=150)
     classify_all(cfg)
     conn = db.connect(cfg.db_path)
-    unsure = conn.execute("SELECT COUNT(*) FROM files WHERE confidence!='high' AND category!='KYC'").fetchone()[0]
-    assert unsure >= 1
+    n_emails = conn.execute("""SELECT COUNT(DISTINCT entry_id) FROM (
+        SELECT a.entry_id, ROW_NUMBER() OVER (PARTITION BY a.sha256 ORDER BY m.received, a.id) rn
+        FROM attachments a JOIN messages m USING(entry_id)) WHERE rn = 1""").fetchone()[0]
     ai_pass(cfg, conn)
-    assert len(sent) == unsure
-    assert all("ABCDE1234F" not in s for s in sent)
-    got = conn.execute("SELECT category, method, client FROM files WHERE method='ai'").fetchall()
-    assert got and all(tuple(r) == ("Claims", "ai", "Sunrise Pharma") for r in got)
+    client = fake_openai[0]
+    assert client.kw["api_key"] == "sk-test-from-file"
+    assert len(client.sent) == n_emails                       # one request per email, none repeated
+    joined = "\n".join(client.sent)
+    assert "ABCDE1234F" not in joined and "@sunrisepharma.com" in joined   # masked, domain kept
+    assert "rahul.mehta@" not in joined
+    assert "To: " in joined and "CC: " in joined and "FORWARDED MESSAGE" in joined
+    assert "KYC document - text not sent" in joined
+    got = conn.execute("SELECT DISTINCT category, method, client FROM files").fetchall()
+    assert [tuple(r) for r in got] == [("Claims", "ai", "Sunrise Pharma")]
+    assert conn.execute("SELECT COUNT(*) FROM messages WHERE summary != ''").fetchone()[0] == n_emails
+
+    # A second run sends nothing (and costs nothing)
+    before = sum(len(c.sent) for c in fake_openai)
+    ai_pass(cfg, conn)
+    assert sum(len(c.sent) for c in fake_openai) == before
+
+
+def test_ai_scope_unsure_sends_only_unsure(cfg, tmp_path, monkeypatch, fake_openai):
+    from mailsorter.ai import ai_pass
+    _ai_cfg(cfg, tmp_path, monkeypatch, ai_scope="unsure")
+    make_demo(cfg, n_emails=150)
+    classify_all(cfg)
+    conn = db.connect(cfg.db_path)
+    ai_pass(cfg, conn)
+    assert len(fake_openai[0].sent) < 10
+    assert conn.execute("SELECT COUNT(*) FROM files WHERE method='rules'").fetchone()[0] > 50
+
+
+def test_ai_batch_mode(cfg, tmp_path, monkeypatch, fake_openai):
+    from mailsorter.ai import ai_pass
+    _ai_cfg(cfg, tmp_path, monkeypatch, ai_batch="always")
+    make_demo(cfg, n_emails=60)
+    classify_all(cfg)
+    conn = db.connect(cfg.db_path)
+    ai_pass(cfg, conn, poll_seconds=0)
+    client = fake_openai[0]
+    assert client.uploaded.count("\n") >= 10                 # one JSONL line per email
+    assert conn.execute("SELECT status FROM ai_batches").fetchone()[0] == "completed"
+    assert conn.execute("SELECT COUNT(*) FROM messages WHERE ai_status='queued'").fetchone()[0] == 0
+    assert conn.execute("SELECT COUNT(*) FROM files WHERE method='ai'").fetchone()[0] == \
+        conn.execute("SELECT COUNT(*) FROM files").fetchone()[0]
+
+
+def test_ai_budget_limit_stops_before_spending(cfg, tmp_path, monkeypatch, fake_openai, capsys):
+    from mailsorter.ai import ai_pass
+    _ai_cfg(cfg, tmp_path, monkeypatch, ai_max_cost_usd=0.0)
+    make_demo(cfg, n_emails=40)
+    classify_all(cfg)
+    ai_pass(cfg, db.connect(cfg.db_path))
+    assert "NOT started" in capsys.readouterr().out
+    assert all(c.sent == [] for c in fake_openai)
+
+
+def test_local_model_is_free_and_uses_ollama(cfg, tmp_path, monkeypatch, fake_openai, capsys):
+    from mailsorter.ai import ai_pass
+    _ai_cfg(cfg, tmp_path, monkeypatch, ai_provider="local", ai_model="qwen2.5:7b", ai_max_cost_usd=0.0)
+    make_demo(cfg, n_emails=30)
+    classify_all(cfg)
+    ai_pass(cfg, db.connect(cfg.db_path))
+    assert "free" in capsys.readouterr().out
+    assert fake_openai[0].kw["base_url"] == "http://localhost:11434/v1"
+    assert len(fake_openai[0].sent) > 0
+
+
+def test_ai_with_anthropic(cfg, tmp_path, monkeypatch):
+    import types
+    import anthropic
+    from mailsorter.ai import EmailVerdict, ai_pass
+    sent = []
+
+    class Messages:
+        def parse(self, **kw):
+            content = kw["messages"][0]["content"]
+            sent.append(content)
+            v = EmailVerdict.model_validate_json(_verdict_json(_n_files(content)))
+            return types.SimpleNamespace(stop_reason="end_turn", parsed_output=v)
+    monkeypatch.setattr(anthropic, "Anthropic", lambda **kw: types.SimpleNamespace(messages=Messages()))
+    _ai_cfg(cfg, tmp_path, monkeypatch, ai_provider="anthropic")
+    make_demo(cfg, n_emails=30)
+    classify_all(cfg)
+    conn = db.connect(cfg.db_path)
+    ai_pass(cfg, conn)
+    assert sent and conn.execute("SELECT COUNT(*) FROM files WHERE method='ai'").fetchone()[0] > 0
+
+
+def test_estimate_counts_tokens_and_cost(cfg):
+    from mailsorter.ai import estimate
+    make_demo(cfg, n_emails=100)
+    classify_all(cfg)
+    e = estimate(cfg, db.connect(cfg.db_path))
+    assert e["emails"] > 0 and e["input_tokens"] > e["emails"] * 300
+    assert e["cost_batch"] == pytest.approx(e["cost_live"] / 2)
 
 
 def test_ai_skipped_without_key(cfg, monkeypatch, tmp_path, capsys):

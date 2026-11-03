@@ -120,18 +120,30 @@ def make_demo(cfg: Config, n_emails: int = 400, seed: int = 7) -> None:
         fname = file_t.format(**vals).replace("/", "-")
         text = text_t.format(**vals)
         cmail = f"{'rahul.mehta' if cdom == 'gmail.com' else 'hr'}@{cdom}"
+        cname = client if cdom != "gmail.com" else "Rahul Mehta"
+        body = f"Dear team,\nPlease find attached.\nRegards,\n{{who}}"
+        cc: list[str] = []
         if who == "client":
-            sender_name, sender, rcpt = (client if cdom != "gmail.com" else "Rahul Mehta"), cmail, [f"ops@{OWN}"]
+            sender_name, sender, to = cname, cmail, [f"ops@{OWN}"]
+            cc = [f"accounts@{cdom}"] if cdom != "gmail.com" and rnd.random() < 0.4 else []
         elif who == "insurer":
-            sender_name, sender, rcpt = f"{ins} Ops", f"ops@{idom}", [f"ops@{OWN}", cmail]
+            sender_name, sender, to, cc = f"{ins} Ops", f"ops@{idom}", [f"ops@{OWN}"], [cmail]
         else:
-            sender_name, sender, rcpt = "CapitUp Ops", f"ops@{OWN}", [cmail, f"uw@{idom}"]
+            sender_name, sender, to, cc = "CapitUp Ops", f"ops@{OWN}", [f"uw@{idom}"], [cmail]
+        body = body.format(who=sender_name)
+        # Often our team forwards the client's own mail to the insurer
+        if who == "client" and rnd.random() < 0.35:
+            subject = "FW: " + subject.removeprefix("RE: ")
+            body = (f"Dear {ins} team,\nPlease process the below request.\nRegards,\nCapitUp Ops\n\n"
+                    f"________________________________\nFrom: {cname} <{cmail}>\n"
+                    f"Sent: {when:%A, %d %B %Y %H:%M}\nTo: CapitUp Ops <ops@{OWN}>\n"
+                    f"Subject: {subj_t.format(**vals)}\n\n{text or 'Please see attached.'}")
+            sender_name, sender, to, cc = "CapitUp Ops", f"ops@{OWN}", [f"uw@{idom}"], [cmail]
         entry_id = f"DEMO{i:06d}"
-        folder = "Inbox" if who != "us" else "Sent Items"
+        folder = "Inbox" if not sender.endswith(OWN) else "Sent Items"
         add_message(conn, entry_id=entry_id, store="Demo mailbox", folder=folder, subject=subject,
-                    sender_name=sender_name, sender_email=sender, recipients=rcpt,
-                    received=when.isoformat(),
-                    body=f"Dear team,\nPlease find attached.\nRegards,\n{sender_name}\n\nFrom: someone\nOld thread about claims")
+                    sender_name=sender_name, sender_email=sender, recipients=to + cc, to=to, cc=cc,
+                    received=when.isoformat(), body=body)
         path = tmp / f"demo{Path(fname).suffix}"
         _write(path, text)
         add_file(conn, cfg, path, fname, entry_id)
