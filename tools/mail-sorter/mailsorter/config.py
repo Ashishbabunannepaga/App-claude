@@ -47,6 +47,13 @@ class Config:
     ai_model: str
     ai_max_chars: int
     ai_workers: int
+    ai_scope: str = "all"
+    ai_batch: str = "auto"
+    ai_batch_min_emails: int = 1000
+    ai_max_cost_usd: float = 25.0
+    ai_price_in: float = 0.15
+    ai_price_out: float = 0.60
+    ai_base_url: str = ""
     source_path: Path | None = None
 
     @property
@@ -103,13 +110,23 @@ def load_config(path: str | os.PathLike) -> Config:
         raise ValueError("config.yaml has no categories")
 
     provider = str(ai.get("provider", "openai")).strip().lower()
-    if provider not in ("openai", "anthropic"):
-        raise ValueError("ai.provider must be 'openai' or 'anthropic'")
+    if provider not in ("openai", "anthropic", "local"):
+        raise ValueError("ai.provider must be 'openai', 'local' or 'anthropic'")
+    scope = str(ai.get("scope", "all")).strip().lower()
+    if scope not in ("all", "unsure"):
+        raise ValueError("ai.scope must be 'all' or 'unsure'")
+    batch = str(ai.get("batch", "auto")).strip().lower()
+    if batch in ("true", "yes"):
+        batch = "always"
+    if batch in ("false", "no"):
+        batch = "never"
+    if batch not in ("auto", "always", "never"):
+        raise ValueError("ai.batch must be 'auto', 'always' or 'never'")
     key_file = str(ai.get("api_key_file", "api-key.txt")).strip()
     key_path = Path(os.path.expandvars(key_file)) if key_file else None
     if key_path and not key_path.is_absolute():
         key_path = (path.parent / key_path).resolve()
-    default_model = "gpt-4o-mini" if provider == "openai" else "claude-opus-5-5"
+    default_model = {"openai": "gpt-4o-mini", "local": "qwen2.5:7b"}.get(provider, "claude-opus-5-5")
 
     mode = str(org.get("mode", "move")).lower()
     if mode not in ("move", "copy"):
@@ -136,7 +153,14 @@ def load_config(path: str | os.PathLike) -> Config:
         ai_provider=provider,
         ai_key_file=key_path,
         ai_model=str(ai.get("model") or default_model),
-        ai_max_chars=int(ai.get("max_chars", 2500)),
-        ai_workers=max(1, int(ai.get("workers", 4))),
+        ai_max_chars=max(2000, int(ai.get("max_chars", 8000))),
+        ai_workers=max(1, int(ai.get("workers", 8))),
+        ai_scope=scope,
+        ai_batch=batch,
+        ai_batch_min_emails=int(ai.get("batch_min_emails", 1000)),
+        ai_max_cost_usd=float(ai.get("max_cost_usd", 25)),
+        ai_price_in=float(ai.get("price_input_per_million", 0.15)),
+        ai_price_out=float(ai.get("price_output_per_million", 0.60)),
+        ai_base_url=str(ai.get("base_url") or "").strip(),
         source_path=path,
     )

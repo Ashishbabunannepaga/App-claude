@@ -55,15 +55,24 @@ def _sender(item) -> str:
         return ""
 
 
-def _recipients(item) -> list[str]:
-    out = []
+OL_TO, OL_CC = 1, 2
+
+
+def _recipients(item) -> tuple[list[str], list[str], list[str]]:
+    """(everyone, To, CC) as SMTP addresses."""
+    every, to, cc = [], [], []
     try:
         for i in range(1, item.Recipients.Count + 1):
             r = item.Recipients.Item(i)
-            out.append(_smtp(r.AddressEntry, r.Address or ""))
+            addr = _smtp(r.AddressEntry, r.Address or "")
+            every.append(addr)
+            if r.Type == OL_TO:
+                to.append(addr)
+            elif r.Type == OL_CC:
+                cc.append(addr)
     except Exception:
         pass
-    return out
+    return every, to, cc
 
 
 def _skip_attachment(att, cfg: Config) -> bool:
@@ -241,11 +250,12 @@ def _process_item(conn, cfg, item, entry_id, store_name, fpath, received, tmp_di
         body = item.Body or ""
     except Exception:
         body = ""
+    every, to, cc = _recipients(item)
     add_message(
         conn, entry_id=entry_id, store=store_name, folder=fpath,
         subject=item.Subject or "", sender_name=item.SenderName or "",
-        sender_email=_sender(item), recipients=_recipients(item),
-        received=received.isoformat(), body=body[:3000],
+        sender_email=_sender(item), recipients=every, to=to, cc=cc,
+        received=received.isoformat(), body=body,
     )
     for tmp, name in saved:
         size = tmp.stat().st_size

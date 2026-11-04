@@ -76,24 +76,63 @@ Double-click **`3-full-run.bat`**.
 1. Create Basic Task → Weekly → Start a program → choose `5-update-new-mail.bat`.
 2. Choose "Run only when user is logged on", because Outlook must be open.
 
-## Optional: AI step for unclear files
+## Optional: AI step (reads every email in full)
 
-The keyword rules usually sort most files. For the rest (scanned PDFs, `document1.pdf`, vague subjects), an AI model can read a short excerpt and decide. The tool works with an **OpenAI** key (the default) or an **Anthropic (Claude)** key.
+Keyword rules sort most files for free. With the AI step on, an AI model **reads each email as a whole**:
 
-**What gets sent:** the file name, the email subject, the sender's company domain, the start of the email, and the first ~2,500 characters of the document's text. PAN numbers, Aadhaar numbers, mobile numbers and email names are **masked before sending**. KYC files and files the rules were sure about are **never sent**. Get your boss's OK on this, because claim documents can contain health information.
+- **Headers:** date, folder, subject, From, **To**, **CC**.
+- **Forwards:** whether the email is a **forward**, and the original sender, date, To and CC of every forwarded or quoted message underneath. So "boss forwards the client's mail to the insurer" is filed under the right client.
+- **Body:** the newest message, plus the forwarded content, which is usually the real request.
+- **Attachments:** every attachment's name, type and opening text, plus what the keyword rules guessed.
 
-**To switch it on:**
+It then decides a category for **each attachment separately** (one email can carry a claim form *and* a KYC document). It also fills in the client, insurer and policy number, and writes a one-line summary of the email. The summary, To, CC and "Forwarded from" columns appear in the Excel file and the dashboard.
 
-1. Open **`api-key.txt`** in this folder (`1-setup.bat` creates it) and paste your key on its own line under the `#` lines. Save. Keep this file private: don't email it or copy it to the shared drive.
-2. Open **`config.yaml`** and, near the bottom under `ai:`, change `enabled: false` to **`enabled: true`**.
-3. Run **`2-trial-run.bat`**. The output shows `AI step: checking N files...` and then how many it moved.
-4. Check the cost on your OpenAI usage page before starting the full run.
+**Nothing is wasted:**
 
-| `config.yaml` setting | What it does |
+- **One request per email** covers all of its attachments.
+- **Each email is read by the AI only once.** Re-runs, resumed runs and corrections cost nothing extra.
+- **A file attached in 20 emails** is judged once, in the first email it arrived in.
+- **Long email threads are trimmed** to the parts that matter: the newest message and the forwarded content first, older replies after.
+
+**What gets sent:** the text described above, with PAN, GSTIN, Aadhaar and mobile numbers and the name part of email addresses **masked** first. The company domains (`@tataaig.com`) are kept, because they identify insurers and clients. The text of KYC documents is **never sent**. Get your boss's OK on this, because claim documents can contain health information.
+
+### What it costs
+
+Before spending anything, run **`estimate.bat`**. It counts exactly what would be sent for the emails read so far and prints the cost in dollars and rupees. Nothing is sent to OpenAI while it does this.
+
+**Free and recommended order:**
+
+1. Run `2-trial-run.bat` or `3-full-run.bat` with AI **off**. Reading Outlook and the keyword sorting are free.
+2. Run **`estimate.bat`** to see the real cost for **your** mailbox.
+3. Switch AI on (below) and run `3-full-run.bat` again. It skips everything already done and only does the AI step.
+
+**Rough guide** for `gpt-4o-mini`, at the prices in `config.yaml` (check <https://openai.com/api/pricing>):
+
+| | per email | 100,000 emails |
+|---|---|---|
+| One by one | ≈ $0.0005 (≈ 4 paise) | ≈ $50 (≈ Rs 4,250) |
+| **Batch (half price)** | ≈ $0.00025 | **≈ $25 (≈ Rs 2,100)** |
+| `scope: unsure` (only unclear files) | | usually 5–10× less |
+| `provider: local` (Ollama on the PC) | free | free, but takes days on a laptop |
+
+A safety limit, **`max_cost_usd: 25`**, stops the AI step from starting if the estimate is higher. Raise it when you're happy with the estimate.
+
+### Switching it on
+
+1. Open **`api-key.txt`** in this folder (`1-setup.bat` creates it) and paste your OpenAI key on its own line under the `#` lines. Save. Keep this file private: don't email it or copy it to the shared drive.
+2. Open **`config.yaml`** and, under `ai:`, change `enabled: false` to **`enabled: true`**.
+3. Run `estimate.bat`, check the cost, and if needed raise `max_cost_usd`.
+4. Run `2-trial-run.bat` or `3-full-run.bat`. The window shows `AI step: reading N emails...`.
+
+| `config.yaml` → `ai:` | What it does |
 |---|---|
-| `provider: openai` | Use `anthropic` instead if you have a Claude key; the key still goes in `api-key.txt`. |
-| `model: gpt-4o-mini` | A cheap, fast OpenAI model that is fine for sorting. If OpenAI says the model isn't found, put in any chat model your account lists. |
-| `workers: 4` | Parallel requests. Lower it to 1–2 if you see "rate limit" errors. |
+| `scope: all` | The AI reads **every** email that has attachments. Most accurate. `unsure` reads only the emails the keyword rules weren't sure about, which is cheaper. |
+| `batch: auto` | For 1,000+ emails, the OpenAI **Batch API** is used at **half price**. Results come back within 24 hours, usually a few. The window waits and shows progress. **You can close it**; running `3-full-run.bat` again collects the results. `never` = always one by one. |
+| `max_cost_usd: 25` | The safety limit described above. |
+| `model: gpt-4o-mini` | Cheap and accurate for this job. If OpenAI says the model isn't found, put in any chat model your account lists, and update the two `price_...` lines to match it. |
+| `workers: 8` | Emails read at the same time (one-by-one mode). Lower it to 2–4 if you see "rate limit" errors. |
+| `provider: local` | A **free** model on this PC instead of OpenAI. Install Ollama from <https://ollama.com>, run `ollama pull qwen2.5:7b`, then set `provider: local` and `model: qwen2.5:7b`. It's slow on a laptop (several seconds per email) and somewhat less accurate than OpenAI. |
+| `provider: anthropic` | Use a Claude key instead; it also goes in `api-key.txt`. |
 
 The key can also come from the `OPENAI_API_KEY` (or `ANTHROPIC_API_KEY`) Windows environment variable, which takes priority over the file.
 
@@ -120,8 +159,10 @@ python -m mailsorter report
 python -m mailsorter all      [extract options] [--ai]
 python -m mailsorter import-review [--file path.xlsx]
 python -m mailsorter status
+python -m mailsorter estimate     # AI cost for the emails read so far (sends nothing)
+python -m mailsorter ai           # run / resume only the AI step (e.g. collect a batch)
 python -m mailsorter demo     # then: --demo classify / organize / report
-python -m pytest tests        # 23 tests, run on any OS (Outlook step excluded)
+python -m pytest tests        # 31 tests, run on any OS (Outlook step excluded)
 ```
 
 | Module | Job |
@@ -130,7 +171,8 @@ python -m pytest tests        # 23 tests, run on any OS (Outlook step excluded)
 | `store.py` | SHA-256 de-duplication into `store_dir/ab/<hash>.<ext>` |
 | `db.py` | SQLite tables `messages`, `files` and `attachments`. This is what makes the tool resumable. |
 | `classify.py` | Keyword scoring: file name ×3, subject ×2, document text ×1, newest part of the body ×1. Plus `requires`/`ignore` rules per category, and client / insurer / policy-number extraction. |
-| `ai.py` | Optional AI pass (OpenAI or Claude, structured JSON output) for files the rules weren't sure about. Masks personal data before sending. Key from env var or `api-key.txt`. |
+| `parse.py` | Splits a body into the newest message and the forwarded/quoted messages (Gmail, Outlook and "wrote:" formats), each with From/To/CC/Date/Subject |
+| `ai.py` | Email-level AI pass: one strict-JSON request per email covering all its attachments. OpenAI live or Batch API, local Ollama, or Anthropic. Cost estimate, budget cap, PII masking, resumable `ai_status`. |
 | `organize.py` | Builds the folder layout. Handles Windows-safe names, the 250-character path limit, name collisions, and re-filing after corrections. |
 | `report.py` | Write-only openpyxl Excel (handles 100k+ rows) with a category dropdown, plus `import-review` |
 | `dashboard.html` | Self-contained offline dashboard (no internet needed). Data is embedded by `report.py`. |

@@ -29,6 +29,7 @@ DASHBOARD_NAME = "Dashboard.html"
 COLUMNS = [
     ("Date", 11), ("Category", 22), ("Client", 26), ("Insurer", 18), ("Policy No", 20),
     ("File name", 42), ("Type", 7), ("Size (KB)", 10), ("Email subject", 50), ("From", 30),
+    ("To", 30), ("CC", 30), ("Forwarded from", 28), ("Email summary (AI)", 45),
     ("Outlook folder", 28), ("Times received", 9), ("Sorted by", 9), ("Confidence", 10),
     ("Reason", 40), ("Open", 8), ("File ID", 12),
 ]
@@ -85,7 +86,8 @@ def write_excel(cfg: Config, rows, path: Path) -> None:
             date_cell, r["category"], r["client"] or "", r["insurer"] or "",
             r["policy_no"] or "", r["filename"], (r["ext"] or "").lstrip(".").upper(),
             round((r["size"] or 0) / 1024), r["subject"], r["sender_email"] or r["sender_name"],
-            r["folder"], r["n_emails"], r["method"], r["confidence"], r["reason"] or "",
+            _addrs(r["to_addrs"] or r["recipients"]), _addrs(r["cc_addrs"]), r["fwd_from"] or "",
+            r["summary"] or "", r["folder"], r["n_emails"], r["method"], r["confidence"], r["reason"] or "",
             link, r["sha256"],
         ]
 
@@ -146,6 +148,10 @@ def write_excel(cfg: Config, rows, path: Path) -> None:
     tmp.replace(path)
 
 
+def _addrs(v) -> str:
+    return (v or "").replace(";", "; ")
+
+
 def _col(n: int) -> str:
     s = ""
     while n:
@@ -181,6 +187,10 @@ def write_dashboard(cfg: Config, rows, path: Path) -> None:
             r["organized_path"] or "",
             r["confidence"] or "",
             r["n_emails"],
+            _addrs(r["to_addrs"] or r["recipients"]),
+            _addrs(r["cc_addrs"]),
+            r["fwd_from"] or "",
+            r["summary"] or "",
         ])
     payload = {
         "generated": datetime.now().strftime("%d %b %Y, %H:%M"),

@@ -9,6 +9,9 @@ from pathlib import Path
 
 from .config import Config
 
+# Enough for the newest message plus several forwarded/quoted ones.
+BODY_LIMIT = 20000
+
 
 def sha256_of(path: Path) -> str:
     h = hashlib.sha256()
@@ -52,13 +55,16 @@ def add_file(conn: sqlite3.Connection, cfg: Config, tmp_path: Path, filename: st
 
 def add_message(conn: sqlite3.Connection, *, entry_id: str, store: str, folder: str,
                 subject: str, sender_name: str, sender_email: str, recipients: list[str],
-                received: str, body: str, status: str = "ok", error: str | None = None) -> None:
+                received: str, body: str, status: str = "ok", error: str | None = None,
+                to: list[str] | None = None, cc: list[str] | None = None) -> None:
+    """recipients = everyone (To + CC + BCC); to / cc kept separately when known."""
+    join = lambda xs: ";".join(x.lower() for x in xs if x)  # noqa: E731
     conn.execute(
         """INSERT OR REPLACE INTO messages
            (entry_id, store, folder, subject, sender_name, sender_email, recipients,
-            received, body, status, error)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+            received, body, status, error, to_addrs, cc_addrs)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (entry_id, store, folder, subject or "", sender_name or "", (sender_email or "").lower(),
-         ";".join(r.lower() for r in recipients if r), received, (body or "")[:3000],
-         status, error),
+         join(recipients), received, (body or "")[:BODY_LIMIT],
+         status, error, join(to if to is not None else recipients), join(cc or [])),
     )

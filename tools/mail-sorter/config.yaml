@@ -181,8 +181,32 @@ clients: []
 # ---------------------------------------------------------------------
 ai:
   enabled: false             # change to true to switch the AI step on
-  provider: openai           # openai  or  anthropic
-  model: gpt-4o-mini         # any chat model your OpenAI account can use
+
+  # openai = your OpenAI key (paste it in api-key.txt)
+  # local  = FREE model running on this PC with Ollama (slower, a bit less accurate)
+  # anthropic = a Claude key
+  provider: openai
+  model: gpt-4o-mini         # any chat model your account can use (local example: qwen2.5:7b)
+
+  # all    = the AI reads EVERY email that has attachments (most accurate - recommended)
+  # unsure = only emails whose files the keyword rules were unsure about (cheapest)
+  scope: all
+
+  # OpenAI Batch API = half price, results within 24 hours (usually a few hours).
+  # auto = use it when there are at least batch_min_emails emails to read.
+  batch: auto                # auto | always | never
+  batch_min_emails: 1000
+
+  # Safety limit in US dollars: the AI step will not start if its estimate is higher.
+  # Run  estimate.bat  first to see the expected cost for your mailbox.
+  max_cost_usd: 25
+
+  # Price per 1 million tokens in US dollars, used for the estimate.
+  # These are gpt-4o-mini list prices - check https://openai.com/api/pricing
+  price_input_per_million: 0.15
+  price_output_per_million: 0.60
+
+  base_url: ''               # only for provider: local - default http://localhost:11434/v1
   api_key_file: api-key.txt
-  max_chars: 2500            # how much document text to send per file
-  workers: 4                 # parallel requests (lower it if you see rate-limit errors)
+  max_chars: 8000            # most text sent per email (email + attachment excerpts)
+  workers: 8                 # emails read at the same time (lower it if you see rate-limit errors)

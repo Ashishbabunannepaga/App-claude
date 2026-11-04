@@ -62,6 +62,9 @@ td.date { white-space: nowrap; font-variant-numeric: tabular-nums; }
 td.file a { color: var(--accent); text-decoration: none; word-break: break-word; }
 td.file a:hover { text-decoration: underline; }
 td.subj { color: var(--muted); max-width: 360px; }
+td.subj .sum { color: var(--ink); font-size: 12px; margin-top: 3px; }
+td.people { max-width: 260px; word-break: break-word; }
+td.people .meta { color: var(--muted); font-size: 12px; }
 .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft);
   color: var(--accent); font-size: 12px; white-space: nowrap; }
 .chip.review { background: var(--warn-soft); color: var(--warn); }
@@ -88,7 +91,7 @@ td.subj { color: var(--muted); max-width: 360px; }
     <div class="panel"><h2>Top clients</h2><div class="bars" id="bar-cli"></div></div>
   </section>
   <section class="filters">
-    <input type="search" id="q" placeholder="Search file name, subject, client, policy no, sender…" aria-label="Search">
+    <input type="search" id="q" placeholder="Search file name, subject, client, policy no, from, to, cc…" aria-label="Search">
     <select id="f-cat" aria-label="Category"></select>
     <select id="f-fy" aria-label="Financial year"></select>
     <select id="f-ins" aria-label="Insurer"></select>
@@ -108,7 +111,7 @@ td.subj { color: var(--muted); max-width: 360px; }
 <script>
 const DATA = /*__DATA__*/null;
 const PAGE = 100;
-const C = { date: 0, cat: 1, cli: 2, ins: 3, pol: 4, name: 5, type: 6, kb: 7, subj: 8, from: 9, path: 10, conf: 11, n: 12 };
+const C = { date: 0, cat: 1, cli: 2, ins: 3, pol: 4, name: 5, type: 6, kb: 7, subj: 8, from: 9, path: 10, conf: 11, n: 12, to: 13, cc: 14, fwd: 15, sum: 16 };
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => n.toLocaleString("en-IN");
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -117,7 +120,7 @@ const href = (p) => p ? p.split("/").map(encodeURIComponent).join("/") : "";
 
 const rows = DATA.rows.map((r) => {
   r.fy = fyOf(r[C.date]);
-  r.hay = [r[C.name], r[C.subj], DATA.clients[r[C.cli]], DATA.insurers[r[C.ins]], r[C.pol], r[C.from], DATA.categories[r[C.cat]]].join(" ").toLowerCase();
+  r.hay = [r[C.name], r[C.subj], DATA.clients[r[C.cli]], DATA.insurers[r[C.ins]], r[C.pol], r[C.from], r[C.to], r[C.cc], r[C.fwd], r[C.sum], DATA.categories[r[C.cat]]].join(" ").toLowerCase();
   return r;
 });
 const reviewIdx = DATA.categories.indexOf(DATA.review);
@@ -196,7 +199,9 @@ function render() {
       <td><span class="chip${isReview ? " review" : ""}">${esc(cat)}</span></td>
       <td>${esc(DATA.clients[r[C.cli]])}</td><td>${esc(DATA.insurers[r[C.ins]])}</td><td>${esc(r[C.pol])}</td>
       <td class="file">${file}<span class="tag">${esc(r[C.type] || "?")}</span></td>
-      <td class="subj">${esc(r[C.subj])}</td><td>${esc(r[C.from])}</td></tr>`;
+      <td class="subj">${esc(r[C.subj])}${r[C.sum] ? `<div class="sum">${esc(r[C.sum])}</div>` : ""}</td>
+      <td class="people">${esc(r[C.from])}${r[C.fwd] ? `<div class="meta">forwarded from ${esc(r[C.fwd])}</div>` : ""}
+        ${r[C.to] ? `<div class="meta">to ${esc(r[C.to])}</div>` : ""}${r[C.cc] ? `<div class="meta">cc ${esc(r[C.cc])}</div>` : ""}</td></tr>`;
   }).join("") : `<tr><td colspan="8" class="empty">No files match these filters.</td></tr>`;
 
   $("pager").innerHTML = pages > 1 ? `<button class="btn" data-p="-1" ${state.page ? "" : "disabled"}>‹ Prev</button>
@@ -207,7 +212,7 @@ function render() {
   $("f-cli").value = state.cli; $("f-type").value = state.type;
 }
 
-const HEAD = [["Date", C.date], ["Category", C.cat], ["Client", C.cli], ["Insurer", C.ins], ["Policy no", C.pol], ["File", C.name], ["Email subject", C.subj], ["From", C.from]];
+const HEAD = [["Date", C.date], ["Category", C.cat], ["Client", C.cli], ["Insurer", C.ins], ["Policy no", C.pol], ["File", C.name], ["Email subject", C.subj], ["From / To / CC", C.from]];
 function renderHead() {
   $("thead").innerHTML = HEAD.map(([l, k]) => `<th data-k="${k}">${l} <span class="arrow">${state.sort === k ? (state.dir > 0 ? "▲" : "▼") : ""}</span></th>`).join("");
 }
