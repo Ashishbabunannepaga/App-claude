@@ -22,6 +22,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _phone = TextEditingController();
   bool _consent = false;
+  bool _contactConsent = false;
   bool _loading = false;
   String? _error;
 
@@ -41,7 +42,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final challenge = await ref.read(authControllerProvider.notifier).requestOtp(_phone.text);
       if (!mounted) return;
-      context.push('/otp', extra: OtpArgs(challenge.identifier, _consent, challenge.resendAfter));
+      context.push(
+        '/otp',
+        extra: OtpArgs(challenge.identifier, _consent, challenge.resendAfter, contactConsent: _contactConsent),
+      );
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } finally {
@@ -104,6 +108,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ],
               ),
             ),
+            // Optional and separate from the terms above: the user can sign up without it
+            // and change it later in Profile > Notifications & privacy.
+            MergeSemantics(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    key: const Key('contact-consent'),
+                    value: _contactConsent,
+                    onChanged: (v) => setState(() => _contactConsent = v ?? false),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(context.l10n.contactConsentLabel, style: TextStyle(color: AppColors.textSecondary)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               onPressed: _valid && _consent && !_loading ? _submit : null,
@@ -125,8 +149,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 }
 
 class OtpArgs {
-  OtpArgs(this.identifier, this.consent, this.resendAfter);
+  OtpArgs(this.identifier, this.consent, this.resendAfter, {this.contactConsent = false});
   final String identifier;
   final bool consent;
+  final bool contactConsent;
   final int resendAfter;
 }

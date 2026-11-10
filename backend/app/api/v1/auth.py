@@ -24,7 +24,9 @@ def request_otp(body: OtpRequest, request: Request, db: DB) -> OtpRequestOut:
 
 @router.post("/otp/verify", response_model=AuthOut)
 def verify_otp(body: OtpVerify, request: Request, db: DB) -> AuthOut:
-    user, is_new = auth_service.verify_otp(db, body.identifier, body.code, body.consent, client_ip(request))
+    user, is_new = auth_service.verify_otp(
+        db, body.identifier, body.code, body.consent, client_ip(request), contact_consent=body.contact_consent
+    )
     access, refresh = auth_service.issue_tokens(db, user)
     return AuthOut(
         access_token=access,

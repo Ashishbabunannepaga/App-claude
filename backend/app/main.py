@@ -15,6 +15,7 @@ from app.api.v1 import (
     family,
     files,
     intelligence,
+    leads,
     me,
     notifications,
     policies,
@@ -55,6 +56,7 @@ def create_app() -> FastAPI:
         support,
         files,
         admin,
+        leads,
     ):
         app.include_router(module.router, prefix=s.api_prefix)
 

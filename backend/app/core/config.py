@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     review_login_identifier: str | None = None
     review_login_code: str | None = None
     privacy_policy_version: str = "2026-10-01"
+    # Version of the optional "CapitUp may contact me" text the user agreed to.
+    contact_consent_version: str = "2026-11-10"
 
     # Storage
     storage_backend: Literal["local", "s3"] = "local"
@@ -81,6 +83,9 @@ class Settings(BaseSettings):
 
     # Admin API (read-mostly ops view). Unset = admin disabled.
     admin_api_token: str | None = None
+
+    # Leads feed for CapitUp's LMS: only users who opted in to be contacted. Unset = feed disabled.
+    leads_api_token: str | None = None
 
     # OCR
     ocr_provider: Literal["tesseract", "paddle", "gemini", "none"] = (

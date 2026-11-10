@@ -154,6 +154,16 @@ class NotificationSettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(context.l10n.notificationsPromise, style: TextStyle(color: AppColors.textSecondary)),
+          const SizedBox(height: AppSpacing.md),
+          Card(
+            child: SwitchListTile(
+              key: const Key('contact-consent-switch'),
+              value: user?.contactConsent ?? false,
+              onChanged: (v) => update('contact_consent', v),
+              title: Text(context.l10n.contactConsentTitle),
+              subtitle: Text(context.l10n.contactConsentHelp),
+            ),
+          ),
         ],
       ),
     );

@@ -17,6 +17,7 @@ class AppUser {
     this.notifyRenewals = true,
     this.notifyProcessing = true,
     this.preferredLanguage = 'en',
+    this.contactConsent = false,
   });
 
   final String id;
@@ -32,6 +33,9 @@ class AppUser {
   /// Language for AI summaries and answers (en, hi, mr, ta, te, kn, bn, gu, ml).
   final String preferredLanguage;
 
+  /// Optional, separate from privacy/terms: CapitUp's team may contact the user about their policies.
+  final bool contactConsent;
+
   factory AppUser.fromJson(Map<String, dynamic> j) => AppUser(
     id: j['id'] as String,
     phone: j['phone'] as String?,
@@ -43,6 +47,7 @@ class AppUser {
     notifyRenewals: j['notify_renewals'] as bool? ?? true,
     notifyProcessing: j['notify_processing'] as bool? ?? true,
     preferredLanguage: j['preferred_language'] as String? ?? 'en',
+    contactConsent: j['contact_consent'] as bool? ?? false,
   );
 
   String get firstName => (fullName ?? '').split(' ').first;
@@ -73,14 +78,15 @@ class AuthRepository {
     return OtpChallenge(res.data!['identifier'] as String, res.data!['resend_after'] as int);
   });
 
-  Future<AppUser> verifyOtp(String identifier, String code, {required bool consent}) => _call(() async {
-    final res = await _dio.post<Map<String, dynamic>>(
-      '/auth/otp/verify',
-      data: {'identifier': identifier, 'code': code, 'consent': consent},
-    );
-    await _tokens.save(access: res.data!['access_token'] as String, refresh: res.data!['refresh_token'] as String);
-    return AppUser.fromJson(res.data!['user'] as Map<String, dynamic>);
-  });
+  Future<AppUser> verifyOtp(String identifier, String code, {required bool consent, bool contactConsent = false}) =>
+      _call(() async {
+        final res = await _dio.post<Map<String, dynamic>>(
+          '/auth/otp/verify',
+          data: {'identifier': identifier, 'code': code, 'consent': consent, 'contact_consent': contactConsent},
+        );
+        await _tokens.save(access: res.data!['access_token'] as String, refresh: res.data!['refresh_token'] as String);
+        return AppUser.fromJson(res.data!['user'] as Map<String, dynamic>);
+      });
 
   Future<AppUser?> currentUser() async {
     if (await _tokens.refreshToken == null) return null;

@@ -20,6 +20,8 @@ class UserOut(BaseModel):
     notify_renewals: bool
     notify_processing: bool
     preferred_language: str
+    contact_consent: bool = False
+    contact_consent_at: datetime | None = None
     created_at: datetime
     deletion_requested_at: datetime | None
 
@@ -32,3 +34,6 @@ class UserUpdate(BaseModel):
     notify_renewals: bool | None = None
     notify_processing: bool | None = None
     preferred_language: Language | None = None
+    contact_consent: bool | None = Field(
+        None, description="Optional: CapitUp's team may contact me about my policies (renewals, better cover)"
+    )

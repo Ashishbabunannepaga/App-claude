@@ -63,10 +63,19 @@ class User(TimestampMixin, Base):
     state: Mapped[str | None] = mapped_column(String(80))
     consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     consent_version: Mapped[str | None] = mapped_column(String(20))
+    # Separate, optional consent for CapitUp's team to contact the user about their policies
+    # (renewals, better cover). Never bundled with the privacy/terms consent above.
+    contact_consent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    contact_consent_version: Mapped[str | None] = mapped_column(String(20))
+    contact_consent_withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
     deletion_requested_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     notify_renewals: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
     notify_processing: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
     preferred_language: Mapped[str] = mapped_column(String(5), default="en", server_default="en")
+
+    @property
+    def contact_consent(self) -> bool:
+        return self.contact_consent_at is not None
 
 
 class OtpChallenge(Base):
