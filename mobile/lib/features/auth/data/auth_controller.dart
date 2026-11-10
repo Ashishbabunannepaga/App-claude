@@ -37,8 +37,8 @@ class AuthController extends Notifier<AuthState> {
 
   Future<OtpChallenge> requestOtp(String identifier) => _repo.requestOtp(identifier);
 
-  Future<void> verifyOtp(String identifier, String code, {required bool consent}) async {
-    final user = await _repo.verifyOtp(identifier, code, consent: consent);
+  Future<void> verifyOtp(String identifier, String code, {required bool consent, bool contactConsent = false}) async {
+    final user = await _repo.verifyOtp(identifier, code, consent: consent, contactConsent: contactConsent);
     state = AuthState(AuthStatus.signedIn, user);
   }
 

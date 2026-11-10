@@ -95,8 +95,11 @@
   "policyUpdates": "Policy updates",
   "policyUpdatesHelp": "When a document has been read and is ready to review",
   "notificationsPromise": "We never send promotional notifications, and notifications never show your policy numbers, amounts or health details.",
+  "contactConsentLabel": "Optional: CapitUp's insurance team may call or message me about my policies, such as renewals and better cover. I can turn this off any time.",
+  "contactConsentTitle": "CapitUp may contact me",
+  "contactConsentHelp": "Our insurance team may call or message you about renewals and better cover. Off by default; turn off any time.",
   "faqSafeQ": "Is my data safe?",
-  "faqSafeA": "Your documents are stored encrypted and are only accessible to you. We do not sell your data or share it with insurers or agents.",
+  "faqSafeA": "Your documents are stored encrypted and only you can see them. We never sell your data, and we never share your documents with insurers or outside agents. CapitUp's own insurance team sees your name, number and renewal dates only if you turn on \"CapitUp may contact me\".",
   "faqAiQ": "How does the AI answer my questions?",
   "faqAiA": "It reads only your own policy document and shows the page its answer came from. If the answer is not in your document it will say so instead of guessing.",
   "faqWrongQ": "The details extracted from my policy are wrong. What do I do?",
@@ -104,7 +107,7 @@
   "faqUploadQ": "Which documents can I upload?",
   "faqUploadA": "PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.",
   "faqSellQ": "Do you sell insurance?",
-  "faqSellA": "No. {app} helps you organise and understand the policies you already have. We do not sell or recommend insurance products.",
+  "faqSellA": "{app} is run by CapitUp, a licensed insurance broker. The app helps you organise and understand the policies you already have. If you turn on \"CapitUp may contact me\", our team may call you about renewals or better cover. You can turn it off any time in Profile.",
   "@faqSellA": {
     "placeholders": {
       "app": {
@@ -131,7 +134,7 @@
   "deleteAccountBody": "Your account will be disabled now. All your policies, documents and data will be permanently deleted after 7 days. Logging in again within 7 days cancels the deletion.",
   "deleteAccount": "Delete account",
   "privacyData": "Privacy & data",
-  "privacyPromise": "We use your policy documents only to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or agents. AI processing uses providers contractually barred from training on your data.",
+  "privacyPromise": "We use your policy documents to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or outside agents. Only if you turn on \"CapitUp may contact me\" does CapitUp's insurance team see your contact details and renewal dates. AI processing uses providers contractually barred from training on your data.",
   "downloadMyData": "Download my data",
   "downloadMyDataHelp": "A copy of your profile, policies and questions",
   "privacyPolicyItem": "Privacy policy",

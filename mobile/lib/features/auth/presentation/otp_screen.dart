@@ -55,7 +55,12 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       // On success the router redirects away from this screen.
       await ref
           .read(authControllerProvider.notifier)
-          .verifyOtp(widget.args.identifier, _code.text, consent: widget.args.consent);
+          .verifyOtp(
+            widget.args.identifier,
+            _code.text,
+            consent: widget.args.consent,
+            contactConsent: widget.args.contactConsent,
+          );
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } finally {

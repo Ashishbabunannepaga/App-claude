@@ -494,6 +494,24 @@ abstract class AppLocalizations {
   /// **'We never send promotional notifications, and notifications never show your policy numbers, amounts or health details.'**
   String get notificationsPromise;
 
+  /// No description provided for @contactConsentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional: CapitUp\'s insurance team may call or message me about my policies, such as renewals and better cover. I can turn this off any time.'**
+  String get contactConsentLabel;
+
+  /// No description provided for @contactConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'CapitUp may contact me'**
+  String get contactConsentTitle;
+
+  /// No description provided for @contactConsentHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Our insurance team may call or message you about renewals and better cover. Off by default; turn off any time.'**
+  String get contactConsentHelp;
+
   /// No description provided for @faqSafeQ.
   ///
   /// In en, this message translates to:
@@ -503,7 +521,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqSafeA.
   ///
   /// In en, this message translates to:
-  /// **'Your documents are stored encrypted and are only accessible to you. We do not sell your data or share it with insurers or agents.'**
+  /// **'Your documents are stored encrypted and only you can see them. We never sell your data, and we never share your documents with insurers or outside agents. CapitUp\'s own insurance team sees your name, number and renewal dates only if you turn on \"CapitUp may contact me\".'**
   String get faqSafeA;
 
   /// No description provided for @faqAiQ.
@@ -551,7 +569,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqSellA.
   ///
   /// In en, this message translates to:
-  /// **'No. {app} helps you organise and understand the policies you already have. We do not sell or recommend insurance products.'**
+  /// **'{app} is run by CapitUp, a licensed insurance broker. The app helps you organise and understand the policies you already have. If you turn on \"CapitUp may contact me\", our team may call you about renewals or better cover. You can turn it off any time in Profile.'**
   String faqSellA(String app);
 
   /// No description provided for @faqDeleteQ.
@@ -671,7 +689,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPromise.
   ///
   /// In en, this message translates to:
-  /// **'We use your policy documents only to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or agents. AI processing uses providers contractually barred from training on your data.'**
+  /// **'We use your policy documents to show, explain and remind you about your own insurance. Documents are encrypted, never sold, and never shared with insurers or outside agents. Only if you turn on \"CapitUp may contact me\" does CapitUp\'s insurance team see your contact details and renewal dates. AI processing uses providers contractually barred from training on your data.'**
   String get privacyPromise;
 
   /// No description provided for @downloadMyData.

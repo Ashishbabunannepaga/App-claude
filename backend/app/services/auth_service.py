@@ -19,6 +19,7 @@ from app.core.security import (
 )
 from app.models import OtpChallenge, RefreshToken, User
 from app.services.audit import audit
+from app.services.contact_consent import set_contact_consent
 from app.services.otp_sender import get_otp_sender
 
 _E164 = re.compile(r"^\+[1-9]\d{7,14}$")
@@ -71,7 +72,9 @@ def request_otp(db: Session, raw_identifier: str, ip: str | None) -> OtpChalleng
     return challenge
 
 
-def verify_otp(db: Session, raw_identifier: str, code: str, consent: bool, ip: str | None) -> tuple[User, bool]:
+def verify_otp(
+    db: Session, raw_identifier: str, code: str, consent: bool, ip: str | None, contact_consent: bool = False
+) -> tuple[User, bool]:
     s = get_settings()
     identifier = normalise_identifier(raw_identifier)
     limiter.hit(f"otp-verify:ip:{ip}", limit=60, window_seconds=3600)
@@ -104,6 +107,8 @@ def verify_otp(db: Session, raw_identifier: str, code: str, consent: bool, ip: s
             user.phone = identifier
         db.add(user)
         db.flush()
+        if contact_consent:
+            set_contact_consent(db, user, True, ip=ip, source="signup")
     elif user.deletion_requested_at is not None:
         user.deletion_requested_at = None  # logging in during the grace period cancels deletion
         audit(db, "account_deletion_cancelled", user.id, ip=ip)

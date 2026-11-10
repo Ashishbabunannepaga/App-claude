@@ -17,6 +17,7 @@ class OtpVerify(BaseModel):
     identifier: str = Field(min_length=5, max_length=320)
     code: str = Field(pattern=r"^\d{6}$")
     consent: bool = Field(False, description="User accepted privacy notice & terms (required for new users)")
+    contact_consent: bool = Field(False, description="Optional, separate: CapitUp may contact me (new users only)")
 
 
 class RefreshRequest(BaseModel):

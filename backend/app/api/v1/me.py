@@ -5,6 +5,7 @@ from app.core.security import now_utc
 from app.schemas.user import UserOut, UserUpdate
 from app.services.audit import audit
 from app.services.auth_service import revoke_all
+from app.services.contact_consent import set_contact_consent
 
 router = APIRouter(prefix="/me", tags=["profile"])
 
@@ -15,10 +16,14 @@ def get_me(user: CurrentUser) -> UserOut:
 
 
 @router.patch("", response_model=UserOut)
-def update_me(body: UserUpdate, user: CurrentUser, db: DB) -> UserOut:
+def update_me(body: UserUpdate, user: CurrentUser, db: DB, request: Request) -> UserOut:
     if body.preferred_language is None and "preferred_language" in body.model_fields_set:
         body.preferred_language = "en"
-    for field, value in body.model_dump(exclude_unset=True).items():
+    changes = body.model_dump(exclude_unset=True)
+    contact = changes.pop("contact_consent", None)
+    if contact is not None:
+        set_contact_consent(db, user, contact, ip=client_ip(request), source="profile")
+    for field, value in changes.items():
         setattr(user, field, value)
     db.commit()
     return UserOut.model_validate(user)
