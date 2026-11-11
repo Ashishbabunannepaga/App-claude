@@ -1,7 +1,7 @@
 # CapitUp — AI-powered personal insurance intelligence
 
 > Brand: CapitUp (`mobile/lib/core/brand.dart`). Drop the logo into `mobile/assets/brand/logo.png`; until then the app
-> draws a text wordmark. The bundle ID is still `com.insureiq.insureiq` (change it before the first store upload).
+> draws a text wordmark. The app ID is `com.capitupindia.app` (Android and iOS); it can never change after the first store upload.
 
 A cross-platform (Android + iOS) app that lets people keep all their insurance policies in one place, understand what they are covered for, ask questions answered **from their own policy document**, and never miss a renewal.
 
@@ -83,7 +83,7 @@ the real backend in demo mode (offline mock AI, labelled "Demo mode · offline A
 | Push | Firebase project: backend `PUSH_SENDER=fcm`, `FCM_PROJECT_ID`, `FCM_SERVICE_ACCOUNT_JSON`; app `--dart-define=FIREBASE_*`; iOS: enable Push Notifications capability in Xcode + upload APNs key to Firebase |
 | Storage | S3 / R2 bucket: `STORAGE_BACKEND=s3`, `S3_BUCKET`, (`S3_ENDPOINT_URL` for R2) |
 | Legal URLs | `--dart-define=PRIVACY_URL / TERMS_URL / SUPPORT_EMAIL / GRIEVANCE_OFFICER` |
-| Store identity | Replace the codename, bundle ID `com.insureiq.insureiq`, app icon |
+| Store identity | App icon (the app ID is final: `com.capitupindia.app`) |
 
 The server refuses to start with `ENV=production` while any dev-only setting (mock AI, console OTP, local storage,
 log push, in-memory rate limits) is still active.
