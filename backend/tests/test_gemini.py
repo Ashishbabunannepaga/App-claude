@@ -196,6 +196,7 @@ def test_without_tesseract_or_gemini_key_photo_fails_clearly(monkeypatch):
         pytesseract, "get_languages", lambda **k: (_ for _ in ()).throw(pytesseract.TesseractNotFoundError())
     )
     monkeypatch.setattr(get_settings(), "gemini_api_key", None)
+    monkeypatch.setattr(get_settings(), "openai_api_key", None)
     buf = io.BytesIO()
     Image.new("RGB", (100, 100), "white").save(buf, format="PNG")
     with pytest.raises(ExtractionError, match="ocr_unavailable"):
