@@ -12,6 +12,8 @@ def pdf(path, pages):
     c.save()
 
 out = sys.argv[1]
+import os
+os.makedirs(out, exist_ok=True)  # the folder may not exist yet
 pdf(f"{out}/health.pdf", [
     ["Star Health and Allied Insurance - Health Insurance Policy Schedule",
      "Plan: Family Health Optima Insurance Plan",
