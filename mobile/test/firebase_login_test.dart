@@ -99,6 +99,11 @@ void main() {
     expect(firebaseError(FirebaseAuthException(code: 'session-expired')).message, contains('expired'));
     expect(firebaseError(FirebaseAuthException(code: 'network-request-failed')).code, 'offline');
     expect(firebaseError(FirebaseAuthException(code: 'something-new')).message, contains("couldn't send"));
+    // Tests run as debug builds: the real reason is shown too, for setup problems.
+    expect(
+      firebaseError(FirebaseAuthException(code: 'app-not-authorized', message: 'SHA-1 not registered')).message,
+      contains('[app-not-authorized] SHA-1 not registered'),
+    );
   });
 
   test('without Firebase: the backend\'s own OTP, as before', () async {
