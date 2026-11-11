@@ -47,16 +47,26 @@ class PolicyRepository {
 
   Future<void> delete(String id) => _call(() => _dio.delete<void>('/policies/$id'));
 
-  Future<PolicyDocument> upload(Uint8List bytes, String filename, {void Function(double)? onProgress}) =>
-      _call(() async {
-        final form = FormData.fromMap({'file': MultipartFile.fromBytes(bytes, filename: filename)});
-        final res = await _dio.post<Map<String, dynamic>>(
-          '/documents',
-          data: form,
-          onSendProgress: (sent, total) => total > 0 ? onProgress?.call(sent / total) : null,
-        );
-        return PolicyDocument.fromJson(res.data!);
-      });
+  /// One file, or several photos of the same policy ([morePages], in order): the server joins
+  /// photos into one PDF so the policy is read as one document.
+  Future<PolicyDocument> upload(
+    Uint8List bytes,
+    String filename, {
+    List<(Uint8List, String)> morePages = const [],
+    void Function(double)? onProgress,
+  }) => _call(() async {
+    final form = FormData.fromMap({
+      'file': MultipartFile.fromBytes(bytes, filename: filename),
+      if (morePages.isNotEmpty)
+        'pages': [for (final (data, name) in morePages) MultipartFile.fromBytes(data, filename: name)],
+    });
+    final res = await _dio.post<Map<String, dynamic>>(
+      '/documents',
+      data: form,
+      onSendProgress: (sent, total) => total > 0 ? onProgress?.call(sent / total) : null,
+    );
+    return PolicyDocument.fromJson(res.data!);
+  });
 
   Future<PolicyDocument> document(String id) => _call(() async {
     final res = await _dio.get<Map<String, dynamic>>('/documents/$id');

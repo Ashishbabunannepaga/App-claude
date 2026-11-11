@@ -1357,6 +1357,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errProcessing => 'We couldn\'t process this document.';
 
   @override
+  String get errNotAPolicy =>
+      'This doesn\'t look like an insurance policy. Please upload the policy document or schedule.';
+
+  @override
+  String get chooseAnotherFile => 'Choose another file';
+
+  @override
+  String get readingDetails => 'Reading your policy details…';
+
+  @override
+  String get preparingDocument => 'Preparing your document…';
+
+  @override
+  String get backToHome => 'Back to home';
+
+  @override
+  String get addAnotherPageTitle => 'Add another page?';
+
+  @override
+  String addAnotherPageBody(int count) {
+    return 'Take a photo of the next page so we can read the whole policy. Pages so far: $count';
+  }
+
+  @override
+  String get addPage => 'Add page';
+
+  @override
+  String get donePages => 'Done';
+
+  @override
+  String get photosHint => 'JPG or PNG. Select every page of the policy.';
+
+  @override
+  String get tooManyPhotos => 'Please choose at most 10 photos for one policy.';
+
+  @override
   String get yourPolicies => 'Your policies';
 
   @override

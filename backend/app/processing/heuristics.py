@@ -192,6 +192,26 @@ def normalise(text: str) -> str:
     return re.sub(r"[^a-z0-9]", "", text.lower())
 
 
+INSURANCE_SIGNALS = (
+    "insur",  # insurance, insured, insurer, reinsurance
+    "assur",  # assured, assurance (life)
+    "irda",  # IRDA / IRDAI registration lines
+    "policy schedule",
+    "certificate of insurance",
+    "sum insured",
+    "premium",
+    "nominee",
+    "policyholder",
+    "policy holder",
+)
+
+
+def insurance_signal(text: str) -> int:
+    """How many insurance markers a document carries. 0 means almost certainly not a policy."""
+    lower = text.lower()
+    return sum(1 for k in INSURANCE_SIGNALS if k in lower)
+
+
 def classify(text: str) -> str:
     lower = text.lower()
     scores = {t: sum(lower.count(k) for k in kws) for t, kws in TYPE_KEYWORDS.items()}

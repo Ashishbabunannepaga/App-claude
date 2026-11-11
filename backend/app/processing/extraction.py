@@ -34,6 +34,13 @@ def _conf(raw: Any) -> float:
         return 0.0
 
 
+def is_not_a_policy(raw: dict[str, Any], text: str) -> bool:
+    """True for documents that are not insurance policies: no insurance markers at all, or the AI
+    says so and the text has almost none. A real policy the AI misjudges still has plenty of markers."""
+    signal = h.insurance_signal(text)
+    return signal == 0 or (raw.get("policy_type") == "not_insurance" and signal < 3)
+
+
 def validate_extraction(raw: dict[str, Any], text: str) -> ValidatedExtraction:
     policy_type = raw.get("policy_type") if raw.get("policy_type") in POLICY_TYPES else h.classify(text)
     fields = raw.get("fields") or {}

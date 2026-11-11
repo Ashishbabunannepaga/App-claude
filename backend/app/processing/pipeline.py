@@ -10,7 +10,7 @@ from app.ai.providers.base import AIProviderError
 from app.models import Document, DocumentStatus, Policy, PolicyChunk, PolicyClause, User
 from app.processing.chunking import chunk_pages
 from app.processing.clauses import extract_clauses
-from app.processing.extraction import validate_extraction
+from app.processing.extraction import is_not_a_policy, validate_extraction
 from app.processing.text_extraction import ExtractionError, extract_text
 from app.services.notification_service import notify
 from app.storage import get_storage
@@ -36,6 +36,8 @@ def process_document(db: Session, document_id: uuid.UUID) -> None:
         doc.extracted_text = extracted.full_text
 
         raw = get_ai_gateway().extract_policy(extracted.full_text)
+        if is_not_a_policy(raw, extracted.full_text):
+            raise ExtractionError("not_a_policy")
         result = validate_extraction(raw, extracted.full_text)
 
         policy = doc.policy or Policy(user_id=doc.user_id, document_id=doc.id, source="upload")
