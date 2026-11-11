@@ -670,6 +670,24 @@
   "errOcrUnavailable": "Scanned documents can't be read right now. Please upload a digital PDF or enter details manually.",
   "errAiUnavailable": "Our reading service is busy. Please retry in a minute.",
   "errProcessing": "We couldn't process this document.",
+  "errNotAPolicy": "This doesn't look like an insurance policy. Please upload the policy document or schedule.",
+  "chooseAnotherFile": "Choose another file",
+  "readingDetails": "Reading your policy details…",
+  "preparingDocument": "Preparing your document…",
+  "backToHome": "Back to home",
+  "addAnotherPageTitle": "Add another page?",
+  "addAnotherPageBody": "Take a photo of the next page so we can read the whole policy. Pages so far: {count}",
+  "@addAnotherPageBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addPage": "Add page",
+  "donePages": "Done",
+  "photosHint": "JPG or PNG. Select every page of the policy.",
+  "tooManyPhotos": "Please choose at most 10 photos for one policy.",
   "yourPolicies": "Your policies",
   "coinsOpenRewards": "Coins: {count}. Open rewards",
   "@coinsOpenRewards": {

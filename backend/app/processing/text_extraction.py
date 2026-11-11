@@ -107,11 +107,20 @@ def _ocr_pdf(data: bytes) -> list[str]:
         pdf.close()
 
 
+def _open_without_password(reader: PdfReader) -> bool:
+    try:
+        return bool(reader.decrypt(""))
+    except Exception:  # noqa: BLE001 - unsupported encryption counts as locked
+        return False
+
+
 def extract_text(data: bytes, content_type: str) -> ExtractedText:
     if content_type == "application/pdf":
         try:
             reader = PdfReader(io.BytesIO(data))
-            if reader.is_encrypted:
+            # Many insurers lock their PDFs only against editing or printing: those open with an
+            # empty password. Only a PDF that needs a real password to open is refused.
+            if reader.is_encrypted and not _open_without_password(reader):
                 raise ExtractionError("pdf_password_protected")
             if len(reader.pages) > get_settings().max_pdf_pages:
                 raise ExtractionError("pdf_too_many_pages")

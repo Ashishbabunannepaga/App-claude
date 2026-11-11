@@ -16,6 +16,7 @@ pypdf==5.9.0
 pypdfium2==4.30.0
 pytesseract==0.3.13
 pillow==11.3.0
+cryptography==50.0.2  # AES-encrypted PDFs (pypdf); already in the lock via google-auth
 celery[redis]==5.4.0
 redis==5.3.1
 boto3==1.35.99

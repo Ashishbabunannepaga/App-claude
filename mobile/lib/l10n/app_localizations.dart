@@ -2504,6 +2504,72 @@ abstract class AppLocalizations {
   /// **'We couldn\'t process this document.'**
   String get errProcessing;
 
+  /// No description provided for @errNotAPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like an insurance policy. Please upload the policy document or schedule.'**
+  String get errNotAPolicy;
+
+  /// No description provided for @chooseAnotherFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another file'**
+  String get chooseAnotherFile;
+
+  /// No description provided for @readingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading your policy details…'**
+  String get readingDetails;
+
+  /// No description provided for @preparingDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your document…'**
+  String get preparingDocument;
+
+  /// No description provided for @backToHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to home'**
+  String get backToHome;
+
+  /// No description provided for @addAnotherPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add another page?'**
+  String get addAnotherPageTitle;
+
+  /// No description provided for @addAnotherPageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo of the next page so we can read the whole policy. Pages so far: {count}'**
+  String addAnotherPageBody(int count);
+
+  /// No description provided for @addPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add page'**
+  String get addPage;
+
+  /// No description provided for @donePages.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get donePages;
+
+  /// No description provided for @photosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'JPG or PNG. Select every page of the policy.'**
+  String get photosHint;
+
+  /// No description provided for @tooManyPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose at most 10 photos for one policy.'**
+  String get tooManyPhotos;
+
   /// No description provided for @yourPolicies.
   ///
   /// In en, this message translates to:

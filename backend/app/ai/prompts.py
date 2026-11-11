@@ -96,11 +96,13 @@ Rules:
 - Respond with a single JSON object and nothing else."""
 
 EXTRACT_PROMPT = """Classify this policy as one of: health, life, motor, other.
+If the document is not an insurance policy, schedule or certificate at all (for example a bank statement,
+invoice, payslip, ID card or hospital bill), use "not_insurance" and leave the fields null.
 Then extract fields.
 
 Return JSON exactly in this shape:
 {{
-  "policy_type": "health|life|motor|other",
+  "policy_type": "health|life|motor|other|not_insurance",
   "fields": {{ "<core_field>": {{"value": <string|number|null>, "confidence": <0-1>}} , ... }},
   "details": {{ "<detail_field>": <short plain-language string or null>, ... }}
 }}

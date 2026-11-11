@@ -1351,6 +1351,41 @@ class AppLocalizationsHi extends AppLocalizations {
   String get errProcessing => 'हम इस दस्तावेज़ को प्रोसेस नहीं कर सके।';
 
   @override
+  String get errNotAPolicy => 'यह बीमा पॉलिसी नहीं लगती। कृपया पॉलिसी दस्तावेज़ या शेड्यूल अपलोड करें।';
+
+  @override
+  String get chooseAnotherFile => 'दूसरी फ़ाइल चुनें';
+
+  @override
+  String get readingDetails => 'आपकी पॉलिसी की जानकारी पढ़ी जा रही है…';
+
+  @override
+  String get preparingDocument => 'आपका दस्तावेज़ तैयार किया जा रहा है…';
+
+  @override
+  String get backToHome => 'होम पर वापस जाएँ';
+
+  @override
+  String get addAnotherPageTitle => 'एक और पेज जोड़ें?';
+
+  @override
+  String addAnotherPageBody(int count) {
+    return 'अगले पेज की फ़ोटो लें ताकि हम पूरी पॉलिसी पढ़ सकें। अब तक पेज: $count';
+  }
+
+  @override
+  String get addPage => 'पेज जोड़ें';
+
+  @override
+  String get donePages => 'हो गया';
+
+  @override
+  String get photosHint => 'JPG या PNG। पॉलिसी के सभी पेज चुनें।';
+
+  @override
+  String get tooManyPhotos => 'एक पॉलिसी के लिए ज़्यादा से ज़्यादा 10 फ़ोटो चुनें।';
+
+  @override
   String get yourPolicies => 'आपकी पॉलिसियाँ';
 
   @override

@@ -11,6 +11,7 @@ import '../data/policy_repository.dart';
 import '../../../core/locale.dart';
 
 const _maxBytes = 20 * 1024 * 1024;
+const _maxPhotos = 10;
 
 class AddPolicyScreen extends ConsumerStatefulWidget {
   const AddPolicyScreen({super.key});
@@ -23,39 +24,76 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
   double? _progress;
   String? _error;
 
-  Future<void> _pick({required bool images}) async {
+  Future<void> _pickPdf() async {
     setState(() => _error = null);
-    final file = await FilePicker.pickFile(
-      type: images ? FileType.image : FileType.custom,
-      allowedExtensions: images ? null : ['pdf'],
-    );
+    final t = context.l10n;
+    final file = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: ['pdf']);
     if (file == null) return;
-    final size = await file.length();
-    if (size != null && size > _maxBytes) {
-      setState(() => _error = context.l10n.fileTooBig);
-      return;
-    }
-    final ext = file.extension?.toLowerCase();
-    if (!['pdf', 'jpg', 'jpeg', 'png'].contains(ext)) {
-      setState(() => _error = context.l10n.wrongFileType);
-      return;
-    }
-    await _upload(await file.readAsBytes(), file.name);
+    final error = await _check([file], t);
+    if (error != null) return setState(() => _error = error);
+    await _upload([(await file.readAsBytes(), file.name)]);
   }
 
+  /// Photos from the gallery: one or several pages of the same policy.
+  Future<void> _pickPhotos() async {
+    setState(() => _error = null);
+    final t = context.l10n;
+    final files = await FilePicker.pickFiles(type: FileType.image);
+    if (files.isEmpty || !mounted) return;
+    if (files.length > _maxPhotos) return setState(() => _error = t.tooManyPhotos);
+    final error = await _check(files, t);
+    if (error != null) return setState(() => _error = error);
+    await _upload([for (final f in files) (await f.readAsBytes(), f.name)]);
+  }
+
+  Future<String?> _check(List<PlatformFile> files, AppLocalizations t) async {
+    for (final file in files) {
+      final size = await file.length();
+      if (size != null && size > _maxBytes) return t.fileTooBig;
+      if (!['pdf', 'jpg', 'jpeg', 'png'].contains(file.extension?.toLowerCase())) return t.wrongFileType;
+    }
+    return null;
+  }
+
+  /// Camera: a photo per page, asking after each one whether there is another page.
   Future<void> _capture() async {
     setState(() => _error = null);
-    final photo = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 85, maxWidth: 2400);
-    if (photo == null) return;
-    await _upload(await photo.readAsBytes(), photo.name);
+    final pages = <(Uint8List, String)>[];
+    while (pages.length < _maxPhotos) {
+      final photo = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 85, maxWidth: 2400);
+      if (photo == null) break;
+      pages.add((await photo.readAsBytes(), photo.name));
+      if (!mounted || pages.length == _maxPhotos || !await _askForAnotherPage(pages.length)) break;
+    }
+    if (pages.isNotEmpty) await _upload(pages);
   }
 
-  Future<void> _upload(Uint8List bytes, String name) async {
+  Future<bool> _askForAnotherPage(int count) async =>
+      await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(context.l10n.addAnotherPageTitle),
+          content: Text(context.l10n.addAnotherPageBody(count)),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.donePages)),
+            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.addPage)),
+          ],
+        ),
+      ) ??
+      false;
+
+  Future<void> _upload(List<(Uint8List, String)> pages) async {
     setState(() => _progress = 0);
     try {
+      final (bytes, name) = pages.first;
       final doc = await ref
           .read(policyRepositoryProvider)
-          .upload(bytes, name, onProgress: (p) => mounted ? setState(() => _progress = p) : null);
+          .upload(
+            bytes,
+            name,
+            morePages: pages.skip(1).toList(),
+            onProgress: (p) => mounted ? setState(() => _progress = p) : null,
+          );
       if (!mounted) return;
       context.pushReplacement('/add/processing/${doc.id}');
     } on ApiException catch (e) {
@@ -85,7 +123,7 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
               icon: Icons.picture_as_pdf_rounded,
               title: context.l10n.uploadPdf,
               subtitle: context.l10n.recommendedBest,
-              onTap: () => _pick(images: false),
+              onTap: _pickPdf,
             ),
             if (!kIsWeb)
               _SourceTile(
@@ -97,10 +135,9 @@ class _AddPolicyScreenState extends ConsumerState<AddPolicyScreen> {
             _SourceTile(
               icon: Icons.photo_library_rounded,
               title: context.l10n.uploadPhoto,
-              subtitle: context.l10n.jpgOrPng,
-              onTap: () => _pick(images: true),
+              subtitle: context.l10n.photosHint,
+              onTap: _pickPhotos,
             ),
-            // TODO(P2): multi-page scanner with edge detection.
             _SourceTile(
               icon: Icons.edit_note_rounded,
               title: context.l10n.enterManually,

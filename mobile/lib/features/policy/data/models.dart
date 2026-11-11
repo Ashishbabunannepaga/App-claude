@@ -198,8 +198,14 @@ class PolicyDocument {
     'no_text_found' => strings.errNoText,
     'ocr_unavailable' => strings.errOcrUnavailable,
     'ai_unavailable' => strings.errAiUnavailable,
+    'not_a_policy' => strings.errNotAPolicy,
     _ => strings.errProcessing,
   };
+
+  /// Failures the same file will always hit again: offer another file instead of a retry.
+  static const permanentErrors = {'pdf_password_protected', 'pdf_too_many_pages', 'pdf_unreadable', 'not_a_policy'};
+
+  bool get canRetry => status == 'failed' && !permanentErrors.contains(errorCode);
 }
 
 class Citation {
