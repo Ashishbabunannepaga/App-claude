@@ -5,6 +5,13 @@ B = "http://localhost:8000/api/v1"
 c = httpx.Client(base_url=B, timeout=60)
 c.post("/auth/otp/request", json={"identifier": "9876543210"}).raise_for_status()
 r = c.post("/auth/otp/verify", json={"identifier": "9876543210", "code": "246810", "consent": True}).json()
+if "access_token" not in r:
+    sys.exit(
+        "Demo login failed: " + str(r.get("error", r)) + "\n"
+        "Add these two lines to backend/.env, let the backend restart, then run this again:\n"
+        "  REVIEW_LOGIN_IDENTIFIER=+919876543210\n"
+        "  REVIEW_LOGIN_CODE=246810"
+    )
 c.headers["Authorization"] = "Bearer " + r["access_token"]
 c.patch("/me", json={"full_name": "Asha Rao", "city": "Bengaluru", "state": "Karnataka", "date_of_birth": "1990-06-14"})
 fam = {}
