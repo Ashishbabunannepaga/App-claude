@@ -1,4 +1,5 @@
 import io
+import re
 from dataclasses import dataclass
 from functools import lru_cache
 
@@ -9,6 +10,15 @@ from app.core.config import get_settings
 
 MIN_CHARS_PER_PAGE = 50
 OCR_DPI_SCALE = 200 / 72
+
+
+# Control characters some insurers' PDFs carry (NUL above all, which Postgres text cannot store).
+# Tabs and newlines stay: they carry the layout.
+_CONTROL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
+
+
+def clean_text(text: str) -> str:
+    return _CONTROL.sub("", text)
 
 
 class ExtractionError(Exception):
@@ -139,18 +149,18 @@ def extract_text(data: bytes, content_type: str) -> ExtractedText:
                 raise ExtractionError("pdf_password_protected")
             if len(reader.pages) > get_settings().max_pdf_pages:
                 raise ExtractionError("pdf_too_many_pages")
-            pages = [(page.extract_text() or "").strip() for page in reader.pages]
+            pages = [clean_text(page.extract_text() or "").strip() for page in reader.pages]
         except PdfReadError as exc:
             raise ExtractionError("pdf_unreadable") from exc
         if pages and sum(len(p) for p in pages) / len(pages) >= MIN_CHARS_PER_PAGE:
             return ExtractedText(pages, "text")
-        pages = [p.strip() for p in _ocr_pdf(data)]  # scanned PDF
+        pages = [clean_text(p).strip() for p in _ocr_pdf(data)]  # scanned PDF
         method = "ocr"
     else:
         from PIL import Image
 
         with Image.open(io.BytesIO(data)) as img:
-            pages = [_ocr_image(img.convert("RGB")).strip()]
+            pages = [clean_text(_ocr_image(img.convert("RGB"))).strip()]
         method = "ocr"
     if sum(len(p) for p in pages) < MIN_CHARS_PER_PAGE:
         raise ExtractionError("no_text_found")

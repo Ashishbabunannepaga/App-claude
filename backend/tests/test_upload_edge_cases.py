@@ -155,3 +155,15 @@ def test_uploading_a_file_that_was_read_does_not_read_it_again(client, auth, mon
     assert first["status"] == "extracted"
     monkeypatch.setattr(pipeline, "extract_text", lambda *a, **k: pytest.fail("re-read an extracted document"))
     assert _doc(client, auth, _upload(client, auth, pdf))["id"] == first["id"]
+
+
+def test_pdf_text_with_nul_characters_is_read(client, auth, monkeypatch):
+    """Some insurers' PDFs carry NUL bytes in their text layer; Postgres text cannot store them."""
+    from pypdf import PageObject
+
+    real = PageObject.extract_text
+    monkeypatch.setattr(PageObject, "extract_text", lambda self, *a, **k: real(self, *a, **k).replace(" ", " \x00", 3))
+    doc = _doc(client, auth, _upload(client, auth, make_pdf()))
+    assert doc["status"] == "extracted", doc
+    with SessionLocal() as db:
+        assert "\x00" not in db.get(Document, doc["id"]).extracted_text
