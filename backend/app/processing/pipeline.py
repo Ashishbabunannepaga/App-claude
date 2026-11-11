@@ -28,6 +28,7 @@ def process_document(db: Session, document_id: uuid.UUID) -> None:
         return
     doc.status, doc.error_code = DocumentStatus.processing, None
     db.commit()
+    log.info("processing document %s (%s)", document_id, doc.content_type)
 
     try:
         data = get_storage().get(doc.storage_key)
@@ -83,8 +84,10 @@ def process_document(db: Session, document_id: uuid.UUID) -> None:
         doc.status = DocumentStatus.extracted
         db.commit()
         _notify(db, doc, ok=True, policy_id=policy.id)
+        log.info("document %s extracted (%s, %d pages)", document_id, doc.extraction_method, doc.page_count)
     except ExtractionError as exc:
         db.rollback()
+        log.warning("document %s failed: %s", document_id, exc.code)
         _fail(db, document_id, exc.code)
     except AIProviderError:
         db.rollback()

@@ -33,8 +33,8 @@ def _ocr_image(image) -> str:
     provider = get_settings().ocr_provider
     if provider == "none":
         raise ExtractionError("ocr_unavailable")
-    if provider == "gemini":
-        return _gemini_ocr(image)
+    if provider in ("gemini", "openai"):
+        return _vision_ocr(image, provider)
     if provider == "paddle":
         return _paddle_ocr(image)
     import pytesseract
@@ -45,29 +45,44 @@ def _ocr_image(image) -> str:
         langs = "+".join(lang for lang in langs.split("+") if lang in available) or "eng"
         return pytesseract.image_to_string(image, lang=langs)
     except pytesseract.TesseractNotFoundError as exc:
-        # Tesseract is a system program, often missing on Windows PCs and slim servers. With a Gemini key,
-        # photos and scanned PDFs still work instead of failing with "ocr_unavailable".
-        if get_settings().gemini_api_key:
-            return _gemini_ocr(image)
-        raise ExtractionError("ocr_unavailable") from exc
+        # Tesseract is a system program, often missing on Windows PCs and slim servers. With an AI key
+        # (Gemini or OpenAI), photos and scanned PDFs are read by a vision model instead.
+        fallback = _vision_fallback()
+        if fallback is None:
+            raise ExtractionError("ocr_unavailable") from exc
+        return _vision_ocr(image, fallback)
 
 
-GEMINI_OCR_MAX_SIDE = 2000  # px; enough for small print, keeps each request well under the 20 MB inline limit
-
-
-def _gemini_ocr(image) -> str:
-    from app.ai.providers.gemini import GeminiProvider
-
+def _vision_fallback() -> str | None:
+    """Vision OCR for when Tesseract is missing: the main AI provider if it has a key, else any keyed one."""
     s = get_settings()
-    if not s.gemini_api_key:
+    keyed = [name for name, key in (("gemini", s.gemini_api_key), ("openai", s.openai_api_key)) if key]
+    if s.ai_provider in keyed:
+        return s.ai_provider
+    return keyed[0] if keyed else None
+
+
+VISION_OCR_MAX_SIDE = 2000  # px; enough for small print, keeps each request well under inline image limits
+
+
+def _vision_ocr(image, provider: str) -> str:
+    s = get_settings()
+    key = s.gemini_api_key if provider == "gemini" else s.openai_api_key
+    if not key:
         raise ExtractionError("ocr_unavailable")
     img = image.convert("RGB")
-    img.thumbnail((GEMINI_OCR_MAX_SIDE, GEMINI_OCR_MAX_SIDE))
+    img.thumbnail((VISION_OCR_MAX_SIDE, VISION_OCR_MAX_SIDE))
     buf = io.BytesIO()
     img.save(buf, format="JPEG", quality=90)
-    return GeminiProvider(s.gemini_api_key, s.gemini_model, s.ai_timeout_seconds).transcribe(
-        buf.getvalue(), "image/jpeg"
-    )
+    if provider == "gemini":
+        from app.ai.providers.gemini import GeminiProvider
+
+        engine = GeminiProvider(key, s.gemini_model, s.ai_timeout_seconds)
+    else:
+        from app.ai.providers.openai import OpenAIProvider
+
+        engine = OpenAIProvider(key, s.openai_model, s.ai_timeout_seconds)
+    return engine.transcribe(buf.getvalue(), "image/jpeg")
 
 
 @lru_cache

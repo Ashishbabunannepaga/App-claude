@@ -90,8 +90,8 @@ class Settings(BaseSettings):
     leads_api_token: str | None = None
 
     # OCR
-    ocr_provider: Literal["tesseract", "paddle", "gemini", "none"] = (
-        "tesseract"  # tesseract falls back to gemini when missing
+    ocr_provider: Literal["tesseract", "paddle", "gemini", "openai", "none"] = (
+        "tesseract"  # when Tesseract is missing, falls back to a vision model (Gemini or OpenAI) if a key is set
     )
     ocr_languages: str = "eng+hin"  # tesseract language packs; PaddleOCR uses ocr_paddle_lang
     ocr_paddle_lang: str = "en"

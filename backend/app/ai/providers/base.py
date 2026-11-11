@@ -6,6 +6,14 @@ from typing import Any
 
 import httpx
 
+# Shared by every vision OCR provider (Gemini, OpenAI).
+TRANSCRIBE_PROMPT = (
+    "Transcribe all text on this insurance document page exactly as printed, in reading order. "
+    "Keep numbers, dates, amounts, policy numbers and names exactly as written; do not correct, translate, "
+    "summarise or add anything. Put table rows on their own lines with cells separated by ' | '. "
+    "If the page has no text, return nothing."
+)
+
 
 class AIProviderError(Exception):
     pass
