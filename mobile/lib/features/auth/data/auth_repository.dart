@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/storage/token_storage.dart';
+import 'phone_gateway.dart';
 
 class AppUser {
   AppUser({
@@ -60,10 +61,26 @@ class OtpChallenge {
 }
 
 class AuthRepository {
-  AuthRepository(this._dio, this._tokens);
+  AuthRepository(this._dio, this._tokens, [this._phone]);
 
   final Dio _dio;
   final TokenStorage _tokens;
+
+  /// Firebase phone login when the app was built with Firebase; null = the backend's own OTP.
+  final PhoneGateway? _phone;
+
+  /// Firebase's verification id per number, from sending the code to checking it.
+  final _verifications = <String, String>{};
+
+  bool _usesFirebase(String identifier) => _phone != null && !identifier.contains('@');
+
+  /// +91XXXXXXXXXX for a 10-digit Indian mobile; anything else as typed (Firebase checks it).
+  static String e164(String raw) {
+    final digits = raw.replaceAll(RegExp(r'[\s\-()]'), '');
+    if (RegExp(r'^[6-9]\d{9}$').hasMatch(digits)) return '+91$digits';
+    if (RegExp(r'^91[6-9]\d{9}$').hasMatch(digits)) return '+$digits';
+    return digits;
+  }
 
   Future<T> _call<T>(Future<T> Function() fn) async {
     try {
@@ -74,16 +91,32 @@ class AuthRepository {
   }
 
   Future<OtpChallenge> requestOtp(String identifier) => _call(() async {
+    if (_usesFirebase(identifier)) {
+      final phone = e164(identifier);
+      _verifications[phone] = await _phone!.sendCode(phone);
+      return OtpChallenge(phone, 30);
+    }
     final res = await _dio.post<Map<String, dynamic>>('/auth/otp/request', data: {'identifier': identifier});
     return OtpChallenge(res.data!['identifier'] as String, res.data!['resend_after'] as int);
   });
 
   Future<AppUser> verifyOtp(String identifier, String code, {required bool consent, bool contactConsent = false}) =>
       _call(() async {
-        final res = await _dio.post<Map<String, dynamic>>(
-          '/auth/otp/verify',
-          data: {'identifier': identifier, 'code': code, 'consent': consent, 'contact_consent': contactConsent},
-        );
+        final verificationId = _verifications[identifier];
+        final res = _usesFirebase(identifier) && verificationId != null
+            ? await _dio.post<Map<String, dynamic>>(
+                '/auth/firebase',
+                data: {
+                  'id_token': await _phone!.confirmCode(verificationId, code),
+                  'consent': consent,
+                  'contact_consent': contactConsent,
+                },
+              )
+            : await _dio.post<Map<String, dynamic>>(
+                '/auth/otp/verify',
+                data: {'identifier': identifier, 'code': code, 'consent': consent, 'contact_consent': contactConsent},
+              );
+        _verifications.remove(identifier);
         await _tokens.save(access: res.data!['access_token'] as String, refresh: res.data!['refresh_token'] as String);
         return AppUser.fromJson(res.data!['user'] as Map<String, dynamic>);
       });
@@ -120,5 +153,5 @@ class AuthRepository {
 }
 
 final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => AuthRepository(ref.watch(dioProvider), ref.watch(tokenStorageProvider)),
+  (ref) => AuthRepository(ref.watch(dioProvider), ref.watch(tokenStorageProvider), ref.watch(phoneGatewayProvider)),
 );

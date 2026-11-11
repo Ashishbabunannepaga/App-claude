@@ -1588,6 +1588,21 @@ class AppLocalizationsHi extends AppLocalizations {
   String get timedOut => 'कनेक्शन का समय खत्म हो गया। कृपया फिर कोशिश करें।';
 
   @override
+  String get otpWrongCode => 'यह कोड सही नहीं है। SMS देखकर फिर से कोशिश करें।';
+
+  @override
+  String get otpExpired => 'इस कोड की समय-सीमा खत्म हो गई है। नया कोड पाने के लिए दोबारा भेजें पर टैप करें।';
+
+  @override
+  String get invalidPhone => '10 अंकों का सही मोबाइल नंबर डालें।';
+
+  @override
+  String get otpTooMany => 'बहुत ज़्यादा कोशिशें हो गईं। कुछ मिनट रुककर फिर से कोशिश करें।';
+
+  @override
+  String get otpSendFailed => 'हम कोड नहीं भेज सके। कृपया फिर से कोशिश करें।';
+
+  @override
   String get cantReachServer => 'सर्वर तक नहीं पहुँच पा रहे। अपना इंटरनेट कनेक्शन जाँचें।';
 
   @override

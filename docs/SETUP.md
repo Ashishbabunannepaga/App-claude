@@ -164,6 +164,14 @@ flutter run
 printed in the backend window (look for `DEV OTP for +91…`). With the demo data from section 5 the account is
 `9876543210`.
 
+**Real SMS with Firebase (optional):** to have Firebase send real codes to any number instead of printing them:
+1. Copy `mobile\firebase.example.json` to `mobile\firebase.json` and fill in the four values from Firebase console →
+   Project settings (project ID, project number, Android app ID) and the Android API key. `firebase.json` is git-ignored.
+2. Add `FIREBASE_PROJECT_ID=<project id>` to `backend\.env` so the backend accepts Firebase's proof of the number.
+3. Run `flutter run --dart-define-from-file=firebase.json`.
+Test numbers set in Firebase console (Authentication → Sign-in method → Phone → Phone numbers for testing) get their
+fixed code without an SMS, which is what to use on an emulator.
+
 **Hot reload:** while `flutter run` is running, save a file and press `r` in that window; the phone updates in about
 a second without losing your place. `R` restarts the app, `q` quits.
 

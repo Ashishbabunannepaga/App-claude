@@ -20,6 +20,12 @@ class OtpVerify(BaseModel):
     contact_consent: bool = Field(False, description="Optional, separate: CapitUp may contact me (new users only)")
 
 
+class FirebaseSignIn(BaseModel):
+    id_token: str = Field(min_length=20, max_length=4096, description="Firebase ID token after phone verification")
+    consent: bool = Field(False, description="User accepted privacy notice & terms (required for new users)")
+    contact_consent: bool = Field(False, description="Optional, separate: CapitUp may contact me (new users only)")
+
+
 class RefreshRequest(BaseModel):
     refresh_token: str = Field(min_length=20, max_length=200)
 

@@ -28,3 +28,6 @@ mobile/ios/Runner/GoogleService-Info.plist
 .DS_Store
 .idea/
 .vscode/
+
+# Firebase settings for `flutter run --dart-define-from-file=firebase.json` (copy firebase.example.json)
+mobile/firebase.json

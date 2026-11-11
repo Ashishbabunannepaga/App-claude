@@ -2924,6 +2924,36 @@ abstract class AppLocalizations {
   /// **'The connection timed out. Please try again.'**
   String get timedOut;
 
+  /// No description provided for @otpWrongCode.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is not right. Check the SMS and try again.'**
+  String get otpWrongCode;
+
+  /// No description provided for @otpExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This code has expired. Tap Resend for a new one.'**
+  String get otpExpired;
+
+  /// No description provided for @invalidPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 10-digit mobile number.'**
+  String get invalidPhone;
+
+  /// No description provided for @otpTooMany.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a few minutes and try again.'**
+  String get otpTooMany;
+
+  /// No description provided for @otpSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t send the code. Please try again.'**
+  String get otpSendFailed;
+
   /// No description provided for @cantReachServer.
   ///
   /// In en, this message translates to:

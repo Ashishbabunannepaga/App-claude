@@ -93,6 +93,18 @@ def verify_otp(
         raise invalid
     challenge.consumed_at = now_utc()
 
+    return sign_in(db, identifier, consent, ip, contact_consent=contact_consent)
+
+
+def sign_in(
+    db: Session, identifier: str, consent: bool, ip: str | None, *, contact_consent: bool = False, method: str = "otp"
+) -> tuple[User, bool]:
+    """The user for a verified phone number or email, creating the profile on first sign-in.
+
+    Shared by our own OTP and by Firebase phone login, so both apply the same consent rules.
+    Commits (or rolls back when consent is missing).
+    """
+    s = get_settings()
     field = User.email if "@" in identifier else User.phone
     user = db.scalar(select(User).where(field == identifier))
     is_new = user is None
@@ -112,7 +124,7 @@ def verify_otp(
     elif user.deletion_requested_at is not None:
         user.deletion_requested_at = None  # logging in during the grace period cancels deletion
         audit(db, "account_deletion_cancelled", user.id, ip=ip)
-    audit(db, "login", user.id, ip=ip, new_user=is_new)
+    audit(db, "login", user.id, ip=ip, new_user=is_new, method=method)
     db.commit()
     return user, is_new
 
