@@ -80,5 +80,5 @@ Never paste the key into chat, code or Git. `.env` is ignored by Git.
 ## Reset the welcome screens
 
 ```powershell
-& $adb -s $phone shell pm clear com.insureiq.insureiq
+& $adb -s $phone shell pm clear com.capitupindia.app
 ```

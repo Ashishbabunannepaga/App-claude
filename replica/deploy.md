@@ -26,7 +26,7 @@ Status key: ✅ done and checked here · 🟡 done in code, you must finish an a
 
 ## Decisions that are yours
 
-1. **App id.** It is still `com.insureiq.insureiq` (the first project name). It can never change after the first Play upload. Change it now to something like `in.capitup.app`, or keep it. Tell me and I will rename it everywhere.
+1. **App id.** `com.capitupindia.app` (decided 11 Nov 2026, from the capitupindia.com domain). It can never change after the first Play upload.
 2. **Host** for the API, worker and database. With Indian users' financial documents, use an India region: Google Cloud Run + Cloud SQL (Mumbai), AWS (Mumbai), or Render/Railway (Singapore is the nearest they offer). The `Dockerfile` runs on all of them.
 3. **Gemini tier.** On Google's free tier, prompts can be used to improve Google's products. For real users' policies, use a paid (billing-enabled) key, whose terms say inputs are not used for training, and state that in the privacy policy.
 
