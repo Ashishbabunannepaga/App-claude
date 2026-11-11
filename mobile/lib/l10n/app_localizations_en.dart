@@ -1602,6 +1602,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get timedOut => 'The connection timed out. Please try again.';
 
   @override
+  String get otpWrongCode => 'That code is not right. Check the SMS and try again.';
+
+  @override
+  String get otpExpired => 'This code has expired. Tap Resend for a new one.';
+
+  @override
+  String get invalidPhone => 'Enter a valid 10-digit mobile number.';
+
+  @override
+  String get otpTooMany => 'Too many attempts. Please wait a few minutes and try again.';
+
+  @override
+  String get otpSendFailed => 'We couldn\'t send the code. Please try again.';
+
+  @override
   String get cantReachServer => 'Can\'t reach the server. Check your internet connection.';
 
   @override

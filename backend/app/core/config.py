@@ -37,6 +37,8 @@ class Settings(BaseSettings):
     # Store-review demo login. Set ONLY via environment in the review environment.
     review_login_identifier: str | None = None
     review_login_code: str | None = None
+    # Firebase phone sign-in: the Firebase project ID whose ID tokens we accept. Unset = disabled.
+    firebase_project_id: str | None = None
     privacy_policy_version: str = "2026-10-01"
     # Version of the optional "CapitUp may contact me" text the user agreed to.
     contact_consent_version: str = "2026-11-10"

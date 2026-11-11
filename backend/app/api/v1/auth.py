@@ -2,9 +2,10 @@ from fastapi import APIRouter, Request
 
 from app.api.deps import DB, client_ip
 from app.core.config import get_settings
-from app.schemas.auth import AuthOut, OtpRequest, OtpRequestOut, OtpVerify, RefreshRequest, TokenPair
+from app.core.rate_limit import limiter
+from app.schemas.auth import AuthOut, FirebaseSignIn, OtpRequest, OtpRequestOut, OtpVerify, RefreshRequest, TokenPair
 from app.schemas.user import UserOut
-from app.services import auth_service
+from app.services import auth_service, firebase_auth
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -26,6 +27,25 @@ def request_otp(body: OtpRequest, request: Request, db: DB) -> OtpRequestOut:
 def verify_otp(body: OtpVerify, request: Request, db: DB) -> AuthOut:
     user, is_new = auth_service.verify_otp(
         db, body.identifier, body.code, body.consent, client_ip(request), contact_consent=body.contact_consent
+    )
+    access, refresh = auth_service.issue_tokens(db, user)
+    return AuthOut(
+        access_token=access,
+        refresh_token=refresh,
+        expires_in=_expires_in(),
+        user=UserOut.model_validate(user),
+        is_new_user=is_new,
+    )
+
+
+@router.post("/firebase", response_model=AuthOut)
+def firebase_sign_in(body: FirebaseSignIn, request: Request, db: DB) -> AuthOut:
+    """Sign in with a phone number Firebase has verified by SMS (the app sends Firebase's ID token)."""
+    ip = client_ip(request)
+    limiter.hit(f"firebase-signin:ip:{ip}", limit=60, window_seconds=3600)
+    phone = auth_service.normalise_identifier(firebase_auth.verified_phone(body.id_token))
+    user, is_new = auth_service.sign_in(
+        db, phone, body.consent, ip, contact_consent=body.contact_consent, method="firebase"
     )
     access, refresh = auth_service.issue_tokens(db, user)
     return AuthOut(
