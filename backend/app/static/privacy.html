@@ -29,12 +29,15 @@ you. We never share your documents with insurers or outside agents.</p>
 <h2>Who processes it for us</h2>
 <table>
 <tr><th>Processor</th><th>What for</th></tr>
-<tr><td>Google (Gemini API)</td><td>Reading policy documents, summaries and answers. [Confirm paid-tier terms: inputs not used for training.]</td></tr>
+<tr><td>OpenAI (API)</td><td>Reading policy documents, including photos and scanned pages, summaries and answers. Under OpenAI's API terms, what we send is not used to train its models and is kept for up to 30 days for abuse monitoring, then deleted (longer only if the law requires).</td></tr>
+<tr><td>Google (Gemini API)</td><td>Reading policy documents, summaries and answers. [Keep only if used; confirm paid-tier terms: inputs not used for training.]</td></tr>
 <tr><td>[Hosting provider, region]</td><td>Servers and database</td></tr>
 <tr><td>[Storage provider, e.g. Cloudflare R2 / AWS S3, region]</td><td>Encrypted document storage</td></tr>
-<tr><td>[SMS provider, e.g. MSG91]</td><td>Sign-in codes</td></tr>
+<tr><td>Google Firebase Authentication</td><td>Sending sign-in codes by SMS to your mobile number</td></tr>
 <tr><td>Google Firebase Cloud Messaging</td><td>Push notifications</td></tr>
 </table>
+<p>We send each service only what its task needs, over encrypted (HTTPS) connections. Our keys for these services stay
+on our servers and are never inside the app.</p>
 
 <h2>How long we keep it</h2>
 <p>While your account is open. When you delete your account in the app (Profile &gt; Privacy &gt; Delete account), it is
