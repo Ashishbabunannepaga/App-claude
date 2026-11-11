@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 8+ adaptive icon: teal gradient tile + gold trend arrow (tools/brand/icon-foreground.svg). -->
+<!-- Android 8+ adaptive icon: white tile + the CapitUp India logo mark (tools/brand/icon-foreground-1024.png). -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@drawable/ic_launcher_background"/>
     <foreground android:drawable="@mipmap/ic_launcher_foreground"/>

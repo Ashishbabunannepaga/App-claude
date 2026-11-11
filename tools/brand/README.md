@@ -1,5 +1,10 @@
 # App icon
 
+**Current icon (11 Nov 2026):** the CapitUp India logo mark (gold ring and arrow, teal trend line) on white, made from
+the company logo. `icon-1024.png`, `play-store-icon-512.png` and `icon-foreground-1024.png` are the sources; the
+SVGs and `render.js` below are the earlier placeholder mark and are no longer used. The in-app logo is
+`mobile/assets/brand/logo.png` (mark + "CAPITUP INDIA", transparent).
+
 `icon.svg` is the CapitUp app icon (the in-app mark: teal tile, gold trend arrow). `icon-foreground.svg` is the
 arrow alone, inside Android's adaptive-icon safe zone.
 

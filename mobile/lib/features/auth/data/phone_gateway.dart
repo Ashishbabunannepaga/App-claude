@@ -61,8 +61,16 @@ class FirebasePhoneGateway implements PhoneGateway {
   }
 }
 
-/// Firebase's error codes as the app's own messages.
-ApiException firebaseError(FirebaseAuthException e) => switch (e.code) {
+/// Firebase's error codes as the app's own messages. Debug builds add Firebase's own reason, because
+/// setup problems (test number missing, SHA-1 not registered, quota) all look alike to the user.
+ApiException firebaseError(FirebaseAuthException e) {
+  debugPrint('Firebase phone auth failed: ${e.code} ${e.message ?? ''}');
+  final error = _firebaseError(e);
+  if (!kDebugMode) return error;
+  return ApiException(error.code, '${error.message}\n[${e.code}] ${e.message ?? ''}'.trim());
+}
+
+ApiException _firebaseError(FirebaseAuthException e) => switch (e.code) {
   'invalid-verification-code' => ApiException(e.code, strings.otpWrongCode),
   'session-expired' || 'code-expired' => ApiException(e.code, strings.otpExpired),
   'invalid-phone-number' => ApiException(e.code, strings.invalidPhone),
