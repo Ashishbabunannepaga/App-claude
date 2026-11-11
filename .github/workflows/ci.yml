@@ -67,6 +67,14 @@ jobs:
         working-directory: mobile
     steps:
       - uses: actions/checkout@v4
+      # A Gradle cache miss (any change to android/*.kts) plus a debug and a release build fills the
+      # runner's disk. Remove preinstalled toolchains this job never uses (.NET, Haskell, Boost, CodeQL).
+      - name: Free disk space
+        working-directory: .
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost "$AGENT_TOOLSDIRECTORY/CodeQL"
+          df -h /
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
