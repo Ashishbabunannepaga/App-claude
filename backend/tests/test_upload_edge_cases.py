@@ -126,3 +126,32 @@ def test_a_stuck_document_can_be_retried_but_a_busy_one_cannot(client, auth):
     r = client.post(f"/api/v1/documents/{doc['id']}/retry", headers=auth)
     assert r.status_code == 200
     assert client.get(f"/api/v1/documents/{doc['id']}", headers=auth).json()["status"] == "extracted"
+
+
+def test_uploading_the_same_file_after_a_failure_reads_it_again(client, auth, monkeypatch):
+    from app.processing import pipeline
+
+    real = pipeline.extract_text
+
+    def broken(*a, **k):
+        raise RuntimeError("bug fixed later")
+
+    pdf = make_pdf()  # the same bytes both times
+    monkeypatch.setattr(pipeline, "extract_text", broken)
+    first = _doc(client, auth, _upload(client, auth, pdf))
+    assert first["status"] == "failed" and first["error_code"] == "processing_failed"
+
+    monkeypatch.setattr(pipeline, "extract_text", real)  # the code is fixed; the user uploads the same PDF
+    again = _doc(client, auth, _upload(client, auth, pdf))
+    assert again["id"] == first["id"]  # still one document, not a duplicate
+    assert again["status"] == "extracted" and again["error_code"] is None
+
+
+def test_uploading_a_file_that_was_read_does_not_read_it_again(client, auth, monkeypatch):
+    from app.processing import pipeline
+
+    pdf = make_pdf()
+    first = _doc(client, auth, _upload(client, auth, pdf))
+    assert first["status"] == "extracted"
+    monkeypatch.setattr(pipeline, "extract_text", lambda *a, **k: pytest.fail("re-read an extracted document"))
+    assert _doc(client, auth, _upload(client, auth, pdf))["id"] == first["id"]
