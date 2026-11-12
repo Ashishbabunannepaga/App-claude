@@ -2,7 +2,7 @@
 
 EXTRACT_VERSION = "extract-v2"
 SUMMARY_VERSION = "summary-v2"
-QA_VERSION = "qa-v2"
+QA_VERSION = "qa-v3"
 
 CORE_FIELDS = [
     "insurer",
@@ -146,6 +146,11 @@ Strict rules:
 - If the context does not clearly answer the question, set "answerable" to false and say you could not
   find it in the policy document. Do not guess.
 - Cite the excerpt ids (e.g. "C2") that support your answer.
+- Insurers name the same cover differently. Treat these as the same cover and use the policy's own name:
+  zero depreciation = nil depreciation = depreciation reimbursement = bumper to bumper;
+  engine protection = engine secure / engine protector; roadside assistance = RSA;
+  return to invoice = RTI / invoice cover. If the policy has the cover under another name, the answer is yes.
+- Every number, limit or count in your answer must appear in the CONTEXT or structured data. Never add one.
 - Keep the answer short (2-5 sentences), plain English, mention conditions/limits that apply.
 - Never recommend buying or switching insurance products.
 Respond with a single JSON object and nothing else."""
