@@ -358,6 +358,9 @@ class _KeyDetails extends StatelessWidget {
   }
 }
 
+/// Details that repeat a key detail already shown above (a motor policy's IDV is its cover amount).
+const _shownAbove = {'idv'};
+
 class _CoverageDetails extends StatelessWidget {
   const _CoverageDetails({required this.details});
   final Map<String, dynamic> details;
@@ -367,10 +370,11 @@ class _CoverageDetails extends StatelessWidget {
     child: Column(
       children: [
         for (final e in details.entries)
-          ListTile(
-            title: Text(humanise(e.key), style: const TextStyle(fontWeight: FontWeight.w600)),
-            subtitle: Text(e.value is List ? (e.value as List).join(', ') : e.value.toString()),
-          ),
+          if (!_shownAbove.contains(e.key))
+            ListTile(
+              title: Text(humanise(e.key), style: const TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text(formatDetailValue(e.key, e.value)),
+            ),
       ],
     ),
   );

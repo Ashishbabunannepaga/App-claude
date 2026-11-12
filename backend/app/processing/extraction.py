@@ -85,8 +85,13 @@ def validate_extraction(raw: dict[str, Any], text: str) -> ValidatedExtraction:
 
     allowed = set(DETAIL_FIELDS[policy_type])
     details = {k: v for k, v in (raw.get("details") or {}).items() if k in allowed and v not in (None, "")}
+    if "ncb_percentage" in details and NCB_NOT_CLAIMED.search(text):
+        # Motor schedules list the previous policy's NCB next to "NCB claimed: NA"; only a claimed NCB applies here.
+        del details["ncb_percentage"]
     return ValidatedExtraction(policy_type, values, confidence, details)
 
+
+NCB_NOT_CLAIMED = re.compile(r"NCB\s*claimed\s*[:\-]?\s*(?:NA|N/A|Nil|No|0(?:\.0+)?\s*%?)(?![\w.])", re.IGNORECASE)
 
 # Below these, a "sum insured" is almost certainly a misread (a page number, a count, a lakh figure without unit).
 MIN_SUM_INSURED = Decimal(10_000)

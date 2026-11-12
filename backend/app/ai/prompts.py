@@ -92,6 +92,9 @@ Rules:
 - sum_insured: health = base sum insured (family floater amount for floaters; exclude cumulative bonus and
   top-ups); motor = IDV (insured declared value); life = sum assured on death.
 - payment_frequency: one of annual, half_yearly, quarterly, monthly, single, null.
+- Motor ncb_percentage: the No Claim Bonus discount applied to THIS policy's own-damage premium (shown as
+  "NCB claimed" or an NCB discount line in the premium schedule). Not the previous policy's NCB and not the NCB
+  slab table in the wording. If NCB claimed is NA, Nil or 0, or no NCB discount is shown, return null.
 - confidence: 0.0-1.0, how certain you are the value is correct and complete.
 - Respond with a single JSON object and nothing else."""
 

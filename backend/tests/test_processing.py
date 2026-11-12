@@ -64,3 +64,28 @@ def test_chunking_tracks_pages_and_sections():
     chunks = chunk_pages(pages)
     assert chunks[0].page == 1 and chunks[0].section == "INTRODUCTION"
     assert chunks[-1].page == 2 and chunks[-1].section == "EXCLUSIONS"
+
+
+MOTOR_TEXT = (
+    "Policy No. 6203516874 02 00\nPeriod 04/10/2026 to 03/10/2027\nTotal Policy Premium 13152\nTotal IDV 426164\n"
+    "The preceding year 20%, preceding two consecutive years 25%\n"
+    "5.Claim in Previous Policy Period: Yes\n6.NCB in Previous Policy: 25 %\n7.NCB Claimed: NA\n"
+)
+
+
+def _motor(ncb):
+    return {"policy_type": "motor", "fields": {}, "details": {"ncb_percentage": ncb, "registration_number": "TS 08"}}
+
+
+def test_previous_policy_ncb_is_not_this_policys_ncb():
+    r = validate_extraction(_motor("25"), MOTOR_TEXT)
+    assert "ncb_percentage" not in r.details
+    assert r.details["registration_number"] == "TS 08"
+
+
+def test_a_claimed_ncb_is_kept():
+    text = MOTOR_TEXT.replace("NCB Claimed: NA", "NCB Claimed: 25%")
+    assert validate_extraction(_motor("25"), text).details["ncb_percentage"] == "25"
+    for written in ("NCB claimed : Nil", "NCB Claimed:0%", "NCB claimed - N/A"):
+        text = MOTOR_TEXT.replace("NCB Claimed: NA", written)
+        assert "ncb_percentage" not in validate_extraction(_motor("25"), text).details, written

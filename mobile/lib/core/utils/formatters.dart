@@ -33,6 +33,28 @@ String policyTypeLabel(String type) => strings.policyTypeName(type);
 String humanise(String key) {
   final known = strings.enumLabel(key == 'other' ? 'otherValue' : key);
   if (known.isNotEmpty) return known;
-  final words = key.replaceAll('_', ' ');
-  return words.isEmpty ? words : words[0].toUpperCase() + words.substring(1);
+  final words = key.split('_').where((w) => w.isNotEmpty).map((w) => _acronyms.contains(w) ? w.toUpperCase() : w);
+  final text = words.join(' ');
+  return text.isEmpty ? text : text[0].toUpperCase() + text.substring(1);
+}
+
+/// Insurance abbreviations people know in capitals: "ncb_percentage" → "NCB percentage", "idv" → "IDV".
+const _acronyms = {'idv', 'ncb', 'pa', 'ped', 'opd', 'icu', 'tpa', 'gst', 'emi', 'uin', 'rto', 'si'};
+
+/// Detail keys whose numeric values are rupee amounts.
+final _amountKey = RegExp(r'(^idv$|_idv$|premium|deductible|sum_insured|sum_assured|_amount$|death_benefit)');
+
+/// A readable value for a policy detail: amounts as rupees ("3237.78" → "₹3,237.78"), NCB as a percentage,
+/// lists joined. Text the AI wrote is shown as it is.
+String formatDetailValue(String key, Object? value) {
+  if (value == null) return '—';
+  if (value is List) return value.join(', ');
+  final text = value.toString().trim();
+  final number = num.tryParse(text.replaceAll(',', ''));
+  if (number != null && _amountKey.hasMatch(key)) {
+    final whole = number == number.truncate();
+    return NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: whole ? 0 : 2).format(number);
+  }
+  if (number != null && key.endsWith('_percentage')) return '${formatIndianNumber(number)}%';
+  return text;
 }
