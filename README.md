@@ -9,6 +9,7 @@ V1 core loop: **Add policy → Read → Understand → Ask → Track → Renew**
 
 | | |
 |---|---|
+| 🤝 **Joining the team? Read the handoff first** (architecture, all APIs, current status) | [`docs/HANDOFF.md`](docs/HANDOFF.md) |
 | 📐 Technical blueprint (Phase 1) | [`docs/01-technical-blueprint.md`](docs/01-technical-blueprint.md) |
 | 🗓️ 12-week roadmap (Phase 2) | [`docs/02-development-roadmap.md`](docs/02-development-roadmap.md) |
 | 🧑‍💻 **New developer? Start here: setup guide** (folders, Windows install, run on a phone, screenshots) | [`docs/SETUP.md`](docs/SETUP.md) |
