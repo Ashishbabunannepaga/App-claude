@@ -17,7 +17,7 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P0 | Figures in answers checked against the policy text; unmatched → low confidence + log | ✅ | |
 | P0 | Long documents keep schedule pages when trimmed (60k characters) | ✅ | Logged when it happens |
 | P0 | Retries on rate limits / provider errors; clear "AI unavailable" message otherwise | ✅ | OpenAI, Claude, Gemini |
-| P0 | **Accuracy test set**: 20–30 real policies (health retail + GMC, motor, term, life; text and scanned) with the correct values written down, run before every prompt or model change | ⬜ | Team members' own policies, stored outside the repo. Today we have 1 checked policy |
+| P0 | **Accuracy test set**: 20–30 real policies (health retail + GMC, motor, term, life; text and scanned) with the correct values written down, run before every prompt or model change | 🟡 | Tool ready: [`ACCURACY-TESTING.md`](ACCURACY-TESTING.md). Policies to collect; today 1 checked |
 | P0 | Pin the model version (e.g. `gpt-4.1-mini-2025-04-14`) so answers don't change under us | ⬜ | `OPENAI_MODEL` in production `.env` |
 | P0 | OpenAI: org account in CapitUp's name, monthly spend limit and alerts in the OpenAI dashboard | ⬜ | Usage per task is now logged (`app.ai.usage`) |
 | P1 | OpenAI Zero Data Retention (no 30-day abuse-monitoring copy) | ⬜ | Apply to OpenAI; until then the privacy page says 30 days |

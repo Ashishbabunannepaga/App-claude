@@ -31,3 +31,8 @@ mobile/ios/Runner/GoogleService-Info.plist
 
 # Firebase settings for `flutter run --dart-define-from-file=firebase.json` (copy firebase.example.json)
 mobile/firebase.json
+
+# Accuracy test sets are real people's policies: never commit them
+answers.csv
+results-*.csv
+capitup-accuracy/
