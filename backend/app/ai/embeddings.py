@@ -4,8 +4,6 @@ import re
 from abc import ABC, abstractmethod
 from functools import lru_cache
 
-import httpx
-
 from app.ai.providers.base import AIProviderError, post_with_retry
 from app.core.config import get_settings
 
@@ -30,16 +28,13 @@ class OpenAIEmbedder(EmbeddingProvider):
     def embed(self, texts: list[str]) -> list[list[float]]:
         out: list[list[float]] = []
         for i in range(0, len(texts), 64):
-            try:
-                resp = httpx.post(
-                    self.url,
-                    headers={"Authorization": f"Bearer {self.api_key}"},
-                    json={"model": self.model, "input": texts[i : i + 64], "dimensions": self.dim},
-                    timeout=self.timeout,
-                )
-                resp.raise_for_status()
-            except httpx.HTTPError as exc:
-                raise AIProviderError(f"embedding request failed: {type(exc).__name__}") from exc
+            resp = post_with_retry(
+                self.url,
+                headers={"Authorization": f"Bearer {self.api_key}"},
+                json={"model": self.model, "input": texts[i : i + 64], "dimensions": self.dim},
+                timeout=self.timeout,
+                label="openai embeddings",
+            )
             out.extend(d["embedding"] for d in sorted(resp.json()["data"], key=lambda d: d["index"]))
         return out
 

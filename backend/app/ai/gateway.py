@@ -1,12 +1,15 @@
 import json
+import logging
 from functools import lru_cache
 from typing import Any
 
 from app.ai import prompts
+from app.ai.guardrails import fit_pages, redact
 from app.ai.providers.base import AIProvider
 from app.core.config import get_settings
 
-MAX_EXTRACT_CHARS = 60_000
+MAX_EXTRACT_CHARS = 60_000  # about 30 dense pages; when longer, schedule pages are kept first
+log = logging.getLogger(__name__)
 
 
 class AIGateway:
@@ -20,10 +23,15 @@ class AIGateway:
         return self.provider.name
 
     def extract_policy(self, text: str) -> dict[str, Any]:
+        fitted, trimmed = fit_pages(redact(text), MAX_EXTRACT_CHARS)
+        if trimmed:
+            log.warning(
+                "extraction text trimmed from %d to %d characters (schedule pages kept)", len(text), len(fitted)
+            )
         prompt = prompts.EXTRACT_PROMPT.format(
             core_fields=", ".join(prompts.CORE_FIELDS),
             detail_fields=json.dumps(prompts.DETAIL_FIELDS, indent=1),
-            text=text[:MAX_EXTRACT_CHARS],
+            text=fitted,
         )
         return self.provider.complete_json(
             "extract", prompts.EXTRACT_SYSTEM, prompt, context={"text": text}, max_tokens=8000
@@ -33,7 +41,7 @@ class AIGateway:
         prompt = prompts.SUMMARY_PROMPT.format(
             policy_type=structured.get("policy_type", "insurance"),
             structured=json.dumps(structured, default=str, indent=1),
-            excerpts=excerpts,
+            excerpts=redact(excerpts),
         )
         system = prompts.SUMMARY_SYSTEM + prompts.language_instruction(language)
         return self.provider.complete_json(
@@ -48,12 +56,12 @@ class AIGateway:
         language: str = "en",
         notes: list[str] | None = None,
     ) -> dict[str, Any]:
-        excerpts = "\n\n".join(f"[{cid}] {text}" for cid, text in chunks) or "(none)"
+        excerpts = "\n\n".join(f"[{cid}] {redact(text)}" for cid, text in chunks) or "(none)"
         prompt = prompts.QA_PROMPT.format(
             structured=json.dumps(structured, default=str, indent=1),
             excerpts=excerpts,
             notes="\n".join(f"- {n}" for n in notes or []) or "(none)",
-            question=question,
+            question=redact(question),
         )
         system = prompts.QA_SYSTEM + prompts.language_instruction(language)
         return self.provider.complete_json(

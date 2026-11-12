@@ -243,6 +243,8 @@ Tables (all in `app/models/entities.py`): `users` (incl. consent and contact-con
   screen against the PDF, and fix extraction rules field by field. The first motor PDF (13 pages) now gets through
   the pipeline; its field check is pending.
 
+**Full launch checklist:** [`PRODUCTION-READINESS.md`](PRODUCTION-READINESS.md) (AI, infrastructure, login, Play Store, legal, operations).
+
 **Not started / waiting on someone** (from the 73-task delivery plan, Play launch target 24 Dec)
 
 | Item | Owner | Notes |

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.embeddings import get_embedder
 from app.ai.gateway import get_ai_gateway
+from app.ai.guardrails import redact
 from app.ai.providers.base import AIProviderError
 from app.models import Document, DocumentStatus, Policy, PolicyChunk, PolicyClause, User
 from app.processing.chunking import chunk_pages
@@ -54,7 +55,7 @@ def process_document(db: Session, document_id: uuid.UUID) -> None:
         db.flush()
 
         chunks = chunk_pages(extracted.pages)
-        vectors = get_embedder().embed([c.content for c in chunks]) if chunks else []
+        vectors = get_embedder().embed([redact(c.content) for c in chunks]) if chunks else []
         db.execute(delete(PolicyChunk).where(PolicyChunk.policy_id == policy.id))
         db.add_all(
             PolicyChunk(

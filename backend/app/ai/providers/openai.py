@@ -1,8 +1,7 @@
 import base64
 from typing import Any
 
-import httpx
-
+from app.ai.guardrails import log_usage
 from app.ai.providers.base import TRANSCRIBE_PROMPT, AIProvider, AIProviderError, parse_json_object, post_with_retry
 
 
@@ -18,25 +17,24 @@ class OpenAIProvider(AIProvider):
     def complete_json(
         self, task: str, system: str, prompt: str, *, context: dict[str, Any], max_tokens: int = 2000
     ) -> dict[str, Any]:
-        try:
-            resp = httpx.post(
-                self.url,
-                headers={"Authorization": f"Bearer {self.api_key}"},
-                json={
-                    "model": self.model,
-                    "max_tokens": max_tokens,
-                    "response_format": {"type": "json_object"},
-                    "messages": [
-                        {"role": "system", "content": system},
-                        {"role": "user", "content": prompt},
-                    ],
-                },
-                timeout=self.timeout,
-            )
-            resp.raise_for_status()
-        except httpx.HTTPError as exc:
-            raise AIProviderError(f"openai request failed: {type(exc).__name__}") from exc
-        return parse_json_object(_message_text(resp.json()))
+        resp = post_with_retry(
+            self.url,
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            json={
+                "model": self.model,
+                "max_tokens": max_tokens,
+                "response_format": {"type": "json_object"},
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": prompt},
+                ],
+            },
+            timeout=self.timeout,
+            label="openai",
+        )
+        body = resp.json()
+        log_usage(self.name, self.model, task, body.get("usage"))
+        return parse_json_object(_message_text(body))
 
     def transcribe(self, image: bytes, mime_type: str = "image/jpeg") -> str:
         """OCR with a vision model: the page's text, verbatim. Used for photos and scanned PDFs."""
@@ -61,7 +59,9 @@ class OpenAIProvider(AIProvider):
             timeout=self.timeout,
             label="openai ocr",
         )
-        return _message_text(resp.json()).strip()
+        body = resp.json()
+        log_usage(self.name, self.model, "ocr", body.get("usage"))
+        return _message_text(body).strip()
 
 
 def _message_text(body: Any) -> str:

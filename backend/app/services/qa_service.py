@@ -1,5 +1,7 @@
 """Retrieval-augmented, citation-enforced answers about a single policy."""
 
+import json
+import logging
 import re
 import uuid
 
@@ -8,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.ai.embeddings import get_embedder
 from app.ai.gateway import get_ai_gateway
+from app.ai.guardrails import redact, ungrounded_numbers
 from app.ai.providers.base import AIProviderError
 from app.core.config import get_settings
 from app.core.errors import AppError
@@ -32,6 +35,8 @@ NOT_FOUND = NOT_FOUND_TEXT["en"]
 def disclaimer(language: str) -> str:
     return DISCLAIMERS.get(language, DISCLAIMER)
 
+
+log = logging.getLogger(__name__)
 
 _STOP = {
     "what",
@@ -64,7 +69,7 @@ def retrieve(db: Session, policy_id: uuid.UUID, question: str, k: int) -> list[P
 
     Indian-language questions are expanded with English glossary terms, since wordings are English."""
     question = f"{question} {english_terms(question)}".strip()
-    qvec = get_embedder().embed_query(question)
+    qvec = get_embedder().embed_query(redact(question))
     vector_hits = db.scalars(
         select(PolicyChunk)
         .where(PolicyChunk.policy_id == policy_id)
@@ -125,6 +130,12 @@ def ask(db: Session, policy: Policy, user_id: uuid.UUID, question: str, language
     answerable = bool(raw.get("answerable")) and bool(cited)
     confidence = raw.get("confidence") if raw.get("confidence") in ("high", "medium", "low") else "low"
     answer = str(raw.get("answer") or "").strip()
+    source = " ".join(c.content for c in chunks) + " " + json.dumps(structured_view(policy), default=str)
+    invented = ungrounded_numbers(answer, source) if answerable else set()
+    if invented:
+        # A figure the policy doesn't contain is the most harmful mistake an insurance answer can make.
+        log.warning("answer for policy %s had numbers not in the policy text: %s", policy.id, sorted(invented))
+        confidence = "low"
     if not answerable or not answer:
         # Post-validation: an answer that cites nothing from the document is not shown as fact.
         answerable, answer, confidence, cited = False, NOT_FOUND_TEXT.get(language, NOT_FOUND), "low", []
