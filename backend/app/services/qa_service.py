@@ -12,7 +12,7 @@ from app.ai.providers.base import AIProviderError
 from app.core.config import get_settings
 from app.core.errors import AppError
 from app.models import Policy, PolicyChunk, PolicyClause, QaMessage
-from app.processing.glossary import english_terms
+from app.processing.glossary import cover_name_notes, english_terms
 from app.services.policy_service import structured_view
 
 DISCLAIMERS = {
@@ -115,8 +115,9 @@ def ask(db: Session, policy: Policy, user_id: uuid.UUID, question: str, language
     context = [
         (cid, f"(page {c.page}{', ' + c.section if c.section else ''}) {c.content}") for cid, c in labelled.items()
     ]
+    notes = cover_name_notes(question, " ".join(c.content for c in chunks))
     try:
-        raw = get_ai_gateway().answer_question(question, structured_view(policy), context, language)
+        raw = get_ai_gateway().answer_question(question, structured_view(policy), context, language, notes)
     except AIProviderError as exc:
         raise AppError("ai_unavailable", "The assistant is unavailable right now. Please try again.", 503) from exc
 

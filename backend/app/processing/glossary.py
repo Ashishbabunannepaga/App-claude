@@ -72,36 +72,60 @@ _WORD = re.compile(r"[^\s?.,!;:'\"()।॥]+")
 
 # Insurers sell the same cover under different names. A question in one name must find the wording in another:
 # TATA AIG calls zero depreciation "Depreciation Reimbursement", others "Nil Depreciation" or "Bumper to Bumper".
-COVER_SYNONYMS: list[tuple[re.Pattern[str], str]] = [
+COVER_SYNONYMS: list[tuple[re.Pattern[str], tuple[str, ...]]] = [
     (
         re.compile(
             r"\b(zero|nil|0)[\s-]*dep(reciation)?\b"
             r"|bumper[\s-]*to[\s-]*bumper"
             r"|depreciation (reimbursement|waiver|cover)"
         ),
-        "depreciation reimbursement nil depreciation zero depreciation bumper to bumper",
+        (
+            "depreciation reimbursement",
+            "nil depreciation",
+            "zero depreciation",
+            "depreciation waiver",
+            "bumper to bumper",
+        ),
     ),
     (
         re.compile(r"\bengine (protect(ion|or)?|secure|guard|cover)\b|hydrostatic"),
-        "engine secure engine protection engine protector hydrostatic",
+        ("engine secure", "engine protection", "engine protector", "engine guard", "hydrostatic"),
     ),
-    (re.compile(r"\b(rsa|road\s*side assistance|roadside)\b"), "road side assistance roadside assistance"),
-    (
-        re.compile(r"\b(rti|return to invoice|invoice cover|invoice protect)"),
-        "return to invoice invoice price",
-    ),
-    (re.compile(r"\bconsumables?\b"), "consumable expenses consumables"),
-    (re.compile(r"\b(ncb|no claim bonus) protect"), "ncb protection no claim bonus protection"),
-    (re.compile(r"\bkey (replacement|loss|protect)"), "key replacement"),
-    (re.compile(r"\b(ped|pre[\s-]?existing)"), "pre-existing disease waiting period"),
-    (re.compile(r"\b(opd|out[\s-]?patient)\b"), "out-patient opd"),
-    (re.compile(r"\bco[\s-]?pay"), "co-payment co-pay"),
+    (re.compile(r"\b(rsa|road\s*side assistance|roadside)\b"), ("road side assistance", "roadside assistance")),
+    (re.compile(r"\b(rti|return to invoice|invoice cover|invoice protect)"), ("return to invoice", "invoice price")),
+    (re.compile(r"\bconsumables?\b"), ("consumable expenses", "consumables")),
+    (re.compile(r"\b(ncb|no claim bonus) protect"), ("ncb protection", "no claim bonus protection", "ncb protect")),
+    (re.compile(r"\bkey (replacement|loss|protect)"), ("key replacement", "key protect")),
+    (re.compile(r"\b(ped|pre[\s-]?existing)"), ("pre-existing disease", "pre-existing", "waiting period")),
+    (re.compile(r"\b(opd|out[\s-]?patient)\b"), ("out-patient", "outpatient", "opd")),
+    (re.compile(r"\bco[\s-]?pay"), ("co-payment", "co-pay", "copayment")),
 ]
+
+
+def cover_name_notes(question: str, policy_text: str) -> list[str]:
+    """For each cover the question names, the name this policy uses for it, as a note for the answering model.
+
+    A general rule ("zero depreciation = depreciation reimbursement") was not enough: the model still answered
+    "not included" from general knowledge. A note that names both, for this policy, is."""
+    lowered, text = question.lower(), policy_text.lower()
+    notes = []
+    for pattern, names in COVER_SYNONYMS:
+        asked = pattern.search(lowered)
+        if not asked:
+            continue
+        in_policy = next((n for n in names if n in text), None)
+        if in_policy and in_policy not in asked.group(0):
+            notes.append(
+                f'The question\'s "{asked.group(0)}" is the cover this policy calls "{in_policy}". They are the same '
+                f'cover: if the policy includes "{in_policy}", answer that "{asked.group(0)}" is included, under that '
+                "name, with the policy's conditions."
+            )
+    return notes
 
 
 def english_terms(question: str) -> str:
     """English keywords for any glossary words or cover names in the question ('' if none)."""
     lowered = question.lower()
     found = [GLOSSARY[w] for w in _WORD.findall(lowered) if w in GLOSSARY]
-    found += [terms for pattern, terms in COVER_SYNONYMS if pattern.search(lowered)]
+    found += [" ".join(names) for pattern, names in COVER_SYNONYMS if pattern.search(lowered)]
     return " ".join(dict.fromkeys(found))

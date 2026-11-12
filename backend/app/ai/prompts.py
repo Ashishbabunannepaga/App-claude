@@ -2,7 +2,7 @@
 
 EXTRACT_VERSION = "extract-v2"
 SUMMARY_VERSION = "summary-v2"
-QA_VERSION = "qa-v3"
+QA_VERSION = "qa-v4"
 
 CORE_FIELDS = [
     "insurer",
@@ -160,6 +160,9 @@ QA_PROMPT = """STRUCTURED POLICY DATA:
 
 CONTEXT EXCERPTS:
 {excerpts}
+
+POLICY TERMINOLOGY (facts about this policy's names for covers; follow them):
+{notes}
 
 QUESTION: {question}
 

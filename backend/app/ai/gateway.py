@@ -41,11 +41,19 @@ class AIGateway:
         )
 
     def answer_question(
-        self, question: str, structured: dict[str, Any], chunks: list[tuple[str, str]], language: str = "en"
+        self,
+        question: str,
+        structured: dict[str, Any],
+        chunks: list[tuple[str, str]],
+        language: str = "en",
+        notes: list[str] | None = None,
     ) -> dict[str, Any]:
         excerpts = "\n\n".join(f"[{cid}] {text}" for cid, text in chunks) or "(none)"
         prompt = prompts.QA_PROMPT.format(
-            structured=json.dumps(structured, default=str, indent=1), excerpts=excerpts, question=question
+            structured=json.dumps(structured, default=str, indent=1),
+            excerpts=excerpts,
+            notes="\n".join(f"- {n}" for n in notes or []) or "(none)",
+            question=question,
         )
         system = prompts.QA_SYSTEM + prompts.language_instruction(language)
         return self.provider.complete_json(
