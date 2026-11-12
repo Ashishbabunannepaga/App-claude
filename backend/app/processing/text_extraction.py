@@ -1,4 +1,5 @@
 import io
+import logging
 import re
 from dataclasses import dataclass
 from functools import lru_cache
@@ -7,6 +8,8 @@ from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
 from app.core.config import get_settings
+
+log = logging.getLogger(__name__)
 
 MIN_CHARS_PER_PAGE = 50
 OCR_DPI_SCALE = 200 / 72
@@ -125,9 +128,12 @@ def _paddle_ocr(image) -> str:
 def _ocr_pdf(data: bytes) -> list[str]:
     import pypdfium2 as pdfium
 
+    limit = get_settings().max_ocr_pages
     pdf = pdfium.PdfDocument(data)
     try:
-        return [_ocr_image(page.render(scale=OCR_DPI_SCALE).to_pil()) for page in pdf]
+        if len(pdf) > limit:
+            log.warning("scanned PDF has %d pages; reading the first %d", len(pdf), limit)
+        return [_ocr_image(pdf[i].render(scale=OCR_DPI_SCALE).to_pil()) for i in range(min(len(pdf), limit))]
     finally:
         pdf.close()
 

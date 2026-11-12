@@ -72,7 +72,7 @@ Tesseract (optional), httpx for AI calls. Lint/format: `ruff`. Tests: `pytest` (
 
 ### How an upload is processed
 
-`POST /documents` → file is checked (type sniffed, size ≤ 20 MB, ≤ 60 pages, ≤ 10 photos joined into one PDF),
+`POST /documents` → file is checked (type sniffed, size ≤ 40 MB, ≤ 200 pages; scanned PDFs: first 30 pages OCR'd, ≤ 10 photos joined into one PDF),
 de-duplicated by SHA-256, stored, then `process_document` runs in the background
 (`app/processing/pipeline.py`):
 

@@ -257,7 +257,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get faqUploadA =>
-      'PDF पॉलिसी दस्तावेज़ सबसे अच्छे रहते हैं। आप 20 MB तक की साफ़ फ़ोटो (JPG/PNG) भी अपलोड कर सकते हैं। पासवर्ड वाली PDF पहले अनलॉक करें।';
+      'PDF पॉलिसी दस्तावेज़ सबसे अच्छे रहते हैं। आप 40 MB तक की साफ़ फ़ोटो (JPG/PNG) भी अपलोड कर सकते हैं। पासवर्ड वाली PDF पहले अनलॉक करें।';
 
   @override
   String get faqSellQ => 'क्या आप बीमा बेचते हैं?';
@@ -1119,7 +1119,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get fileTooBig => 'फ़ाइल 20 MB से छोटी होनी चाहिए।';
+  String get fileTooBig => 'फ़ाइल 40 MB से छोटी होनी चाहिए।';
 
   @override
   String get wrongFileType => 'कृपया PDF, JPG या PNG फ़ाइल चुनें।';

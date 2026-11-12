@@ -167,3 +167,20 @@ def test_pdf_text_with_nul_characters_is_read(client, auth, monkeypatch):
     assert doc["status"] == "extracted", doc
     with SessionLocal() as db:
         assert "\x00" not in db.get(Document, doc["id"]).extracted_text
+
+
+def test_long_text_policies_are_accepted():
+    """Group policies run to 100+ pages; the default limits must let them through."""
+    s = get_settings()
+    assert s.max_pdf_pages >= 150 and s.max_upload_bytes >= 40 * 1024 * 1024
+
+
+def test_scanned_pdf_reads_only_the_first_pages(monkeypatch):
+    from app.processing import text_extraction as te
+
+    monkeypatch.setattr(get_settings(), "max_ocr_pages", 2)
+    seen = []
+    monkeypatch.setattr(te, "_ocr_image", lambda image: seen.append(image) or "Policy schedule page text " * 5)
+    blank = make_pdf([[" "], [" "], [" "], [" "]])  # four pages with no text layer, like a scan
+    out = te.extract_text(blank, "application/pdf")
+    assert out.method == "ocr" and len(seen) == 2 and len(out.pages) == 2

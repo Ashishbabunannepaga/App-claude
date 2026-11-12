@@ -132,13 +132,20 @@ class _ClauseCard extends StatelessWidget {
             Row(
               children: [
                 ClauseTypeBadge(clause.type),
-                const Spacer(),
-                Text(
-                  [
-                    if (clause.page != null) context.l10n.pageLabel('${clause.page}'),
-                    if (clause.section != null) clause.section,
-                  ].join(' · '),
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                const SizedBox(width: AppSpacing.sm),
+                // Section headings from real wordings can be long ("Policy Period · End Date Midnight …"):
+                // one line, cut with an ellipsis, instead of overflowing the card.
+                Expanded(
+                  child: Text(
+                    [
+                      if (clause.page != null) context.l10n.pageLabel('${clause.page}'),
+                      if (clause.section != null) clause.section,
+                    ].join(' · '),
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                  ),
                 ),
               ],
             ),
