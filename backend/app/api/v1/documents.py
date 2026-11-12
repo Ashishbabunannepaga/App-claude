@@ -100,6 +100,11 @@ async def upload(
 
     existing = db.scalar(select(Document).where(Document.user_id == user.id, Document.sha256 == digest))
     if existing is not None:
+        if existing.status == DocumentStatus.failed:
+            # Uploading the same file again after a failure means "try again": read it with today's code.
+            existing.status, existing.error_code = DocumentStatus.uploaded, None
+            db.commit()
+            enqueue_process_document(existing.id, background)
         return _out(existing)
 
     doc_id = uuid.uuid4()
