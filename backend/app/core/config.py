@@ -50,8 +50,12 @@ class Settings(BaseSettings):
     s3_endpoint_url: str | None = None  # set for Cloudflare R2
     s3_region: str = "ap-south-1"
     signed_url_ttl_seconds: int = 300
-    max_upload_bytes: int = 20 * 1024 * 1024
-    max_pdf_pages: int = 60
+    # Group (GMC) policies run to 100+ pages of wording. The AI reads at most ~60k characters of it, schedule pages
+    # first (app/ai/guardrails.fit_pages), so long text PDFs are accepted. Scanned pages cost one OCR call each,
+    # so only the first max_ocr_pages of a scanned PDF are read; the schedule is almost always at the front.
+    max_upload_bytes: int = 40 * 1024 * 1024
+    max_pdf_pages: int = 200
+    max_ocr_pages: int = 30
 
     # AI
     ai_provider: Literal["claude", "openai", "gemini", "mock"] = "mock"

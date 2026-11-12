@@ -10,7 +10,7 @@ import '../../../core/network/api_exception.dart';
 import '../data/policy_repository.dart';
 import '../../../core/locale.dart';
 
-const _maxBytes = 20 * 1024 * 1024;
+const _maxBytes = 40 * 1024 * 1024; // same as the backend's MAX_UPLOAD_BYTES
 const _maxPhotos = 10;
 
 class AddPolicyScreen extends ConsumerStatefulWidget {

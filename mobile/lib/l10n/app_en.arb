@@ -105,7 +105,7 @@
   "faqWrongQ": "The details extracted from my policy are wrong. What do I do?",
   "faqWrongA": "Open the policy, tap the ⋮ menu and choose \"Edit details\". Anything you correct is saved as confirmed by you.",
   "faqUploadQ": "Which documents can I upload?",
-  "faqUploadA": "PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.",
+  "faqUploadA": "PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 40 MB. Password-protected PDFs must be unlocked first.",
   "faqSellQ": "Do you sell insurance?",
   "faqSellA": "{app} is run by CapitUp, a licensed insurance broker. The app helps you organise and understand the policies you already have. If you turn on \"CapitUp may contact me\", our team may call you about renewals or better cover. You can turn it off any time in Profile.",
   "@faqSellA": {
@@ -540,7 +540,7 @@
       }
     }
   },
-  "fileTooBig": "File must be under 20 MB.",
+  "fileTooBig": "File must be under 40 MB.",
   "wrongFileType": "Please choose a PDF, JPG or PNG file.",
   "addAPolicyTitle": "Add a policy",
   "uploadIntro": "Upload your policy document and we'll read it for you. Make sure it shows the policy number, start and end dates, premium, cover amount and insurer/plan name.",

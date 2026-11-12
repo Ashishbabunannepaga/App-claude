@@ -256,7 +256,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqUploadA =>
-      'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.';
+      'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 40 MB. Password-protected PDFs must be unlocked first.';
 
   @override
   String get faqSellQ => 'Do you sell insurance?';
@@ -1118,7 +1118,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get fileTooBig => 'File must be under 20 MB.';
+  String get fileTooBig => 'File must be under 40 MB.';
 
   @override
   String get wrongFileType => 'Please choose a PDF, JPG or PNG file.';

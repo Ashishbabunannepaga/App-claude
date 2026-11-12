@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @faqUploadA.
   ///
   /// In en, this message translates to:
-  /// **'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 20 MB. Password-protected PDFs must be unlocked first.'**
+  /// **'PDF policy documents work best. You can also upload a clear photo (JPG/PNG) up to 40 MB. Password-protected PDFs must be unlocked first.'**
   String get faqUploadA;
 
   /// No description provided for @faqSellQ.
@@ -2141,7 +2141,7 @@ abstract class AppLocalizations {
   /// No description provided for @fileTooBig.
   ///
   /// In en, this message translates to:
-  /// **'File must be under 20 MB.'**
+  /// **'File must be under 40 MB.'**
   String get fileTooBig;
 
   /// No description provided for @wrongFileType.

@@ -34,6 +34,7 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P0 | Celery worker + beat + Redis (`TASKS_EAGER=false`, `RATE_LIMIT_BACKEND=redis`) | ⬜ | Renewal reminders and account purge need beat |
 | P0 | `ENV=production` with strong `JWT_SECRET`, `OTP_HMAC_SECRET`, `ADMIN_API_TOKEN`, `LEADS_API_TOKEN` from a secrets manager | ⬜ | Server refuses to start with dev settings |
 | P0 | HTTPS domain (e.g. `api.capitupindia.com`), CORS locked down | ⬜ | |
+| P0 | Load balancer / proxy request-body limit at least 40 MB (uploads) and request timeout at least 120 s | ⬜ | Defaults are often 1–10 MB and 30–60 s |
 | P0 | Error tracking (Sentry `SENTRY_DSN`) and uptime check on `/health/ready` | ⬜ | Code is ready |
 | P1 | `/admin` behind company SSO instead of a shared token | ⬜ | |
 | P1 | Load test: 50 concurrent uploads, 200 questions/minute | ⬜ | |
