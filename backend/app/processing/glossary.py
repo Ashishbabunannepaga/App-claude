@@ -70,7 +70,38 @@ GLOSSARY: dict[str, str] = {
 _WORD = re.compile(r"[^\s?.,!;:'\"()।॥]+")
 
 
+# Insurers sell the same cover under different names. A question in one name must find the wording in another:
+# TATA AIG calls zero depreciation "Depreciation Reimbursement", others "Nil Depreciation" or "Bumper to Bumper".
+COVER_SYNONYMS: list[tuple[re.Pattern[str], str]] = [
+    (
+        re.compile(
+            r"\b(zero|nil|0)[\s-]*dep(reciation)?\b"
+            r"|bumper[\s-]*to[\s-]*bumper"
+            r"|depreciation (reimbursement|waiver|cover)"
+        ),
+        "depreciation reimbursement nil depreciation zero depreciation bumper to bumper",
+    ),
+    (
+        re.compile(r"\bengine (protect(ion|or)?|secure|guard|cover)\b|hydrostatic"),
+        "engine secure engine protection engine protector hydrostatic",
+    ),
+    (re.compile(r"\b(rsa|road\s*side assistance|roadside)\b"), "road side assistance roadside assistance"),
+    (
+        re.compile(r"\b(rti|return to invoice|invoice cover|invoice protect)"),
+        "return to invoice invoice price",
+    ),
+    (re.compile(r"\bconsumables?\b"), "consumable expenses consumables"),
+    (re.compile(r"\b(ncb|no claim bonus) protect"), "ncb protection no claim bonus protection"),
+    (re.compile(r"\bkey (replacement|loss|protect)"), "key replacement"),
+    (re.compile(r"\b(ped|pre[\s-]?existing)"), "pre-existing disease waiting period"),
+    (re.compile(r"\b(opd|out[\s-]?patient)\b"), "out-patient opd"),
+    (re.compile(r"\bco[\s-]?pay"), "co-payment co-pay"),
+]
+
+
 def english_terms(question: str) -> str:
-    """English keywords for any glossary words in the question ('' if none)."""
-    found = [GLOSSARY[w] for w in _WORD.findall(question.lower()) if w in GLOSSARY]
+    """English keywords for any glossary words or cover names in the question ('' if none)."""
+    lowered = question.lower()
+    found = [GLOSSARY[w] for w in _WORD.findall(lowered) if w in GLOSSARY]
+    found += [terms for pattern, terms in COVER_SYNONYMS if pattern.search(lowered)]
     return " ".join(dict.fromkeys(found))

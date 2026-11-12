@@ -279,17 +279,24 @@ class _AnswerBubble extends StatelessWidget {
           if (answer.citations.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             for (final c in answer.citations)
-              Theme(
-                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                child: ExpansionTile(
-                  tilePadding: EdgeInsets.zero,
-                  dense: true,
-                  leading: Icon(Icons.bookmark_outline_rounded, size: 18, color: AppColors.secondary),
-                  title: Text(
-                    context.l10n.sourceLabel(c.label.isEmpty ? context.l10n.policyDocument : c.label),
-                    style: TextStyle(color: AppColors.secondary, fontSize: 13),
+              // Its own transparent Material: the bubble's coloured box would otherwise hide the tile's tap ripple
+              // (and debug builds assert about it).
+              Material(
+                type: MaterialType.transparency,
+                child: Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: Icon(Icons.bookmark_outline_rounded, size: 18, color: AppColors.secondary),
+                    title: Text(
+                      context.l10n.sourceLabel(c.label.isEmpty ? context.l10n.policyDocument : c.label),
+                      style: TextStyle(color: AppColors.secondary, fontSize: 13),
+                    ),
+                    children: [
+                      Text('“${c.excerpt}”', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13)),
+                    ],
                   ),
-                  children: [Text('“${c.excerpt}”', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13))],
                 ),
               ),
             if (answer.confidence != 'high')
