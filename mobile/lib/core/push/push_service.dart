@@ -70,7 +70,12 @@ class PushService {
       }
     }
 
+    // firebase_messaging 17 deprecates tokens in favour of register()/onRegistered, which return a Firebase
+    // Installation ID for FCM's newer direct-send API. Our backend sends through the FCM v1 API to registration
+    // tokens, so the token calls stay until the backend sends to installation IDs (docs/PRODUCTION-READINESS.md).
+    // ignore: deprecated_member_use
     await register(await messaging.getToken());
+    // ignore: deprecated_member_use
     messaging.onTokenRefresh.listen(register);
 
     void open(RemoteMessage m) {
