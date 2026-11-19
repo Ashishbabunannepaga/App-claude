@@ -193,6 +193,7 @@ Base path `/api/v1`. Interactive docs at **`http://localhost:8000/docs`** (disab
 | | `POST /client-errors` | App crash/error reports |
 | LMS (header `X-Leads-Token`) | `GET /partner/leads?cursor=` | Opted-in users only, keyset-paginated. Withdrawn users come back as `withdrawn` with no personal data |
 | Admin (token) | `GET /admin/stats`, `/admin/documents/failed`, `/admin/support`, `PATCH /admin/support/{id}` | Ops dashboard data (PII masked); page at `/admin` |
+| | `GET /admin/review`, `GET /admin/review/{policy_id}/document`, `POST /admin/review/{policy_id}` | Review queue: low-confidence readings of opted-in clients; staff confirm or flag, never edit |
 | Public | `GET /health`, `/health/ready`, `/privacy`, `/terms` | Uptime checks and legal pages |
 
 ## 7. Data model

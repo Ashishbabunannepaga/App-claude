@@ -161,6 +161,10 @@ class Policy(TimestampMixin, Base):
     details: Mapped[dict] = mapped_column(JSONB, default=dict)
     summary: Mapped[dict | None] = mapped_column(JSONB)
     renewal_status: Mapped[str] = mapped_column(String(20), default="pending", server_default="pending")
+    # CapitUp ops check of a low-confidence reading (opted-in clients only): correct | needs_client_check
+    review_outcome: Mapped[str | None] = mapped_column(String(20))
+    review_note: Mapped[str | None] = mapped_column(String(500))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
 
     document: Mapped[Document | None] = relationship(back_populates="policy")
     members: Mapped[list[FamilyMember]] = relationship(secondary=policy_members, lazy="selectin")
