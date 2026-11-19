@@ -23,7 +23,7 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P1 | OpenAI Zero Data Retention (no 30-day abuse-monitoring copy) | ⬜ | Apply to OpenAI; until then the privacy page says 30 days |
 | P1 | Per-user daily AI budget (today: hourly limits of 30 uploads, 60 questions, 30 summaries) | 🟡 | Add a daily cap if costs spike |
 | P1 | Follow-up questions ("what about my wife?") | ⬜ | Q&A is single-turn by design today: each question is answered on its own, so no conversation history builds up or leaks between questions |
-| P1 | Human review queue for low-confidence extractions (ops team checks before the client sees it) | ⬜ | `/admin` shows failed documents only |
+| P1 | Review queue for low-confidence readings (opted-in clients only) | ✅ | `/admin` → Review queue: open the document, mark correct or flag for a client call; every view audited |
 
 ## 2. Backend and infrastructure
 

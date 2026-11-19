@@ -31,6 +31,10 @@
   </div>
   <div id="app" hidden>
     <div class="grid" id="stats"></div>
+    <h2>Review queue</h2>
+    <p class="muted">Readings the AI was unsure about, from clients who opted in to be contacted. Check the fields against the
+      document. Staff never change a client's policy: mark it correct, or flag it so the team calls the client.</p>
+    <table id="review"></table>
     <h2>Failed documents</h2><table id="failed"></table>
     <h2>Open support requests</h2><table id="support"></table>
   </div>
@@ -48,6 +52,13 @@ async function load() {
       ['Unanswerable rate (7d)', (s.unanswerable_rate_7d * 100).toFixed(1) + '%'], ['Renewal reminders (7d)', s.renewal_reminders_last_7_days],
       ['Open support', s.open_support_requests], ['Pending deletion', s.users_pending_deletion]];
     document.getElementById('stats').innerHTML = tiles.map(([k, v]) => `<div class="card"><span class="muted">${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+    const q = await api('/review');
+    const fmt = v => v == null ? '<span class="muted">empty</span>' : esc(v);
+    document.getElementById('review').innerHTML = '<tr><th>Client</th><th>Type</th><th>What the AI read</th><th></th></tr>' +
+      (q.map(x => `<tr><td>${esc(x.client || '')}<br><span class="muted">${esc(x.user)}</span></td><td>${esc(x.policy_type)}</td><td>` +
+        Object.entries(x.fields).map(([k, v]) => `<div${x.low_fields.includes(k) ? ' style="color:var(--warn);font-weight:600"' : ''}>${esc(k)}: ${fmt(v)} <span class="muted">(${esc(x.confidence[k])})</span></div>`).join('') +
+        `</td><td><button onclick="openDoc('${esc(x.id)}')">Open document</button><br><br><button onclick="review('${esc(x.id)}','correct')">Correct</button><br><br><button onclick="review('${esc(x.id)}','needs_client_check')">Needs client check</button></td></tr>`).join('')
+      || '<tr><td colspan=4 class="muted">Nothing to review</td></tr>');
     const f = await api('/documents/failed');
     document.getElementById('failed').innerHTML = '<tr><th>When</th><th>Error</th><th>Type</th><th>Size</th><th>Document</th></tr>' +
       (f.map(d => `<tr><td>${esc(new Date(d.created_at).toLocaleString())}</td><td>${esc(d.error_code)}</td><td>${esc(d.content_type)}</td><td>${(d.size_bytes/1024).toFixed(0)} KB</td><td class="muted">${esc(d.id)}</td></tr>`).join('') || '<tr><td colspan=5 class="muted">None</td></tr>');
@@ -56,6 +67,11 @@ async function load() {
       (r.map(x => `<tr><td>${esc(new Date(x.created_at).toLocaleString())}</td><td>${esc(x.user)}</td><td>${esc(x.category)}</td><td>${esc(x.message)}</td><td><button onclick="closeReq('${esc(x.id)}')">Close</button></td></tr>`).join('') || '<tr><td colspan=5 class="muted">None</td></tr>');
     document.getElementById('login').hidden = true; document.getElementById('app').hidden = false;
   } catch (e) { document.getElementById('err').textContent = e.message; }
+}
+async function openDoc(id) { const d = await api('/review/' + id + '/document'); window.open(d.url, '_blank', 'noopener'); }
+async function review(id, outcome) {
+  const note = outcome === 'needs_client_check' ? (prompt('What looks wrong? (shown to the team, not the client)') ?? '') : '';
+  await api('/review/' + id, {method: 'POST', body: JSON.stringify({outcome, note})}); load();
 }
 async function closeReq(id) { await api('/support/' + id, {method: 'PATCH', body: JSON.stringify({status: 'closed'})}); load(); }
 if (sessionStorage.getItem('t')) load();
