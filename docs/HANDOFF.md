@@ -212,9 +212,10 @@ Tables (all in `app/models/entities.py`): `users` (incl. consent and contact-con
    It is off by default and audited with its version (`contact_consent_version`).
 2. The LMS (`CapitUpIndia_LMS_Web`, Cloudflare Workers + D1) shows them under **Admin → App leads**. Handing one
    over creates a Retail lead linked by `app_user_id`.
-3. Every 15 minutes the LMS cron reads the feed; users who withdrew consent get a do-not-contact note and the lead
+3. **Talk to an expert:** the app's request dialog asks for the same consent (unticked) when the client hasn't given it; the backend refuses an expert request without it (`contact_consent_required`). An open request shows in the feed as `expert_review_requested_at` + `expert_review_note`, so the LMS can show it as a warm lead.
+4. Every 15 minutes the LMS cron reads the feed; users who withdrew consent get a do-not-contact note and the lead
    moves to Closed Lost.
-4. LMS secrets: `APP_API_URL`, `APP_LEADS_TOKEN` (must equal the backend's `LEADS_API_TOKEN`).
+5. LMS secrets: `APP_API_URL`, `APP_LEADS_TOKEN` (must equal the backend's `LEADS_API_TOKEN`).
 
 ## 9. How we work
 

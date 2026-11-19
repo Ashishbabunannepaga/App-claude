@@ -1994,6 +1994,12 @@ abstract class AppLocalizations {
   /// **'What would you like help with? (optional)'**
   String get helpWithOptional;
 
+  /// No description provided for @expertCallConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'CapitUp\'s insurance team may call me about my policies. I can turn this off any time in Settings.'**
+  String get expertCallConsent;
+
   /// No description provided for @requestCall.
   ///
   /// In en, this message translates to:

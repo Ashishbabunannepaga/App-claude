@@ -12,6 +12,7 @@ import '../../core/ui/pressable.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/policy_card.dart';
 import '../account/data/account_repository.dart';
+import '../auth/data/auth_controller.dart';
 import '../coverage/coverage_widgets.dart';
 import '../policy/data/models.dart';
 import '../policy/data/policy_repository.dart';
@@ -303,39 +304,63 @@ class ServiceTile extends StatelessWidget {
   );
 }
 
-/// Request a call with an insurance expert. Goes to the support queue (category expert_review).
+/// Request a call with an insurance expert. Goes to the support queue (category expert_review) and, with the
+/// client's "CapitUp may contact me" consent, to the LMS leads feed. A client who hasn't given that consent ticks
+/// it here (unticked by default); the request can't be sent without it, because the expert is CapitUp calling.
 class ExpertReviewCard extends ConsumerWidget {
   const ExpertReviewCard({super.key});
 
   Future<void> _request(BuildContext context, WidgetRef ref) async {
+    final hadConsent = ref.read(authControllerProvider).user?.contactConsent ?? false;
+    var agreed = hadConsent;
     final note = TextEditingController();
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(context.l10n.requestReview),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(context.l10n.expertWillCall),
-            const SizedBox(height: AppSpacing.md),
-            TextField(
-              controller: note,
-              maxLines: 3,
-              decoration: InputDecoration(hintText: context.l10n.helpWithOptional),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => AlertDialog(
+          title: Text(context.l10n.requestReview),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(context.l10n.expertWillCall),
+                const SizedBox(height: AppSpacing.md),
+                TextField(
+                  controller: note,
+                  maxLines: 3,
+                  decoration: InputDecoration(hintText: context.l10n.helpWithOptional),
+                ),
+                if (!hadConsent)
+                  CheckboxListTile(
+                    key: const Key('expert-contact-consent'),
+                    value: agreed,
+                    onChanged: (v) => setState(() => agreed = v ?? false),
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(context.l10n.expertCallConsent, style: const TextStyle(fontSize: 13)),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.cancel)),
+            TextButton(
+              key: const Key('expert-request-call'),
+              onPressed: agreed ? () => Navigator.pop(ctx, true) : null,
+              child: Text(context.l10n.requestCall),
             ),
           ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.cancel)),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(context.l10n.requestCall)),
-        ],
       ),
     );
     final text = note.text.trim();
     note.dispose();
     if (ok != true || !context.mounted) return;
     try {
+      if (!hadConsent) {
+        await ref.read(authControllerProvider.notifier).updateProfile({'contact_consent': true});
+      }
       await ref
           .read(accountRepositoryProvider)
           .contactSupport('expert_review', text.length >= 5 ? text : 'Please review my policies.');

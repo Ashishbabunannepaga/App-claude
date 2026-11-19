@@ -1035,6 +1035,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get helpWithOptional => 'आपको किस बारे में मदद चाहिए? (वैकल्पिक)';
 
   @override
+  String get expertCallConsent =>
+      'CapitUp की बीमा टीम मेरी पॉलिसियों के बारे में मुझे कॉल कर सकती है। मैं इसे कभी भी सेटिंग्स में बंद कर सकता/सकती हूँ।';
+
+  @override
   String get requestCall => 'कॉल की माँग करें';
 
   @override

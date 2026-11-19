@@ -24,7 +24,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import DB, client_ip
 from app.core.config import get_settings
 from app.core.errors import AppError
-from app.models import Policy, User
+from app.models import Policy, SupportRequest, User
 from app.services.audit import audit
 
 router = APIRouter(prefix="/partner/leads", tags=["leads"])
@@ -66,6 +66,9 @@ class Lead(BaseModel):
     contact_consent_version: str | None = None
     next_renewal_date: date | None = None
     policies: list[LeadPolicy] = []
+    # Latest open "Talk to an expert" request: the client asked for a call. None when there is none.
+    expert_review_requested_at: datetime | None = None
+    expert_review_note: str | None = None
     # Only for status == "withdrawn"
     withdrawn_at: datetime | None = None
 
@@ -96,10 +99,21 @@ def leads_page(db: Session, cursor: str | None, limit: int) -> LeadPage:
     last_policy_change = (
         select(Policy.user_id, func.max(Policy.updated_at).label("changed")).group_by(Policy.user_id).subquery()
     )
-    changed_at = func.greatest(User.updated_at, func.coalesce(last_policy_change.c.changed, User.updated_at))
+    last_expert_request = (
+        select(SupportRequest.user_id, func.max(SupportRequest.created_at).label("asked"))
+        .where(SupportRequest.category == "expert_review")
+        .group_by(SupportRequest.user_id)
+        .subquery()
+    )
+    changed_at = func.greatest(
+        User.updated_at,
+        func.coalesce(last_policy_change.c.changed, User.updated_at),
+        func.coalesce(last_expert_request.c.asked, User.updated_at),
+    )
     q = (
         select(User, changed_at.label("changed_at"))
         .outerjoin(last_policy_change, last_policy_change.c.user_id == User.id)
+        .outerjoin(last_expert_request, last_expert_request.c.user_id == User.id)
         # Opted in now, or opted in once and has since withdrawn.
         .where(or_(User.contact_consent_at.is_not(None), User.contact_consent_withdrawn_at.is_not(None)))
         .order_by(changed_at, User.id)
@@ -114,11 +128,22 @@ def leads_page(db: Session, cursor: str | None, limit: int) -> LeadPage:
 
     active_ids = [u.id for u, _ in rows if _is_active(u)]
     by_user: dict[uuid.UUID, list[Policy]] = {}
+    expert: dict[uuid.UUID, SupportRequest] = {}
     if active_ids:
         for p in db.scalars(
             select(Policy).where(Policy.user_id.in_(active_ids)).order_by(Policy.end_date.asc().nulls_last())
         ):
             by_user.setdefault(p.user_id, []).append(p)
+        for r in db.scalars(
+            select(SupportRequest)
+            .where(
+                SupportRequest.user_id.in_(active_ids),
+                SupportRequest.category == "expert_review",
+                SupportRequest.status == "open",
+            )
+            .order_by(SupportRequest.created_at)
+        ):
+            expert[r.user_id] = r  # ordered oldest first: the latest open request wins
 
     today = date.today()
     items: list[Lead] = []
@@ -139,6 +164,8 @@ def leads_page(db: Session, cursor: str | None, limit: int) -> LeadPage:
                     contact_consent_at=u.contact_consent_at,
                     contact_consent_version=u.contact_consent_version,
                     next_renewal_date=min(upcoming) if upcoming else None,
+                    expert_review_requested_at=expert[u.id].created_at if u.id in expert else None,
+                    expert_review_note=expert[u.id].message if u.id in expert else None,
                     policies=[
                         LeadPolicy(
                             policy_type=str(getattr(p.policy_type, "value", p.policy_type)),

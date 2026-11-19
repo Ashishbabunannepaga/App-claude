@@ -495,6 +495,7 @@
   "requestReview": "Request a policy review",
   "expertWillCall": "An insurance expert will call you on your registered number to walk through your policies. We won't try to sell you anything.",
   "helpWithOptional": "What would you like help with? (optional)",
+  "expertCallConsent": "CapitUp's insurance team may call me about my policies. I can turn this off any time in Settings.",
   "requestCall": "Request call",
   "requestSent": "Request sent. Our team will call you on your registered number.",
   "talkToExpert": "Talk to an expert",

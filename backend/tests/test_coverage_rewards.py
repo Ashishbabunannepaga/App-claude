@@ -98,6 +98,8 @@ def test_rewards_are_earned_once_and_capped(client, auth):
 
 
 def test_expert_review_support_category(client, auth):
+    # An expert call needs the "CapitUp may contact me" consent (tests/test_leads.py covers the refusal).
+    client.patch("/api/v1/me", json={"contact_consent": True}, headers=auth)
     r = client.post(
         "/api/v1/support", json={"category": "expert_review", "message": "Please review my health cover"}, headers=auth
     )

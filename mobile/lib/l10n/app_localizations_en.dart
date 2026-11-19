@@ -1039,6 +1039,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpWithOptional => 'What would you like help with? (optional)';
 
   @override
+  String get expertCallConsent =>
+      'CapitUp\'s insurance team may call me about my policies. I can turn this off any time in Settings.';
+
+  @override
   String get requestCall => 'Request call';
 
   @override
