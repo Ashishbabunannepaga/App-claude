@@ -10,6 +10,9 @@ from pypdf.errors import PdfReadError
 from app.core.config import get_settings
 
 log = logging.getLogger(__name__)
+# pypdf logs a warning for every malformed number in an insurer's PDF (e.g. "--0.25" in a drawing
+# command) and repairs it itself; those warnings don't affect the text and flood the logs.
+logging.getLogger("pypdf").setLevel(logging.ERROR)
 
 MIN_CHARS_PER_PAGE = 50
 OCR_DPI_SCALE = 200 / 72
