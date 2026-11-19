@@ -4,6 +4,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
+from pathlib import Path
 
 import httpx
 
@@ -76,11 +77,25 @@ class FcmPushSender(PushSender):
         resp.raise_for_status()
 
 
+def service_account_json() -> str | None:
+    """The FCM key: FCM_SERVICE_ACCOUNT_JSON (production, from a secrets manager) or FCM_SERVICE_ACCOUNT_FILE."""
+    s = get_settings()
+    if s.fcm_service_account_json:
+        return s.fcm_service_account_json
+    if s.fcm_service_account_file:
+        path = Path(s.fcm_service_account_file).expanduser()
+        if not path.is_file():
+            raise RuntimeError(f"FCM_SERVICE_ACCOUNT_FILE not found: {path}")
+        return path.read_text(encoding="utf-8")
+    return None
+
+
 @lru_cache
 def get_push_sender() -> PushSender:
     s = get_settings()
     if s.push_sender == "fcm":
-        if not (s.fcm_project_id and s.fcm_service_account_json):
-            raise RuntimeError("FCM_PROJECT_ID and FCM_SERVICE_ACCOUNT_JSON are required")
-        return FcmPushSender(s.fcm_project_id, s.fcm_service_account_json)
+        key = service_account_json()
+        if not (s.fcm_project_id and key):
+            raise RuntimeError("PUSH_SENDER=fcm needs FCM_PROJECT_ID and FCM_SERVICE_ACCOUNT_JSON or _FILE")
+        return FcmPushSender(s.fcm_project_id, key)
     return LogPushSender()

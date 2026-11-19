@@ -81,6 +81,8 @@ class Settings(BaseSettings):
     push_sender: Literal["log", "fcm"] = "log"
     fcm_project_id: str | None = None
     fcm_service_account_json: str | None = None  # JSON contents, injected from the secrets manager
+    # Or a path to the downloaded key file (local testing). Never commit the file; it is git-ignored.
+    fcm_service_account_file: str | None = None
     renewal_reminder_days: list[int] = [90, 60, 30, 15, 7, 1]
 
     # Rate limiting: "memory" (single process) or "redis" (shared across replicas)
