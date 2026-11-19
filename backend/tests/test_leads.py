@@ -117,3 +117,41 @@ def test_paging(client, otp, feed):
     page2 = feed(cursor=page1["next_cursor"], limit=2).json()
     assert len(page2["items"]) == 1 and page2["has_more"] is False
     assert feed(cursor="not-a-cursor").status_code == 400
+
+
+def test_expert_call_needs_contact_consent(client, otp):
+    _, auth = _signup(client, otp, "+919811100001", False)
+    r = client.post(
+        "/api/v1/support", json={"category": "expert_review", "message": "Please review my policies."}, headers=auth
+    )
+    assert r.status_code == 400 and r.json()["error"]["code"] == "contact_consent_required"
+    # Other support categories never need it.
+    r = client.post(
+        "/api/v1/support", json={"category": "problem", "message": "Upload fails on my phone"}, headers=auth
+    )
+    assert r.status_code == 201
+
+
+def test_expert_request_reaches_the_lms_feed(client, otp, feed):
+    _, auth = _signup(client, otp, "+919811100002", False)
+    first = feed().json()
+    assert first["items"] == []
+
+    # The app's dialog: tick "CapitUp may call me", then request the call.
+    assert client.patch("/api/v1/me", json={"contact_consent": True}, headers=auth).status_code == 200
+    note = "Is my health cover enough for my parents?"
+    r = client.post("/api/v1/support", json={"category": "expert_review", "message": note}, headers=auth)
+    assert r.status_code == 201
+    page = feed(cursor=first["next_cursor"]).json()
+    lead = page["items"][0]
+    assert lead["status"] == "active" and lead["expert_review_note"] == note
+    assert lead["expert_review_requested_at"]
+
+
+def test_already_opted_in_client_reappears_in_the_feed_after_an_expert_request(client, otp, feed):
+    _, auth = _signup(client, otp, "+919811100003", True)
+    page = feed().json()
+    assert page["items"][0]["expert_review_requested_at"] is None
+    client.post("/api/v1/support", json={"category": "expert_review", "message": "Please call me"}, headers=auth)
+    again = feed(cursor=page["next_cursor"]).json()["items"]
+    assert len(again) == 1 and again[0]["expert_review_note"] == "Please call me"
