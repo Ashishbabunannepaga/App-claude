@@ -214,6 +214,12 @@ def main(argv: list[str] | None = None) -> int:
     rows = read_answers(folder)
     if args.only:
         rows = [r for r in rows if r.get("policy_type", "").lower() == args.only.lower()]
+    blank = [r.get("file", "?") for r in rows if not any(v for k, v in r.items() if k != "file")]
+    rows = [r for r in rows if any(v for k, v in r.items() if k != "file")]
+    if blank:
+        print(f"Skipping {len(blank)} file(s) with no answers filled in (no AI call): {', '.join(blank)}")
+    if not rows:
+        sys.exit(f"No answers filled in {folder / 'answers.csv'} yet, so nothing to check. Nothing was sent to the AI.")
     print(f"Reading {len(rows)} documents with AI_PROVIDER={get_settings().ai_provider} …", flush=True)
     results = []
     for row in rows:

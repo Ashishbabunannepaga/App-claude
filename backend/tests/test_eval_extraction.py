@@ -48,4 +48,17 @@ def test_end_to_end_report(tmp_path, capsys):
     assert "premium: expected '99999'" in out
     assert "missing.pdf: FAILED TO READ" in out
     assert list(tmp_path.glob("results-*.csv"))
-    assert main([str(tmp_path), "--only", "motor"]) == 0  # no motor rows: nothing to check
+    with pytest.raises(SystemExit, match="No answers filled in"):
+        main([str(tmp_path), "--only", "motor"])  # no motor rows: nothing to check
+
+
+def test_blank_answer_sheet_sends_nothing_to_the_ai(tmp_path, monkeypatch):
+    (tmp_path / "a.pdf").write_bytes(make_pdf())
+    assert main([str(tmp_path), "--template"]) == 0  # every answer cell empty
+
+    def no_ai(*_args, **_kwargs):
+        raise AssertionError("the AI must not be called for rows with no answers")
+
+    monkeypatch.setattr("app.scripts.eval_extraction.run_file", no_ai)
+    with pytest.raises(SystemExit, match="Nothing was sent to the AI"):
+        main([str(tmp_path)])
