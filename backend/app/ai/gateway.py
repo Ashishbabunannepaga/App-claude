@@ -88,7 +88,7 @@ def get_ai_gateway() -> AIGateway:
 
         if not s.openai_api_key:
             raise RuntimeError("OPENAI_API_KEY is required for the openai provider")
-        provider = OpenAIProvider(s.openai_api_key, s.openai_model, s.ai_timeout_seconds)
+        provider = OpenAIProvider(s.openai_api_key, s.openai_model, s.ai_timeout_seconds, s.openai_reasoning_effort)
     elif s.ai_provider == "gemini":
         from app.ai.providers.gemini import GeminiProvider
 

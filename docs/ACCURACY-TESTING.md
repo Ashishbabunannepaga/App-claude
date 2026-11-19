@@ -58,6 +58,19 @@ before merging a prompt change).
 It prints each document's wrong fields and the AI's confidence for them, then accuracy by field and overall, and
 saves `results-<date>.csv` in the same folder.
 
+### Comparing two models
+
+Run the same set once per model and compare the two `results-*.csv` files. The model setting can be changed
+for one run without editing `.env` (PowerShell):
+
+```
+$env:OPENAI_MODEL="gpt-4.1-mini"; .venv\Scripts\python -m app.scripts.eval_extraction C:\Users\<you>\capitup-accuracy
+$env:OPENAI_MODEL="gpt-6-luna";   .venv\Scripts\python -m app.scripts.eval_extraction C:\Users\<you>\capitup-accuracy
+Remove-Item Env:OPENAI_MODEL
+```
+
+This is how we choose gpt-4.1-mini's replacement before OpenAI shuts it down on 14 Jan 2027.
+
 ## 3. Use the results
 
 - **Wrong field with high AI confidence** is the dangerous kind: the app won't highlight it in amber. Fix these first.

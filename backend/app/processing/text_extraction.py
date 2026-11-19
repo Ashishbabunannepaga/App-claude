@@ -94,7 +94,7 @@ def _vision_ocr(image, provider: str) -> str:
     else:
         from app.ai.providers.openai import OpenAIProvider
 
-        engine = OpenAIProvider(key, s.openai_model, s.ai_timeout_seconds)
+        engine = OpenAIProvider(key, s.openai_model, s.ai_timeout_seconds, s.openai_reasoning_effort)
     return engine.transcribe(buf.getvalue(), "image/jpeg")
 
 

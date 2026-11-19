@@ -62,7 +62,10 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     claude_model: str = "claude-sonnet-5-5"
     openai_api_key: str | None = None
-    openai_model: str = "gpt-4.1-mini"
+    openai_model: str = "gpt-4.1-mini"  # OpenAI shuts it down on 14 Jan 2027; replacement: gpt-6-luna
+    # Reasoning models (gpt-5*, gpt-6*, o-series) think before answering. Effort none|low|medium|high; unset = "low"
+    # for those models (reading a policy is careful copying, not deep reasoning), ignored for other models.
+    openai_reasoning_effort: Literal["none", "low", "medium", "high"] | None = None
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
     gemini_embedding_model: str = "gemini-embedding-001"
