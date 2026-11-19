@@ -4,15 +4,37 @@ from typing import Any
 from app.ai.guardrails import log_usage
 from app.ai.providers.base import TRANSCRIBE_PROMPT, AIProvider, AIProviderError, parse_json_object, post_with_retry
 
+REASONING_PREFIXES = ("gpt-5", "gpt-6", "o1", "o3", "o4")
+# Reasoning tokens count toward the output limit; this much is added so thinking never crowds out the answer.
+REASONING_HEADROOM = 8000
+
+
+def is_reasoning_model(model: str) -> bool:
+    return model.startswith(REASONING_PREFIXES)
+
 
 class OpenAIProvider(AIProvider):
     name = "openai"
     url = "https://api.openai.com/v1/chat/completions"
 
-    def __init__(self, api_key: str, model: str, timeout: float):
+    def __init__(self, api_key: str, model: str, timeout: float, reasoning_effort: str | None = None):
         self.api_key = api_key
         self.model = model
         self.timeout = timeout
+        self.reasoning = is_reasoning_model(model)
+        self.reasoning_effort = (reasoning_effort or "low") if self.reasoning else None
+
+    def _limits(self, max_tokens: int, temperature: float | None = None) -> dict[str, Any]:
+        """Output limit and sampling settings in the form the model accepts.
+
+        Reasoning models refuse `max_tokens` and a custom `temperature`; they take `max_completion_tokens`
+        (thinking included) and `reasoning_effort`. Older chat models take the classic pair."""
+        if self.reasoning:
+            return {"max_completion_tokens": max_tokens + REASONING_HEADROOM, "reasoning_effort": self.reasoning_effort}
+        limits: dict[str, Any] = {"max_tokens": max_tokens}
+        if temperature is not None:
+            limits["temperature"] = temperature
+        return limits
 
     def complete_json(
         self, task: str, system: str, prompt: str, *, context: dict[str, Any], max_tokens: int = 2000
@@ -22,7 +44,7 @@ class OpenAIProvider(AIProvider):
             headers={"Authorization": f"Bearer {self.api_key}"},
             json={
                 "model": self.model,
-                "max_tokens": max_tokens,
+                **self._limits(max_tokens),
                 "response_format": {"type": "json_object"},
                 "messages": [
                     {"role": "system", "content": system},
@@ -44,8 +66,7 @@ class OpenAIProvider(AIProvider):
             headers={"Authorization": f"Bearer {self.api_key}"},
             json={
                 "model": self.model,
-                "temperature": 0,
-                "max_tokens": 8192,
+                **self._limits(8192, temperature=0),
                 "messages": [
                     {
                         "role": "user",

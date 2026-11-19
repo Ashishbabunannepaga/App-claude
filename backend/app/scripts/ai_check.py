@@ -30,7 +30,7 @@ def _hint(exc: Exception) -> str:
     if "HTTP 429" in text:
         return "\n       Rate limit or free-tier quota reached. Wait a minute or check your quota in AI Studio."
     if "HTTP 404" in text:
-        return "\n       Model name not found. Check GEMINI_MODEL / GEMINI_EMBEDDING_MODEL."
+        return "\n       Model name not found. Check OPENAI_MODEL / GEMINI_MODEL / the embedding model in .env."
     return ""
 
 
