@@ -18,7 +18,7 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P0 | Long documents keep schedule pages when trimmed (60k characters) | ✅ | Logged when it happens |
 | P0 | Retries on rate limits / provider errors; clear "AI unavailable" message otherwise | ✅ | OpenAI, Claude, Gemini |
 | P0 | **Accuracy test set**: 20–30 real policies (health retail + GMC, motor, term, life; text and scanned) with the correct values written down, run before every prompt or model change | 🟡 | Tool ready: [`ACCURACY-TESTING.md`](ACCURACY-TESTING.md). Policies to collect; today 1 checked |
-| P0 | Pin the model version (e.g. `gpt-4.1-mini-2025-04-14`) so answers don't change under us | ⬜ | `OPENAI_MODEL` in production `.env` |
+| P0 | **Move off gpt-4.1-mini: OpenAI shuts it down on 14 Jan 2027** (replacement `gpt-6-luna`); re-run the accuracy set on the new model, then pin its dated snapshot | ⬜ | `OPENAI_MODEL`; announced 14 Oct 2026 |
 | P0 | OpenAI: org account in CapitUp's name, monthly spend limit and alerts in the OpenAI dashboard | ⬜ | Usage per task is now logged (`app.ai.usage`) |
 | P1 | OpenAI Zero Data Retention (no 30-day abuse-monitoring copy) | ⬜ | Apply to OpenAI; until then the privacy page says 30 days |
 | P1 | Per-user daily AI budget (today: hourly limits of 30 uploads, 60 questions, 30 summaries) | 🟡 | Add a daily cap if costs spike |
@@ -48,6 +48,7 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P0 | Firebase **App Check** (Play Integrity) so bots can't trigger SMS on our bill | ⬜ | SMS fraud is a known cost risk |
 | P0 | Remove the test phone number; keep only the Play-review demo login (`REVIEW_LOGIN_*`) | ⬜ | |
 | P1 | Real push: `PUSH_SENDER=fcm` + service-account JSON on the server | ⬜ | Never in git or chat |
+| P1 | Push: move from FCM registration tokens (deprecated in firebase_messaging 17) to installation IDs (`register()`/`onRegistered`) once the backend sends to them | ⬜ | Token calls still work; marked in `push_service.dart` |
 
 ## 4. App and Play Store
 
