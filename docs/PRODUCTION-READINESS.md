@@ -38,6 +38,9 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P0 | Error tracking (Sentry `SENTRY_DSN`) and uptime check on `/health/ready` | ⬜ | Code is ready |
 | P1 | `/admin` behind company SSO instead of a shared token | ⬜ | |
 | P1 | Load test: 50 concurrent uploads, 200 questions/minute | ⬜ | |
+| P0 | Secret scan of the full git history (gitleaks) | ✅ | 20 Nov: App-claude and LMS, all branches: no leaks |
+| P0 | Known-vulnerability check of dependencies (pip-audit, osv-scanner) | ✅ | 20 Nov: pypdf, Pillow, Starlette upgraded (#34). Re-run before each release |
+| P1 | Python 3.10 PaddleOCR worker image still gets Pillow 12.3 (issues fixed only in 13, which needs 3.11) | ⬜ | Don't deploy the 3.10 worker (Tesseract is the default), or move it to 3.11 |
 | P1 | Security review / penetration test of the API | ⬜ | Auth, file upload, leads feed |
 
 ## 3. Login and messaging
