@@ -21,7 +21,7 @@ from tests.conftest import make_pdf
         ("premium", "13152", "13252", False),
         ("ncb_percentage", "-", None, True),  # "-" means it must be empty
         ("ncb_percentage", "-", "25", False),
-        ("registration_number", "TS 08 HV 9458", "TS08 HV 9458", False),
+        ("registration_number", "TS 08 HV 9458", "TS08-HV-9458", True),
         ("registration_number", "TS 08 HV 9458", "ts 08 hv 9458", True),
         ("payment_frequency", "annual", "annual", True),
     ],

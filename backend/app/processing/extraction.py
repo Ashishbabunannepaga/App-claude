@@ -76,6 +76,7 @@ def validate_extraction(raw: dict[str, Any], text: str) -> ValidatedExtraction:
                 conf = min(conf, 0.4)
         values[name], confidence[name] = value, round(conf, 3)
 
+    _prefer_total_premium(values, text)
     _plausibility(policy_type, values, confidence)
 
     start, end = values.get("start_date"), values.get("end_date")
@@ -85,13 +86,56 @@ def validate_extraction(raw: dict[str, Any], text: str) -> ValidatedExtraction:
 
     allowed = set(DETAIL_FIELDS[policy_type])
     details = {k: v for k, v in (raw.get("details") or {}).items() if k in allowed and v not in (None, "")}
-    if "ncb_percentage" in details and NCB_NOT_CLAIMED.search(text):
+    ncb = details.get("ncb_percentage")
+    if ncb is not None and NCB_NOT_CLAIMED.search(text) and not _ncb_discount_shown(ncb, text):
         # Motor schedules list the previous policy's NCB next to "NCB claimed: NA"; only a claimed NCB applies here.
+        # But a discount line in this policy's premium schedule ("Less: No claim bonus (25%)") wins over a
+        # proposal-section "NCB Claimed: NA".
         del details["ncb_percentage"]
+    if details.get("registration_number"):
+        # "AP 39 KS 7117", "AP-23-AL-2600" and "ap39ks7117" are the same vehicle.
+        details["registration_number"] = re.sub(r"[^A-Za-z0-9]", "", str(details["registration_number"])).upper()
     return ValidatedExtraction(policy_type, values, confidence, details)
 
 
 NCB_NOT_CLAIMED = re.compile(r"NCB\s*claimed\s*[:\-]?\s*(?:NA|N/A|Nil|No|0(?:\.0+)?\s*%?)(?![\w.])", re.IGNORECASE)
+
+
+def _ncb_discount_shown(value: Any, text: str) -> bool:
+    """Whether this policy's premium schedule shows the NCB discount right after its label: "No claim bonus (50%)",
+    "No claim bonus 45%" or "NCB Discount(25%)". "NCB in Previous Policy: 25 %" does not count."""
+    try:
+        pct = int(float(str(value).strip().rstrip("%")))
+    except ValueError:
+        return False
+    if pct <= 0:
+        return False
+    pattern = rf"(?:no\s*claim\s*bonus|\bNCB)(?:\s*discount)?\s*[:(]?\s*{pct}(?:\.0+)?\s*%"
+    return re.search(pattern, text, re.IGNORECASE) is not None
+
+
+# Schedules show "Net Premium 8758.91 · GST 1576.61 · Final Premium 10335.52"; the client pays the total.
+GST_RATE = Decimal("0.18")
+
+
+def _prefer_total_premium(values: dict[str, Any], text: str) -> None:
+    """If the AI returned the pre-tax net premium, switch to the total the client pays: the document shows both
+    the 18% GST on that amount (whole, or split as CGST + SGST) and the net + GST total. Table layouts lose the
+    labels in extracted text, so this checks the arithmetic instead."""
+    premium = values.get("premium")
+    if not isinstance(premium, Decimal) or premium < MIN_PREMIUM:
+        return
+    amounts = [a for m in re.finditer(r"\d[\d,]*(?:\.\d{1,2})?", text) if (a := h.parse_amount(m.group(0)))]
+
+    def in_text(amount: Decimal) -> Decimal | None:
+        """The document's own figure within ₹1 of amount (it rounds GST its own way)."""
+        return next((a for a in amounts if abs(a - amount) <= 1), None)
+
+    gst = premium * GST_RATE
+    total = in_text(premium + gst)
+    if total is not None and total > premium and (in_text(gst) or in_text(gst / 2)):
+        values["premium"] = total
+
 
 # Below these, a "sum insured" is almost certainly a misread (a page number, a count, a lakh figure without unit).
 MIN_SUM_INSURED = Decimal(10_000)
