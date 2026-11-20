@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/account/data/account_repository.dart';
 import '../config/env.dart';
+import '../strings.dart';
 
 /// Push notifications via Firebase Cloud Messaging (APNs on iOS through Firebase).
 ///
@@ -18,6 +20,38 @@ class PushService {
 
   static bool _initialised = false;
   static bool get enabled => _initialised;
+
+  /// Called when a push arrives while the app is open (the app refreshes its inbox and unread badge).
+  static VoidCallback? onForegroundMessage;
+
+  /// Shows in-app banners; set as MaterialApp.scaffoldMessengerKey.
+  static final messengerKey = GlobalKey<ScaffoldMessengerState>();
+
+  // Sign-in and the permission prompt both register; keep one listener of each kind.
+  static final List<StreamSubscription<Object?>> _subscriptions = [];
+
+  /// The OS shows no notification while the app is open, so show a banner instead. [open] follows the deep link.
+  @visibleForTesting
+  static void showForeground({
+    required String? title,
+    required String? body,
+    required String? link,
+    required String viewLabel,
+    required void Function(String link) open,
+  }) {
+    final text = [title, body].whereType<String>().where((t) => t.trim().isNotEmpty).join('\n');
+    if (text.isEmpty) return;
+    messengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(text, maxLines: 3, overflow: TextOverflow.ellipsis),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 6),
+        action: link != null && link.startsWith('/')
+            ? SnackBarAction(label: viewLabel, onPressed: () => open(link))
+            : null,
+      ),
+    );
+  }
 
   static FirebaseOptions? get _options {
     if (kIsWeb || Env.firebaseApiKey.isEmpty) return null;
@@ -75,15 +109,31 @@ class PushService {
     // tokens, so the token calls stay until the backend sends to installation IDs (docs/PRODUCTION-READINESS.md).
     // ignore: deprecated_member_use
     await register(await messaging.getToken());
+    for (final s in _subscriptions) {
+      await s.cancel();
+    }
+    _subscriptions.clear();
     // ignore: deprecated_member_use
-    messaging.onTokenRefresh.listen(register);
+    _subscriptions.add(messaging.onTokenRefresh.listen(register));
 
     void open(RemoteMessage m) {
       final link = m.data['deep_link'] as String?;
       if (link != null && link.startsWith('/')) router.push(link);
     }
 
-    FirebaseMessaging.onMessageOpenedApp.listen(open);
+    _subscriptions.add(FirebaseMessaging.onMessageOpenedApp.listen(open));
+    _subscriptions.add(
+      FirebaseMessaging.onMessage.listen((m) {
+        onForegroundMessage?.call();
+        showForeground(
+          title: m.notification?.title,
+          body: m.notification?.body,
+          link: m.data['deep_link'] as String?,
+          viewLabel: strings.notificationView,
+          open: router.push,
+        );
+      }),
+    );
     final initial = await messaging.getInitialMessage();
     if (initial != null) open(initial);
   }

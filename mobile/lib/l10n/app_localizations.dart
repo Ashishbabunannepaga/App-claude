@@ -2995,6 +2995,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeDark;
+
+  /// No description provided for @notificationView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get notificationView;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

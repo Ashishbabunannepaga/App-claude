@@ -37,7 +37,7 @@ class AuthInterceptor extends QueuedInterceptor {
   final TokenStorage _tokens;
   final SessionEvents _events;
 
-  static const _noAuthPaths = ['/auth/otp/request', '/auth/otp/verify', '/auth/refresh'];
+  static const _noAuthPaths = ['/auth/otp/request', '/auth/otp/verify', '/auth/firebase', '/auth/refresh'];
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {

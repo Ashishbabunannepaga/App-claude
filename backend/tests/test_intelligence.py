@@ -168,3 +168,20 @@ def test_related_clauses_are_only_the_strongest_matches(client, auth):
         headers=auth,
     ).json()
     assert a["related_clauses"] and all("Cosmetic" in c["text"] for c in a["related_clauses"])
+
+
+def test_citations_from_the_same_page_are_merged():
+    from types import SimpleNamespace
+
+    from app.services.qa_service import _merge_citations
+
+    chunk = lambda page, section, text: SimpleNamespace(page=page, section=section, content=text)  # noqa: E731
+    cited = [
+        chunk(12, "Auto Secure", "Zero depreciation is covered."),
+        chunk(5, "Add-On Covers", "Engine secure add-on."),
+        chunk(12, "Auto Secure", "Consumables are covered."),
+        chunk(12, "Auto Secure", "Zero depreciation is covered."),
+    ]
+    merged = _merge_citations(cited)
+    assert [(c["page"], c["section"]) for c in merged] == [(12, "Auto Secure"), (5, "Add-On Covers")]
+    assert merged[0]["excerpt"] == "Zero depreciation is covered. … Consumables are covered."
