@@ -1,5 +1,11 @@
 # Exact pins (strict version control). Upgrade deliberately: change, test, commit.
-fastapi==0.165.0
+# The API image runs Python 3.11. Python 3.10 is only the optional PaddleOCR worker image: it gets the newest
+# versions that still support 3.10 (Pillow 12.3 there still has known issues fixed only in 13; see docs/PRODUCTION-READINESS.md
+# section 2: don't deploy the 3.10 worker, or move it to 3.11).
+fastapi==0.165.0; python_version >= "3.11"
+fastapi==0.162.5; python_version < "3.11"
+starlette==1.10.0; python_version >= "3.11"
+starlette==1.7.0; python_version < "3.11"
 uvicorn[standard]==0.32.1
 gunicorn==23.0.0
 sqlalchemy==2.0.54
@@ -15,7 +21,8 @@ httpx==0.28.1
 pypdf==6.21.4
 pypdfium2==4.30.0
 pytesseract==0.3.13
-pillow==13.0.0
+pillow==13.0.0; python_version >= "3.11"
+pillow==12.3.0; python_version < "3.11"
 cryptography==50.0.2  # AES-encrypted PDFs (pypdf); already in the lock via google-auth
 celery[redis]==5.4.0
 redis==5.3.1
