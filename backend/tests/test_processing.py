@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 
 from app.processing import heuristics as h
 from app.processing.chunking import chunk_pages
@@ -80,7 +81,7 @@ def _motor(ncb):
 def test_previous_policy_ncb_is_not_this_policys_ncb():
     r = validate_extraction(_motor("25"), MOTOR_TEXT)
     assert "ncb_percentage" not in r.details
-    assert r.details["registration_number"] == "TS 08"
+    assert r.details["registration_number"] == "TS08"
 
 
 def test_a_claimed_ncb_is_kept():
@@ -89,3 +90,35 @@ def test_a_claimed_ncb_is_kept():
     for written in ("NCB claimed : Nil", "NCB Claimed:0%", "NCB claimed - N/A"):
         text = MOTOR_TEXT.replace("NCB Claimed: NA", written)
         assert "ncb_percentage" not in validate_extraction(_motor("25"), text).details, written
+
+
+def test_a_discount_line_beats_a_proposal_ncb_claimed_na():
+    # Tata AIG: the proposal section says "NCB Claimed: NA" but the premium schedule applies the discount.
+    for line in ("Less : No claim bonus (25%) 527.76", "No claim bonus 25% -760.84", "NCB Discount(25%) 165.57"):
+        assert validate_extraction(_motor("25"), MOTOR_TEXT + line).details["ncb_percentage"] == "25", line
+    # A different percentage, or the previous policy's NCB, does not count.
+    assert "ncb_percentage" not in validate_extraction(_motor("25"), MOTOR_TEXT + "No claim bonus (50%)").details
+
+
+def test_registration_number_is_normalised():
+    for written in ("AP 39 KS 7117", "AP-39-KS-7117", "ap39ks7117"):
+        raw = {"policy_type": "motor", "fields": {}, "details": {"registration_number": written}}
+        assert validate_extraction(raw, MOTOR_TEXT).details["registration_number"] == "AP39KS7117"
+
+
+def _premium(value, text):
+    raw = {"policy_type": "motor", "fields": {"premium": {"value": value, "confidence": 0.9}}}
+    return validate_extraction(raw, text).values["premium"]
+
+
+def test_net_premium_is_replaced_by_the_total_with_gst():
+    # Table text loses the labels, so the check is arithmetic: net + 18% GST, with the GST figure shown.
+    digit = "Net Premium Final Premium\n8758.91\nIGST @18% (1576.61)\n10335.52\n"
+    assert _premium("8758.91", digit) == Decimal("10335.52")
+    assert _premium("10335.52", digit) == Decimal("10335.52")
+    # GST split into CGST + SGST, rounded by the insurer.
+    split = "Net Premium 13,752.00 CGST 1,237.68 SGST 1,237.68 Final Premium 16,227.00"
+    assert _premium("13752", split) == Decimal("16227.00")
+    # No GST line (health with no tax): left alone.
+    health = "Basic Premium 11,498.34 Stamp Duty 1.00 Total Premium 11,499.00"
+    assert _premium("11498.34", health) == Decimal("11498.34")

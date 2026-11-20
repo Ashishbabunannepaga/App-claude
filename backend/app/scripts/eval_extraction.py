@@ -96,7 +96,7 @@ def matches(field_name: str, expected: str, got: Any) -> bool:
     if field_name in DATE_FIELDS:
         a, b = _date(expected), _date(got)
         return a is not None and a == b
-    if field_name == "policy_number":
+    if field_name in ("policy_number", "registration_number"):
         return re.sub(r"[^A-Za-z0-9]", "", expected).upper() == re.sub(r"[^A-Za-z0-9]", "", str(got)).upper()
     e, g = _words(expected), _words(str(got))
     if field_name in LOOSE_FIELDS or field_name not in CORE:

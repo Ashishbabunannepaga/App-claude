@@ -1,6 +1,6 @@
 """Versioned prompts. Bump the version when changing a prompt so evaluations stay comparable."""
 
-EXTRACT_VERSION = "extract-v2"
+EXTRACT_VERSION = "extract-v3"
 SUMMARY_VERSION = "summary-v2"
 QA_VERSION = "qa-v4"
 
@@ -90,7 +90,9 @@ Rules:
   For group policies use the employee's certificate number if shown, otherwise the master policy number.
 - start_date / end_date: the period of insurance (policy start and expiry). Not the issue date, premium due date
   or grace period.
-- premium: the total premium the policyholder pays per payment, including GST if the total is shown.
+- premium: the total premium the policyholder pays per payment, including GST if the total is shown ("Final
+  Premium", "Total Policy Premium", "Gross Premium", "Total Payable"). Never the "Net Premium" or taxable value.
+- plan_name: the base product or plan name. Not an add-on, rider or optional cover name.
 - sum_insured: health = base sum insured (family floater amount for floaters; exclude cumulative bonus and
   top-ups); motor = IDV (insured declared value); life = sum assured on death.
 - payment_frequency: one of annual, half_yearly, quarterly, monthly, single, null.
