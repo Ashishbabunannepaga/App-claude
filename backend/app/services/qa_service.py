@@ -148,7 +148,7 @@ def ask(db: Session, policy: Policy, user_id: uuid.UUID, question: str, language
         answer=answer,
         answerable=answerable,
         confidence=confidence,
-        citations=[{"page": c.page, "section": c.section, "excerpt": _excerpt(c.content)} for c in cited],
+        citations=_merge_citations(cited),
         related_clauses=related_clauses(db, policy.id, question) if answerable else [],
     )
     db.add(message)
@@ -161,6 +161,20 @@ def summary_excerpts(db: Session, policy_id: uuid.UUID, limit: int = 12) -> str:
         select(PolicyChunk).where(PolicyChunk.policy_id == policy_id).order_by(PolicyChunk.chunk_index).limit(limit)
     ).all()
     return "\n\n".join(f"(page {c.page}) {c.content}" for c in chunks) or "(no document text)"
+
+
+def _merge_citations(cited: list) -> list[dict]:
+    """One source per page and section: several chunks from the same page showed as repeated
+    "Source: Page 12 · ..." rows. Their excerpts are joined under the one source, in the order cited."""
+    groups: dict[tuple, list[str]] = {}
+    for c in cited:
+        texts = groups.setdefault((c.page, c.section), [])
+        if c.content not in texts:
+            texts.append(c.content)
+    return [
+        {"page": page, "section": section, "excerpt": _excerpt(" … ".join(texts), 400 if len(texts) > 1 else 280)}
+        for (page, section), texts in groups.items()
+    ]
 
 
 def _excerpt(text: str, limit: int = 280) -> str:

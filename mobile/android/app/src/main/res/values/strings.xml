@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CapitUp</string>
+    <string name="notification_channel_id" translatable="false">capitup_updates</string>
+    <string name="notification_channel_name">Policy updates</string>
+    <string name="notification_channel_description">Renewal reminders and policy reading updates</string>
 </resources>

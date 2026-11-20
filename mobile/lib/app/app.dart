@@ -21,12 +21,17 @@ class InsureApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     ref.listen(authControllerProvider, (prev, next) {
       if (next.status == AuthStatus.signedIn && prev?.status != AuthStatus.signedIn) {
+        PushService.onForegroundMessage = () {
+          ref.invalidate(unreadCountProvider);
+          ref.invalidate(notificationsProvider);
+        };
         PushService.registerForUser(ref.read(accountRepositoryProvider), router);
       }
     });
     return MaterialApp.router(
       title: Brand.name,
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: PushService.messengerKey,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: ref.watch(themeModeProvider),

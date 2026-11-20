@@ -844,5 +844,6 @@
   "appearance": "Appearance",
   "themeSystem": "Same as phone",
   "themeLight": "Light",
-  "themeDark": "Dark"
+  "themeDark": "Dark",
+  "notificationView": "View"
 }

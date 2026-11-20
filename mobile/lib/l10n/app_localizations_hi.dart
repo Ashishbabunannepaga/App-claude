@@ -1623,4 +1623,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get themeDark => 'डार्क';
+
+  @override
+  String get notificationView => 'देखें';
 }
