@@ -1,5 +1,5 @@
 # Exact pins (strict version control). Upgrade deliberately: change, test, commit.
-fastapi==0.115.14
+fastapi==0.165.0
 uvicorn[standard]==0.32.1
 gunicorn==23.0.0
 sqlalchemy==2.0.54
@@ -12,10 +12,10 @@ pyjwt==2.15.1
 python-multipart==0.0.32
 pgvector==0.3.6
 httpx==0.28.1
-pypdf==5.9.0
+pypdf==6.21.4
 pypdfium2==4.30.0
 pytesseract==0.3.13
-pillow==11.3.0
+pillow==13.0.0
 cryptography==50.0.2  # AES-encrypted PDFs (pypdf); already in the lock via google-auth
 celery[redis]==5.4.0
 redis==5.3.1
