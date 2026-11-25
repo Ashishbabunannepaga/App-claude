@@ -17,8 +17,8 @@ Legend: ✅ done · 🟡 partly · ⬜ not started · **P0** = blocks launch · 
 | P0 | Figures in answers checked against the policy text; unmatched → low confidence + log | ✅ | |
 | P0 | Long documents keep schedule pages when trimmed (60k characters) | ✅ | Logged when it happens |
 | P0 | Retries on rate limits / provider errors; clear "AI unavailable" message otherwise | ✅ | OpenAI, Claude, Gemini |
-| P0 | **Accuracy test set**: 20–30 real policies (health retail + GMC, motor, term, life; text and scanned) with the correct values written down, run before every prompt or model change | 🟡 | Tool ready: [`ACCURACY-TESTING.md`](ACCURACY-TESTING.md). Policies to collect; today 1 checked |
-| P0 | **Move off gpt-4.1-mini: OpenAI shuts it down on 14 Jan 2027** (replacement `gpt-6-luna`); re-run the accuracy set on the new model, then pin its dated snapshot | ⬜ | `OPENAI_MODEL`; announced 14 Oct 2026 |
+| P0 | **Accuracy test set**: 20–30 real policies (health retail + GMC, motor, term, life; text and scanned) with the correct values written down, run before every prompt or model change | ✅ | 20 Nov: 279/280 fields right on 31 real policies (gpt-6-luna). Re-run after every prompt/model change: [`ACCURACY-TESTING.md`](ACCURACY-TESTING.md) |
+| P0 | **Move off gpt-4.1-mini: OpenAI shuts it down on 14 Jan 2027** (replacement `gpt-6-luna`); re-run the accuracy set on the new model, then pin its dated snapshot | 🟡 | `gpt-6-luna` chosen and supported (#27, #32); set `OPENAI_MODEL=gpt-6-luna` in production and pin the snapshot |
 | P0 | OpenAI: org account in CapitUp's name, monthly spend limit and alerts in the OpenAI dashboard | ⬜ | Usage per task is now logged (`app.ai.usage`) |
 | P1 | OpenAI Zero Data Retention (no 30-day abuse-monitoring copy) | ⬜ | Apply to OpenAI; until then the privacy page says 30 days |
 | P1 | Per-user daily AI budget (today: hourly limits of 30 uploads, 60 questions, 30 summaries) | 🟡 | Add a daily cap if costs spike |
