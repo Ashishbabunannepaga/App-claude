@@ -4,7 +4,8 @@
 together, every API, and where things stand today. Install steps are in [`SETUP.md`](SETUP.md); this page links to
 the other docs instead of repeating them.
 
-*Status as of 12 Nov 2026, `develop` at PR #18. Owner: Ashish (tech lead). Update the "Current status" section
+*Status as of 25 Nov 2026, `develop` at PR #34. Owner: Ashish (tech lead). The current, fuller handover for the
+team (state, setup, OTP testing, every pending task) is the [Developer Handover](https://claude.ai/artifact/UsdxtcnpQgpksrs6BD7Zoq). Update the "Current status" section
 when you merge something that changes it.*
 
 ---
@@ -54,7 +55,7 @@ without code changes. The app holds **no secrets**, only the API URL and Firebas
 ## 4. Backend (`backend/`)
 
 **Stack:** Python 3.11 (CI also runs 3.10), FastAPI, SQLAlchemy 2, Alembic, psycopg 3, Celery, pypdf/pypdfium2,
-Tesseract (optional), httpx for AI calls. Lint/format: `ruff`. Tests: `pytest` (**140 passing**).
+Tesseract (optional), httpx for AI calls. Lint/format: `ruff`. Tests: `pytest` (**201 passing**).
 
 | Folder | Responsibility |
 |---|---|
@@ -68,7 +69,7 @@ Tesseract (optional), httpx for AI calls. Lint/format: `ruff`. Tests: `pytest` (
 | `app/storage/` | Local and S3/R2 file storage |
 | `app/static/` | `/privacy`, `/terms` pages and the `/admin` dashboard |
 | `app/scripts/` | `ai_check` (test AI keys), `reembed` (after changing embeddings), `backfill_clauses` |
-| `alembic/versions/` | Migrations `0001`–`0005` |
+| `alembic/versions/` | Migrations `0001`–`0006` |
 
 ### How an upload is processed
 
@@ -233,17 +234,16 @@ Tables (all in `app/models/entities.py`): `users` (incl. consent and contact-con
 ## 10. Current status
 
 **Done and working on the emulator**
-- Firebase phone login (Spark plan: test numbers plus about 10 real SMS a day; SMS region set to India).
-- Upload of PDFs and photos, including all edge cases: print-locked PDFs, password PDFs, page limit, size limit,
-  non-policies, multi-photo, stuck documents, NUL characters, re-upload after failure.
-- OpenAI as the AI and OCR provider (`gpt-4.1-mini`) when Tesseract isn't installed.
-- Opt-in contact consent and the leads feed into the LMS (LMS side merged and deployed).
-- CapitUp logo and app icon; English + Hindi; dark mode.
-
-**In progress**
-- Real-AI accuracy test: upload 3–5 real policies (health, motor, term) owned by team members, compare the review
-  screen against the PDF, and fix extraction rules field by field. The first motor PDF (13 pages) now gets through
-  the pipeline; its field check is pending.
+- Firebase phone login (Blaze plan needed for real SMS; use Firebase test numbers for testing). Backend OTP in
+  development prints the code in the server console.
+- Upload of PDFs and photos, including all edge cases (print-locked and password PDFs, page and size limits,
+  non-policies, multi-photo, stuck documents, re-upload after failure).
+- AI reading with OpenAI `gpt-6-luna`: **accuracy test passed 20 Nov, 279/280 fields right on 31 real policies**.
+- Ask AI, summaries, health check, coverage report, clauses, nominees, compare, insights, rewards.
+- Push notifications (FCM, tested on a phone 19 Nov), in-app banner, "Policy updates" channel.
+- Ops review queue; "Talk to an expert" requests and opted-in clients flow to the LMS (App leads page).
+- Security: secret scan clean; dependency upgrade merged (#34).
+- CapitUp logo and app icon; English + Hindi; dark mode; app lock.
 
 **Measuring AI accuracy:** [`ACCURACY-TESTING.md`](ACCURACY-TESTING.md) (run real policies, compare every field).
 
@@ -255,13 +255,13 @@ Tables (all in `app/models/entities.py`): `users` (incl. consent and contact-con
 |---|---|---|
 | Play Console organisation account | Ashish / management | D-U-N-S ready |
 | Release signing key (`.jks`) | Ashish | Back it up; losing it means a new app listing |
-| Production server, database, storage | On hold | Testing is local-only for now |
-| Real push notifications (FCM) | Dev | Needs the service-account JSON on the server, never in chat or git |
+| Production server, database, storage | Management (budget) + backend dev | Hosting not chosen yet |
 | IRDAI broker licence number in `privacy.html` | Management | Placeholder bracket still there |
 | Legal review of privacy page and terms | Management + lawyer | Lists OpenAI and Firebase as processors |
 | Native Hindi review of app strings | Anyone fluent | `mobile/lib/l10n/app_hi.arb` |
 | OpenAI Zero Data Retention (optional) | Ashish | Apply to OpenAI before launch if we want no 30-day retention |
-| MSG91 + DLT for our own SMS | Optional | Only if we move off Firebase SMS |
+| OTP testing on real phones | QA | Firebase test numbers first; see the Developer Handover |
+| Cheaper login SMS (Truecaller + Indian gateway, DLT) | Backend + app dev | Firebase SMS is ~₹6 each; see the Developer Handover |
 
 ## 11. Known gotchas (Windows dev PC)
 

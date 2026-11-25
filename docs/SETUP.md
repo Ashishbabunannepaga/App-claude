@@ -226,7 +226,7 @@ Screens from the current app with the demo data (captured 16 Oct 2026).
 cd C:\dev\App-claude\mobile
 dart format --output=none --set-exit-if-changed lib test   # no files listed = formatted
 flutter analyze                                            # must say: No issues found!
-flutter test                                               # must end: All tests passed! (~600)
+flutter test                                               # must end: All tests passed! (~630)
 
 cd ..\backend
 .venv\Scripts\activate
